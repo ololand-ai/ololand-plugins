@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "source": ".",
+      "source": "./ololand-dd",
       "description": "Institutional due diligence control system — 33 MCP tools for deal analysis, financial valuation, risk assessment, and cross-deal learning."
     }
   ]
