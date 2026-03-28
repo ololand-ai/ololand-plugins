@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ololand": {
+      "type": "http",
+      "url": "${OLOLAND_MCP_URL:-https://ma-workbench-api-303576587005.us-central1.run.app/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${OLOLAND_AGENT_KEY}"
+      },
+      "description": "OloLand M&A intelligence — 33 tools for deal analysis, financial valuation, risk assessment, document search, knowledge graph, competitive strategy simulation, corp dev workflows (build-vs-buy, acquisition thesis, batch triage), and report generation."
+    }
+  }
+}

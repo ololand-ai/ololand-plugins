@@ -1,0 +1,15 @@
+{
+  "name": "ololand-dd",
+  "description": "Institutional due diligence control system. Deterministic financial engines (DCF, LBO, Monte Carlo), 246-category risk taxonomy, forensic QoE (Beneish, Benford), cross-deal learning, and workflow orchestration for M&A professionals. Connects to OloLand's MCP server for deal intelligence.",
+  "version": "1.0.0",
+  "author": {
+    "name": "OloLand",
+    "url": "https://ololand.ai"
+  },
+  "repository": "https://github.com/ololand-ai/ololand-dd-plugin",
+  "keywords": [
+    "due-diligence", "m&a", "private-equity", "risk-analysis",
+    "financial-valuation", "dcf", "lbo", "monte-carlo",
+    "investment-memo", "cim", "deal-analysis", "forensic-qoe"
+  ]
+}
