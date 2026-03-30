@@ -60,26 +60,26 @@ Every deal makes the system smarter. Analyst corrections refine risk models. Out
 
 ### Benchmark
 
-OloLand scores **87.7%** vs Claude's **81.5%** on the Gauntlet v4 institutional due diligence evaluation (3 tracks, 24 questions, dual-judge scoring by Gemini 3.1 Pro + Claude Opus 4.6).
+OloLand scores **90.5%** vs Claude's **88.5%** on the Gauntlet v4 T5 institutional due diligence evaluation (dual-judge scoring by Gemini 3.1 Pro + Claude Opus 4.6). The gap widens on forensic, reconciliation, and visual-decision tasks.
 
 ## MCP Tools (33)
 
-The plugin connects to OloLand's MCP server, which exposes 30 tools grouped by category:
+The plugin connects to OloLand's MCP server, which exposes 33 tools grouped by category:
 
 | Category | Tools |
 |----------|-------|
-| **Deal Intelligence** | `list_deals`, `get_deal_summary`, `get_deal_timeline` |
-| **Financial Valuation** | `run_dcf`, `run_lbo`, `run_monte_carlo`, `run_comparables`, `get_financial_data` |
-| **Risk Analysis** | `get_risk_report`, `get_risk_categories`, `get_risk_quantification` |
-| **Documents** | `search_deal_documents`, `get_document`, `list_documents` |
-| **Knowledge Graph** | `query_knowledge_graph`, `get_entity_relationships`, `get_entity_details` |
-| **Cross-Deal Learning** | `find_similar_deals`, `get_deal_patterns`, `get_outcome_predictions` |
-| **Reports** | `generate_memo`, `generate_cim_summary`, `export_report` |
-| **Market Intelligence** | `get_market_data`, `get_industry_benchmarks`, `get_comparable_companies` |
-| **Strategy** | `run_war_game`, `get_strategy_scenarios` |
-| **Corp Dev** | `analyze_build_vs_buy`, `generate_acquisition_thesis`, `batch_triage_companies` |
-| **Voice** | `create_audio_brief` |
-| **Workflow** | `get_approval_status`, `submit_for_review` |
+| **Deal Intelligence** | `list_deals`, `get_deal`, `get_deal_summary_tiles`, `get_deal_indicators` |
+| **Financial Valuation** | `get_financial_snapshot`, `get_dcf_valuation`, `run_monte_carlo_simulation` |
+| **Risk Analysis** | `get_deal_risks`, `get_evidence_links` |
+| **Documents** | `list_deal_documents`, `search_deal_documents` |
+| **Knowledge Graph** | `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
+| **Cross-Deal Learning** | `find_similar_deals` |
+| **Reports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier` |
+| **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals` |
+| **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
+| **Corp Dev** | `batch_triage_companies` |
+| **Voice** | `talk_to_deal` |
+| **Workflow** | `run_due_diligence`, `check_task_status`, `decompose_intent`, `get_plan_status`, `list_missions` |
 
 ## Links
 
