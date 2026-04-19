@@ -7,11 +7,13 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "source": "./ololand-dd",
-      "description": "Institutional underwriting layer inside Claude \u2014 39 MCP tools: deterministic DCF / LBO / Monte Carlo / real options engines, 246-category risk taxonomy, forensic QoE (Beneish, Benford, EBITDA bridge, lapping), cross-document reconciliation with source hierarchy, war-game RL simulation, and cross-deal learning against your firm's closed deals."
+      "version": "1.4.1",
+      "source": "./",
+      "category": "productivity",
+      "description": "Institutional due diligence for Claude — deterministic financial engines, 246-category risk taxonomy, forensic QoE, cross-document reconciliation, and a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin."
     }
   ],
   "metadata": {
-    "description": "OloLand institutional due diligence plugin for Claude \u2014 the underwriting layer above Anthropic's native private-equity scaffold. Deterministic financial engines, 246-category risk taxonomy, forensic QoE, and cross-deal learning for PE / M&A professionals."
+    "description": "OloLand institutional due diligence plugin for Claude — the underwriting layer above Anthropic's native private-equity scaffold. Deterministic financial engines, 246-category risk taxonomy, forensic QoE, and cross-deal learning for PE / M&A professionals."
   }
 }

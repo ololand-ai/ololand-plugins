@@ -101,7 +101,7 @@ First 100 tool calls free on install. Upgrade at [ololand.ai/pricing](https://ol
 - **App**: [app.ololand.ai](https://app.ololand.ai)
 - **Pricing**: [ololand.ai/pricing](https://ololand.ai/pricing)
 - **Methodology**: [docs.ololand.ai/methodology](https://docs.ololand.ai/methodology)
-- **Support**: [aleks@ololand.ai](mailto:aleks@ololand.ai)
+- **Support**: [support@ololand.ai](mailto:support@ololand.ai)
 
 ## Disclaimer
 
