@@ -1,0 +1,24 @@
+{
+  "name": "ololand-dd",
+  "version": "1.4.1",
+  "description": "Institutional due diligence for Claude — deterministic financial engines, 246-category risk taxonomy, forensic QoE, cross-document reconciliation, and a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin.",
+  "author": {
+    "name": "OloLand",
+    "email": "support@ololand.ai",
+    "url": "https://ololand.ai"
+  },
+  "homepage": "https://ololand.ai",
+  "repository": "https://github.com/ololand-ai/ololand-dd-plugin",
+  "license": "MIT",
+  "keywords": [
+    "finance",
+    "private-equity",
+    "due-diligence",
+    "m-and-a",
+    "valuation",
+    "lbo",
+    "dcf",
+    "risk-analysis",
+    "forensic-qoe"
+  ]
+}

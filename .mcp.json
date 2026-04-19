@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ololand": {
+      "type": "http",
+      "url": "https://ma-workbench-api-303576587005.us-central1.run.app/mcp"
+    }
+  }
+}
