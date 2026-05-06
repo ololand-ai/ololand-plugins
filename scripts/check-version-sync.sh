@@ -2,8 +2,9 @@
 # Fails if any plugin's plugin.json version disagrees with the marketplace.json
 # entry for that plugin. Source of truth: each plugin's plugin.json.
 #
-# Iterates every plugin listed in .claude-plugin/marketplace.json and compares
-# against <pluginRoot>/<source>/.claude-plugin/plugin.json.
+# Iterates every plugin listed in .claude-plugin/marketplace.json. Resolves
+# the plugin path from the entry's "source" field (joined with optional
+# metadata.pluginRoot for backwards compatibility with the older format).
 
 set -euo pipefail
 
@@ -20,11 +21,12 @@ plugin_count=$(python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]
 
 for i in $(seq 0 $((plugin_count - 1))); do
   read -r name source mp_version <<< "$(python3 -c '
-import json, sys
+import json, os, sys
 mp = json.load(open(sys.argv[1]))
 plugin_root = mp.get("metadata", {}).get("pluginRoot", ".")
 entry = mp["plugins"][int(sys.argv[2])]
-print(entry["name"], plugin_root.rstrip("/") + "/" + entry["source"], entry.get("version", ""))
+joined = os.path.normpath(os.path.join(plugin_root, entry["source"]))
+print(entry["name"], joined, entry.get("version", ""))
 ' "$marketplace_json" "$i")"
 
   plugin_json="$repo_root/$source/.claude-plugin/plugin.json"
