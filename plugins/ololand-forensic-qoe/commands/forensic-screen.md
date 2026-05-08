@@ -51,6 +51,44 @@ A Pre-LOI Forensic Screen catches the deals that should be killed *before* you s
 
 Returns the full screen in 60-90 seconds, formatted as an IC-defensible exclusion schedule with citations.
 
+## When the user wants the PDF deliverable
+
+If the user asks for "the Pre-LOI Screen PDF," "the IC deliverable,"
+"a downloadable forensic report," "send me the PDF," or any phrasing
+that implies they want a paste-into-IC document rather than just
+structured analysis:
+
+1. Invoke `generate_forensic_screen_pdf(deal_id, with_scenario_defense=True)`.
+2. The tool returns `{"job_id": "...", "status": "queued"}`. Poll status
+   with the standard forensic job-status endpoint until status becomes
+   `completed`.
+3. When complete, the response includes a `pdf_url` signed URL the user
+   can download.
+
+The PDF includes 7 sections:
+
+1. **Cover** — deal name, run ID, source-document inventory
+2. **Executive Summary** — 3-5 bullet deal-killer findings, severity-ordered
+3. **Cross-Doc Reconciliation Receipts** — the hero. Every line item with
+   source-hierarchy provenance: CPA-audited > tax-return > management >
+   AI-extracted
+4. **Forensic Findings** — Beneish M-Score, Benford's Law, EBITDA bridge,
+   lapping detection
+5. **Scenario Defense Insert** — P10/P50/P90 IRR distribution + covenant
+   cascade graph + top-3 falsifying scenarios (Pillar 2)
+6. **Risk Taxonomy** — top 10 of 246 risk-taxonomy hits, severity-ordered
+7. **Methodology + Provenance** — methodology footer with input hash and
+   model versions for reproducibility
+
+Credit cost: **50** (vs. 10-15 for engine-only tools — this is the
+premium SKU; the $7,500/72-hr price is sold via the HTTP route + Stripe).
+
+The PDF is the IC-paste-ready artifact. `analyze_forensic_qoe` (the
+older tool) returns structured findings text — useful for in-conversation
+analysis but NOT the SKU deliverable. When in doubt, ask the user
+whether they want "the analysis" (use `analyze_forensic_qoe`) or "the
+PDF" (use `generate_forensic_screen_pdf`).
+
 ## Related commands
 
 - `/beneish` — run only Beneish M-Score
