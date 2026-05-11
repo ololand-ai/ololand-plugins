@@ -27,19 +27,19 @@ This command runs the pre-flight check before the analyst attempts to approve.
 
 1. Call `get_assumption_control_summary` with the `deal_id`.
 2. Call `get_assumption_evidence_pack` to retrieve `quality_flags` for the deal.
-3. Categorize:
+3. Call `get_ic_package(deal_id)` to retrieve the latest IC package and its `approval_evidence_snapshot`. If the response has `package: null`, no IC package exists yet — note this and continue with just the assumption-level analysis.
+4. Categorize:
    - **Tier-1 blockers** (resolution required): from `control_summary.blocking_assumptions` — high/critical, status not in {verified, mitigated, invalidated, accepted}.
    - **Tier-2 blockers** (provenance required): from `quality_flags` — high/critical tracked assumptions with `evidence_strength == "none"`.
-   - **Warnings** (review recommended, not blocking): from `quality_flags` — high/critical tracked assumptions with `evidence_strength` in {weak, partial}.
-4. Render:
+   - **Warnings** (review recommended, not blocking): from `quality_flags` — high/critical tracked assumptions with `evidence_strength` in {weak, partial}. Cross-reference these against `approval_evidence_snapshot.warnings` if a package exists.
+5. Render:
 
    - **Overall readiness**: READY / BLOCKED
    - **Tier-1 blockers** (one row per blocker): `assumption_id`, `statement`, `status`, `priority`, recommended resolution
    - **Tier-2 blockers** (unsupported high-priority): `assumption_id`, `statement`, `missing_links`, recommended source to attach
    - **Warnings** (weak/partial evidence): `assumption_id`, `statement`, `evidence_strength`, why this is weak, what to add to strengthen it
    - **Counts**: `total`, `open`, `blocking`, by `evidence_strength`
-
-5. If READY, also surface the latest IC package's `approval_evidence_snapshot.summary` field (returned on the IC package GET response) — that's the snapshot that will be captured at approval time.
+   - **Package state** (if a package exists): `version`, `status`, `approved_at`, and `approval_evidence_snapshot.summary` — the snapshot that was captured at the last approval attempt or will be captured next.
 
 ## Why two tiers
 
