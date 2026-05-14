@@ -65,10 +65,26 @@ If `as-of` was provided, also verify the 10-K's `filing_date` is before the cuto
 
 ### Step 4 — Read the financial spine from explicit tiles
 
-Do NOT call `run_due_diligence` here. It silently fans out to `deep_research` which fires web search. Instead:
+This is a **web-off** run. The whole point of `/pre-screen` is that the artifact reflects only what was knowable from pre-cutoff filings — any tool that reaches the live internet (announcements, current news, sell-side commentary, press releases) silently leaks the answer key into the screen.
+
+**Deny-list — do NOT call any of these during `/pre-screen`:**
+
+- `run_due_diligence` — fans out internally to `deep_research`, which fires web search.
+- `deep_market_research` / `research_market` — both invoke Google Search agents.
+- `fetch_public_deal_facts` — designed for memo *refresh* (8-K + press-release fetch); ingests live web data by design.
+- `generate_investment_memo` (legacy / deprecated) — routes through `deep_research` for the executive summary.
+- `WebFetch`, `WebSearch` — Claude built-ins; one call breaks the cutoff guarantee.
+- `tavily_*` (any Tavily MCP tool — `tavily_search`, `tavily_crawl`, `tavily_extract`, `tavily_map`, `tavily_research`).
+- `mcp__claude-in-chrome__*` (any browser-automation tool — `navigate`, `read_page`, `get_page_text`, etc.).
+- Any other MCP tool whose description says "search the web," "browse," "fetch URL," or "look up current news."
+
+If you find yourself reaching for any of these, stop. The information you want is either already in the ingested 10-K (re-read it via `search_deal_documents`) or it's a stage-2 question that doesn't belong in this brief.
+
+**Use these instead** (filing-only, deterministic):
 
 - `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Source: FMP snapshot. Inspect the `as_of` date in the response and note in the brief.
 - `get_deal_risks(deal_id, limit=150)` — pulls the auto-extraction risks from the 10-K ingestion (typically 100-140 for a public target). Every `source_excerpt` should reference the 10-K filename. If any risk's `file_name` is NOT the 10-K, that's a contamination signal — surface it as a `[gap]` and exclude that risk from the brief.
+- `search_deal_documents(deal_id, query)` — when you need a quote or a specific number, retrieve from the ingested 10-K rather than recalling from training data.
 
 ### Step 5 — Run Monte Carlo
 
@@ -179,10 +195,12 @@ Exactly one of:
 
 ## Stage-2 entry point
 
-If the recommendation is "Pursue to NDA," the user's next command after the NDA closes is:
-- `/dd-analyze {deal_id}` for the heavyweight DD pipeline, OR
-- `/ic-memo-skeptical {deal_id}` for the defensive memo composition (preferred as of 2026-05-12)
-- `/forensic-screen {deal_id}` once management financials are uploaded
+If the recommendation is "Pursue to NDA," the user's next commands after the NDA closes are:
+
+1. **`/ic-memo-skeptical {deal_id}`** — defensive memo composition with the Project Atlas hardening (pre-render reconciliation, source-hierarchy citations, gating conditions, freshness gate). This is the primary recommended path.
+2. **`/forensic-screen {deal_id}`** — once management financials are uploaded (audited or tax + management projections), runs the seven-primitive forensic battery (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital, revenue quality).
+
+> _Legacy:_ `/dd-analyze {deal_id}` predates the Project Atlas hardening and routes through the un-gated legacy memo path (no pre-render reconciliation enforcement, no constrained recommendation enum, war-game auto-included). **Do not recommend it** for new stage-2 work — use `/ic-memo-skeptical` instead. Kept available only for back-compat with existing tile pipelines.
 
 Deal summary: https://app.ololand.ai/deals/{deal_id}/summary
 ```
