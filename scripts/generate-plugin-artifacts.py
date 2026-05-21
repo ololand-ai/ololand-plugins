@@ -314,6 +314,31 @@ def write_or_check_command_skills(
             pass
 
 
+def validate_skill_names(root: Path, plugin_name: str) -> None:
+    skills_dir = root / "skills"
+    if not skills_dir.is_dir():
+        return
+    seen: dict[str, Path] = {}
+    for skill_md in sorted(skills_dir.glob("*/SKILL.md")):
+        text = skill_md.read_text(encoding="utf-8")
+        if not text.startswith("---\n"):
+            continue
+        _, frontmatter, _ = text.split("---\n", 2)
+        metadata = yaml.safe_load(frontmatter) or {}
+        name = metadata.get("name") if isinstance(metadata, dict) else None
+        if not isinstance(name, str):
+            continue
+        if name in seen:
+            raise ValueError(
+                f"{plugin_name}: duplicate skill name {name!r} in "
+                f"{skill_md.relative_to(REPO_ROOT)} and "
+                f"{seen[name].relative_to(REPO_ROOT)}. "
+                f"Claude.ai's plugin directory rejects plugins with colliding "
+                f"skill names; rename one."
+            )
+        seen[name] = skill_md
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -347,6 +372,7 @@ def main() -> int:
                 args.check,
                 drift,
             )
+        validate_skill_names(root, plugin["name"])
 
     write_or_check(
         REPO_ROOT / ".claude-plugin" / "marketplace.json",
