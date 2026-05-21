@@ -1,5 +1,5 @@
 ---
-name: ololand-dd-firm-playbook
+name: ololand-dd-firm-playbook-recall
 description: "Use when the user asks about WACC ranges, IRR targets, max EV/Revenue or EV/EBITDA multiples, approval thresholds, preferred frameworks, or custom rules for an OloLand deal. Reads the firm's standing playbook via `mcp__ololand__recall_firm_playbook` — institutional preferences that are more authoritative than market-default heuristics."
 ---
 
