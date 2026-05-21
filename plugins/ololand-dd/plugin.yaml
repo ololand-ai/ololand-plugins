@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.13.1
+version: 1.13.2
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -38,6 +38,13 @@ defaultPrompt:
 targets:
   claude: true
   codex: true
+codex:
+  # Disabled 2026-05-21 to keep ololand-dd under Cowork's per-plugin install
+  # cap. With 31 commands + 52 skills, Cowork's marketplace ingest was
+  # cascading into "skills-only minimal mode" — stripping commands/, agents/,
+  # and .mcp.json, and truncating skills/ to ~23. Codex users keep slash
+  # commands via commands/*.md; the cmd-* skill wrappers were duplicates.
+  generateCommandSkills: false
 interface:
   websiteURL: https://ololand.ai
   privacyPolicyURL: https://ololand.ai/privacy
