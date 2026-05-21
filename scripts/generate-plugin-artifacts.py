@@ -282,24 +282,23 @@ def generated_command_skill_paths(root: Path) -> set[Path]:
 def write_or_check_command_skills(
     root: Path, plugin: dict[str, Any], check: bool, drift: list[Path]
 ) -> None:
-    if not plugin.get("codex", {}).get("generateCommandSkills", True):
-        return
-
+    generate = plugin.get("codex", {}).get("generateCommandSkills", True)
     commands_dir = root / "commands"
-    if not commands_dir.is_dir():
-        return
 
     expected: set[Path] = set()
-    for command_path in sorted(commands_dir.glob("*.md")):
-        target = root / "skills" / f"cmd-{command_path.stem}" / "SKILL.md"
-        if target.exists() and GENERATED_SKILL_MARKER not in target.read_text(
-            encoding="utf-8"
-        ):
-            raise ValueError(
-                f"{plugin['name']}: refusing to overwrite hand-written skill {target}"
+    if generate and commands_dir.is_dir():
+        for command_path in sorted(commands_dir.glob("*.md")):
+            target = root / "skills" / f"cmd-{command_path.stem}" / "SKILL.md"
+            if target.exists() and GENERATED_SKILL_MARKER not in target.read_text(
+                encoding="utf-8"
+            ):
+                raise ValueError(
+                    f"{plugin['name']}: refusing to overwrite hand-written skill {target}"
+                )
+            expected.add(target)
+            write_or_check(
+                target, command_skill_text(plugin, command_path), check, drift
             )
-        expected.add(target)
-        write_or_check(target, command_skill_text(plugin, command_path), check, drift)
 
     stale = generated_command_skill_paths(root) - expected
     if check:
