@@ -1,12 +1,15 @@
 ---
-description: Run a pre-NDA public-company screen — create the deal, ingest filings only (no web search, no news, no merger filings), extract risks, run Monte Carlo, and produce a 1-page pre-screen brief. Designed for "is this public target worth pursuing before we spend diligence dollars?"
+description: Run a pre-LOI screen on a public or private target. Branches on the resolver's classification. For public targets, constrains evidence to pre-cutoff filings (10-K + FMP). For private targets, uses PCS-traced signal evidence (SEC N-PORT marks, counter-party 10-Ks, USAspending, S-1 if filed) plus scoped web research. Outputs a 1-page brief with bear/base/bull SOTP framing.
 ---
 
-# Pre-Announcement Public Screen
+# Pre-Announcement Screen — public or private target
 
-Run an end-to-end **stage-1** screening of a public company using only its public filings. No NDA, no management projections, no deal-side materials, no current news — by design.
+Run an end-to-end **stage-1** screen of a target company. This command auto-detects whether the target is public or private and routes accordingly:
 
-This is the pre-NDA counterpart to `/ic-memo-skeptical`. Where that command refreshes against the latest public 8-K so a stored deal record can't drift stale, `/pre-screen` does the opposite: it deliberately constrains the evidence set to pre-cutoff filings so the output reflects what a sponsor would have seen *before* any transaction was announced. Use it when David's point applies — "would OloLand have told me to pursue this if I'd never heard of the deal?"
+- **Public target** (resolver returns `classification == "public"`): constrain evidence to the latest 10-K + FMP financial snapshot. Web search is **off** so the artifact reflects only what was knowable from pre-cutoff filings.
+- **Private target** (resolver returns `classification == "private"`): use the PrivateCompanySnapshot (PCS) seeded from the four primary-source signal adapters (SEC N-PORT marks, counter-party 10-K mentions, USAspending federal contract awards, and the S-1 watcher if the target has filed). Deep-research web search is **on** — there is no 10-K to anchor against, so press / news / Sacra-style commentary IS the public-trace evidence layer for a private target. Honor the `as-of` cutoff if supplied.
+
+The audit log at the end is what separates this from "an LLM wrote a memo." Always surface it.
 
 ## Usage
 
@@ -16,112 +19,164 @@ This is the pre-NDA counterpart to `/ic-memo-skeptical`. Where that command refr
 
 ## Arguments
 
-- `<ticker or company name>` (required) — Free text. Examples: `GBTG`, `Amex GBT`, `SNOW`, `Snowflake`.
-- `as-of <YYYY-MM-DD>` (optional) — Cutoff date. The screen will deliberately ignore any filing, news, or evidence dated after this. If omitted, defaults to today. Provide this whenever you're running a retrospective screen against a public target whose deal has already been announced.
+- `<ticker or company name>` (required) — Free text. Examples: `GBTG`, `Amex GBT`, `Snowflake`, `SpaceX`, `Anthropic`.
+- `as-of <YYYY-MM-DD>` (optional) — Cutoff date. The screen ignores any filing, news, or evidence dated after this. Defaults to today. Use for retrospective screens against a target whose deal or IPO has already been announced.
 
-## Why this command exists
+---
 
-`run_due_diligence` and `generate_investment_memo` both fan out to web search by default. That makes them useful for *announced* deals where the announcement IS the most important fact, and useless for *pre-screen* exercises where the announcement is the answer key you're not allowed to peek at.
-
-The Project Atlas / GBTG screen attempt (2026-05-12, `deal554a83ba4a12` for pre-announcement / `deal4fdd2334a0bd` for post-announcement comparison) surfaced the gap:
-
-- `run_due_diligence` populated 134 risks but did not fan out to DCF / LBO / summary tiles
-- The post-announcement deal's precedent-transactions tile included the deal being screened as its own comp — direct contamination
-- The Forensic Screen SKU correctly refused to run on public-only data, but no single command set up the user to expect this
-
-`/pre-screen` enforces the orchestration that produces a clean stage-1 artifact. It assembles from explicit tile reads with web search explicitly off, frames the Monte Carlo P5↔P95 spread as the value-add (not as an appendix caveat), and tells the user where the public screen stops being enough so they go into stage-2 with the right expectations.
-
-## Orchestration (every step is required; do not skip)
-
-Execute in order. Surface gaps as diligence asks rather than papering over them.
+## Orchestration
 
 ### Step 1 — Resolve the company
 
-1. Call `resolve_company` with the user's query. For clean tickers (`GBTG`, `MSFT`, `BRK.B`) pass `hint="public"`.
+1. Call `resolve_company` with the user's query. For clean tickers (`GBTG`, `MSFT`, `BRK.B`) pass `hint="public"`. For obviously-private targets (`SpaceX`, `Anthropic`, `Stripe`) pass `hint="private"`. When ambiguous, omit the hint and let the resolver pick.
 2. If multiple candidates come back above 0.7 confidence, list the top 3-5 and ask which one. Don't guess.
-3. Capture the picked ticker + CIK + classification.
+3. Capture the picked name + ticker/CIK (if public) + classification.
 
-If the resolver returns `classification != "public"`, halt and tell the user: this command only handles public targets. Private-target pre-screening is a different workflow (no SEC filings, no FMP snapshot, no point pretending we have an audit trail we don't).
+If the resolver returns `classification == "unresolved"`, halt and tell the user: "I couldn't resolve the target. Try the full legal name (e.g. 'Space Exploration Technologies Corp.' instead of 'SpaceX'), or pass a ticker / website domain."
 
-### Step 2 — Create the deal
+If `classification == "public"`, go to **Step 2-Public**. If `classification == "private"`, go to **Step 2-Private**.
+
+---
+
+## PUBLIC TARGET BRANCH
+
+### Step 2-Public — Create the deal
 
 Call `create_deal` with:
 
 - `query` — the user's original text
-- `ticker_override` — from step 1
-- `cik_override` — from step 1
+- `ticker_override` — from Step 1
+- `cik_override` — from Step 1
 - `hint` — `"public"`
-- `deal_mode` — `"screening"` (this is a screen, not a formal DD setup)
+- `deal_mode` — `"screening"`
 
 Watch ingestion with `check_task_status` until `state == "SUCCESS"`. Public-filer ingestion typically completes in 15-30s. Capture the resulting `deal_id`.
 
-### Step 3 — Confirm the document set is pre-cutoff and pristine
+### Step 3-Public — Confirm the document set is pre-cutoff and pristine
 
 Call `list_deal_documents(deal_id)`. Expected output: exactly the 10-K from EDGAR plus the FMP financial snapshot. Nothing else.
 
-If you see ANY additional uploaded PDFs (proxy statements, merger communications, 8-K announcement decks, transaction press releases, news articles), halt and tell the user: this deal was pre-seeded with announcement-era materials and is not a clean pre-screen target. Recommend creating a fresh deal via `/new-deal` and trying again on the new ID.
+If you see ANY additional uploaded PDFs (proxy statements, merger communications, 8-K announcement decks, transaction press releases, news articles), halt and tell the user: this deal was pre-seeded with announcement-era materials and is not a clean pre-screen target. Recommend creating a fresh deal via `/new-deal` and retrying.
 
-If `as-of` was provided, also verify the 10-K's `filing_date` is before the cutoff. If the most recent available 10-K post-dates the cutoff, walk back to the prior fiscal year's 10-K (the resolver and `create_deal` don't yet support `as-of` natively — surface this as a known limitation and pause for the user's instruction).
+If `as-of` was provided, verify the 10-K's `filing_date` is before the cutoff. If the most recent available 10-K post-dates the cutoff, walk back to the prior fiscal year's 10-K and surface this as a known limitation.
 
-### Step 4 — Read the financial spine from explicit tiles
+### Step 4-Public — Read the financial spine from explicit tiles
 
-This is a **web-off** run. The whole point of `/pre-screen` is that the artifact reflects only what was knowable from pre-cutoff filings — any tool that reaches the live internet (announcements, current news, sell-side commentary, press releases) silently leaks the answer key into the screen.
+**Web-off** run. The whole point of the public branch is the artifact reflects only what was knowable from pre-cutoff filings.
 
-**Deny-list — do NOT call any of these during `/pre-screen`:**
+**Deny-list — do NOT call any of these on the public branch:**
 
-- `run_due_diligence` — fans out internally to `deep_research`, which fires web search.
-- `deep_market_research` / `research_market` — both invoke Google Search agents.
-- `fetch_public_deal_facts` — designed for memo *refresh* (8-K + press-release fetch); ingests live web data by design.
-- `generate_investment_memo` (legacy / deprecated) — routes through `deep_research` for the executive summary.
-- `WebFetch`, `WebSearch` — Claude built-ins; one call breaks the cutoff guarantee.
-- `tavily_*` (any Tavily MCP tool — `tavily_search`, `tavily_crawl`, `tavily_extract`, `tavily_map`, `tavily_research`).
-- `mcp__claude-in-chrome__*` (any browser-automation tool — `navigate`, `read_page`, `get_page_text`, etc.).
-- Any other MCP tool whose description says "search the web," "browse," "fetch URL," or "look up current news."
+- `run_due_diligence`, `deep_market_research`, `research_market`, `fetch_public_deal_facts`, `generate_investment_memo`, `WebFetch`, `WebSearch`, `tavily_*`, `mcp__claude-in-chrome__*`, or any MCP tool whose description says "search the web."
 
-If you find yourself reaching for any of these, stop. The information you want is either already in the ingested 10-K (re-read it via `search_deal_documents`) or it's a stage-2 question that doesn't belong in this brief.
+**Use instead:**
 
-**Use these instead** (filing-only, deterministic):
+- `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Source: FMP snapshot. Inspect the `as_of` date.
+- `get_deal_risks(deal_id, limit=150)` — 10-K-extracted risks. Every `source_excerpt` must reference the 10-K filename. Any risk whose `file_name` is NOT the 10-K is a contamination signal — surface as `[gap]` and exclude.
+- `search_deal_documents(deal_id, query)` — for specific quotes or numbers.
 
-- `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Source: FMP snapshot. Inspect the `as_of` date in the response and note in the brief.
-- `get_deal_risks(deal_id, limit=150)` — pulls the auto-extraction risks from the 10-K ingestion (typically 100-140 for a public target). Every `source_excerpt` should reference the 10-K filename. If any risk's `file_name` is NOT the 10-K, that's a contamination signal — surface it as a `[gap]` and exclude that risk from the brief.
-- `search_deal_documents(deal_id, query)` — when you need a quote or a specific number, retrieve from the ingested 10-K rather than recalling from training data.
+### Step 5-Public — Run Monte Carlo
 
-### Step 5 — Run Monte Carlo
+Call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)`. Report mean / median EV ($M), P5 / P25 / P75 / P95 EV ($M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6).
 
-Call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)`. The fixed seed makes the run reproducible across demos.
+UNLIKE `/ic-memo-skeptical`, MC numerics belong in the BODY of the public brief, not the appendix. Pre-NDA, the MC distribution **is** the value-add — caveat defaulted assumptions inline; don't suppress the numbers.
 
-In the brief, report:
+### Step 6-Public — Pull deal indicators
 
-- Mean / Median EV ($M)
-- P5 / P25 / P75 / P95 EV ($M)
-- VaR(5%) and CVaR(5%)
-- Mean / Median equity value ($M)
-- `assumption_provenance` breakdown — which parameters were sourced (revenue, growth, margin, capex, net debt) and which defaulted (typically WACC + terminal growth pre-NDA, because we don't have a comps set yet)
-- `assumption_coverage` (target: ≥0.6 for the brief to carry weight)
+`get_deal_indicators(deal_id)` + `render_risk_matrix_tile(deal_id)`. Report severity counts (high / medium / low), top 3-5 risk categories, 246-taxonomy concentration.
 
-UNLIKE `/ic-memo-skeptical`, the MC numerics belong in the BODY of this brief, not the appendix. Pre-NDA, the MC distribution **is** the value-add — it makes the cost of pre-NDA uncertainty explicit and lets the sponsor see whether the P95 upside even reaches the rumored or announced price. Caveat the defaulted assumptions inline; don't suppress the numbers.
+### Step 7-Public — Forensic Screen skip
 
-### Step 6 — Pull the deal indicators tile
+Do NOT call `generate_forensic_screen_pdf`. In the brief: "The Pre-LOI Forensic Screen (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection) is a stage-2 product. It requires management-supplied transaction-level data and runs once the NDA is signed. Pre-NDA, the closest signal is the Revenue Quality risk class flagged from the 10-K."
 
-Call `get_deal_indicators(deal_id)` and `render_risk_matrix_tile(deal_id)`. These give the categorical risk distribution and deal health score without invoking the heavyweight summary-tile pipeline (which depends on web research).
+### Step 8-Public — Compose the public brief
 
-Report:
+Output the public template (see below in **Public brief template**).
 
-- Total risks by severity (high / medium / low)
-- Top 3-5 risk categories by count
-- 246-taxonomy concentration (where the risks cluster — is this a "Liquidity + Synergies" target, a "Channel Concentration + Privacy" target, etc.)
+### Step 9-Public — Audit log
 
-### Step 7 — Skip Forensic Screen explicitly
+See **Audit log** section. Hand off.
 
-Do NOT call `generate_forensic_screen_pdf`. It pre-flights for `financial_snapshot + audit_or_tax_return + management_projections` and will correctly refuse on public-only data. Tell the user this in one sentence:
+---
 
-> The Pre-LOI Forensic Screen (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection) is a stage-2 product. It requires management-supplied transaction-level data and runs once the NDA is signed. Pre-NDA, the closest signal is the Revenue Quality risk class flagged from the 10-K — surface that in step 4's risk readout if present.
+## PRIVATE TARGET BRANCH
 
-This isn't a gap; it's the platform design. Framing it as a product clarification is what separates this command from a hacky pre-screen attempt.
+### Step 2-Private — Create the deal (this seeds the PCS automatically)
 
-### Step 8 — Compose the pre-screen brief
+Call `create_deal` with:
 
-Output a single-page artifact in this exact shape (don't deviate; this layout is what makes the comparison to `/ic-memo-skeptical` legible):
+- `query` — the user's original text
+- `hint` — `"private"`
+- `deal_mode` — `"screening"`
+
+`create_deal` for private targets dispatches `research_private_company_task` which runs in sequence: Apollo enrichment + GLEIF + Wayback first/investor snapshot + Sonnet synthesis + **PCS seed**. The PCS seed step runs four primary-source adapters with `watchlist=[target_name]` and persists `RawSignal` rows for everything found:
+
+- `s1_watcher` (reliability 95) — SEC DRS / S-1 / S-1/A / F-1 / 424B / EFFECT filings. **A hit here promotes the target to S-1-citable analysis** — the brief should then cite by S-1 page number, not just N-PORT mark.
+- `mutual_fund_marks` (88) — N-PORT-P / N-CSR Level-3 valuation disclosures.
+- `counter_party_10k` (80) — public filer 10-K / 10-Q mentions of the target.
+- `usaspending` (70) — federal contract awards.
+
+Poll `check_task_status(task_id)` until `state == "SUCCESS"`. Typical end-to-end: 30-90s.
+
+### Step 3-Private — Inspect the PCS + signal evidence
+
+```
+pcs = get_private_company_snapshot(deal_id)
+signals = list_pcs_signals(deal_id, limit=50)
+```
+
+The `signals.summary_by_source` map gives the headline number for the brief: "We found X mutual fund disclosures, Y counter-party 10-K mentions, Z federal contracts, and W S-1 filings."
+
+**If `signals.summary_by_source` totals zero across all sources, halt** and tell the user: "No public-trace evidence found for this target in the last 30 days across SEC N-PORT, counter-party 10-Ks, USAspending, or SEC IPO registrations. Pre-screen ends here. Either (a) the target is too obscure for these data sources, or (b) the target name didn't match the canonical form filers use — try the alternate legal name (e.g. 'Space Exploration Technologies Corp.' instead of 'SpaceX')."
+
+**If `signals.summary_by_source.s1_watcher > 0`**, this is the SpaceX-class case: the target just filed S-1. The brief should explicitly call this out in the headline (see template) and the recommendation should reflect that pre-screen has more rigor than usual because the S-1 fills in segment financials.
+
+### Step 4-Private — Deep research IS allowed (scoped)
+
+Unlike the public branch, web research is the public-trace layer for private targets — they don't file 10-Ks. The discipline is in WHAT you search for, not whether you search.
+
+**Allowed for the private branch:**
+
+- `deep_research(query, as_of=...)` — scoped to press, sell-side commentary, Sacra-style analyst notes, and S-1 mirror sites if S-1 ingestion hasn't completed yet.
+- `tavily_search` / `tavily_extract` / `tavily_research` — for citation density.
+- `search_deal_documents(deal_id, query)` — once S-1 has been ingested (look for it in `list_deal_documents` output), search inside it directly.
+
+**Honor the `as-of` cutoff strictly** — every web result must be dated before the cutoff. Discard anything newer.
+
+**Still off-limits even on the private branch:**
+
+- `mcp__claude-in-chrome__*` — too unbounded; the artifact must be replayable.
+- `generate_forensic_screen_pdf` — still stage-2 even for private targets with S-1.
+
+### Step 5-Private — Valuation: PCS-driven Monte Carlo
+
+If `pcs.revenue_band.mid` is populated (S-1 hit, user-supplied, or a future heuristic fills this):
+
+- Call `run_combined_dcf(deal_id, ...)` for the P5/P50/P95 enterprise value distribution. The MC kernel from PR #1644 samples from `Triangular(revenue_band.low, mid, high)` per iteration and applies the PCS-resident WACC inputs (applied_beta, illiquidity_discount, private_company_risk_premium). Report mean/median + P5/P95 EV and equity.
+- Report `pcs.wacc_inputs` so the brief shows the explicit private-co adjustments (typically: `illiquidity_discount = 0.15`, `private_company_risk_premium = 0.04`, applied_beta from the PCS comp set).
+
+If `pcs.revenue_band.mid` is NULL (the PR B contract — no heuristic yet):
+
+- **Skip Monte Carlo** and note explicitly in the brief: "Revenue band requires either an ingested S-1 (`s1_watcher` will detect when one drops) or user-supplied input via `/dd-correct`. Pre-screen recommendation defaults to PURSUE-TO-NDA if signal coverage is strong, PASS if signal coverage is thin."
+
+### Step 6-Private — Pull what risks exist
+
+Call `get_deal_risks(deal_id, limit=50)`. Pre-NDA private targets typically have THIN risk extraction (no 10-K), so report counts but don't overstate. If `signals.summary_by_source.s1_watcher > 0` AND the S-1 has been ingested into `list_deal_documents`, expect 50-150 risks from the S-1 risk-factors section and treat as you would 10-K risks on the public branch.
+
+### Step 7-Private — Forensic Screen still skipped
+
+Same boundary as public: even when S-1 is filed, full Forensic QoE requires management transaction-level data (DRS / journals / detailed GL). The S-1's audited financials enable Beneish M-score and EBITDA bridge ONLY if the S-1 income statement extraction has completed — note as future-stage in the brief.
+
+### Step 8-Private — Compose the private brief
+
+Output the private template (see **Private brief template** below). Bear/base/bull SOTP by segment is the default; MC percentiles render in an appendix.
+
+### Step 9-Private — Audit log
+
+Identical structure to the public branch. The signal counts + reliability scores are what differentiate this from "an LLM web-searched and made up numbers."
+
+---
+
+## Public brief template
 
 ```
 # Pre-Announcement Public Screen — {Company Name} ({Ticker})
@@ -132,11 +187,9 @@ Output a single-page artifact in this exact shape (don't deviate; this layout is
 **Run:** {ISO timestamp}
 
 ## Headline
-
-{One sentence stating the Monte Carlo finding in terms the user asked about. Example: "10,000-scenario Monte Carlo P95 enterprise value: $2.41B. Any deal price above that level depends on assumptions outside what public filings support."}
+{One sentence stating the MC finding in terms the user asked about.}
 
 ## Financial spine
-
 | Metric | Value | Source |
 |---|---|---|
 | Revenue (LTM) | $X.XB | FMP / 10-K |
@@ -147,7 +200,6 @@ Output a single-page artifact in this exact shape (don't deviate; this layout is
 | CapEx % revenue | X.X% | FMP |
 
 ## Monte Carlo valuation (10,000 simulations)
-
 | Percentile | Enterprise Value | Equity Value |
 |---|---|---|
 | P5 | $XXX M | $XX M |
@@ -159,63 +211,116 @@ Output a single-page artifact in this exact shape (don't deviate; this layout is
 
 VaR(5%): $XXX M | CVaR(5%): $XXX M | Assumption coverage: XX% (sourced) / XX% (defaulted)
 
-Defaulted assumptions (pre-NDA, no comps set): {list, e.g. "WACC, terminal growth"}. These widen the distribution and are the value-add to compress in stage 2.
-
-## Risk concentration (134 categorized risks from 10-K only)
-
+## Risk concentration (X categorized risks from 10-K only)
 | Severity | Count |
 |---|---|
 | High | X |
 | Medium | XX |
 | Low | XX |
 
-Top 5 risk clusters (by count + materiality):
-
-1. **{Category}** — {one-line summary, sourced from the highest-severity risk in the cluster}. _Source: 10-K, page/section reference._
-2. ...
-
-## Where the public screen stops
-
-The following diligence work requires the NDA + data room:
-
-- Forensic QoE (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection) — needs management transaction-level data
-- Customer concentration top-20 list — 10-K only discloses ">10% of revenue" aggregates
-- Covenant cascade modeling under stress — needs full credit agreement, not summary
-- Management projections vs. consensus reconciliation — projections aren't public
-- Real revenue quality test — needs multi-period transaction data
-
-Each of these maps to a stage-2 workflow. The fact that they aren't here is design, not omission.
+Top 5 risk clusters with one-line summaries and 10-K page references.
 
 ## Recommendation
-
-Exactly one of:
-- **Pass:** {one-sentence reason — typically "P95 EV below any plausible deal price" or "risk concentration in deal-killer categories"}
-- **Pursue to NDA:** {one-sentence reason — typically "P95 EV competitive with reference pricing AND risk clusters look diligence-able"}
-- **More public data needed:** {one-sentence reason — typically "assumption coverage below 0.6, surface ambiguity before committing to next step"}
-
-## Stage-2 entry point
-
-If the recommendation is "Pursue to NDA," the user's next commands after the NDA closes are:
-
-1. **`/ic-memo-skeptical {deal_id}`** — defensive memo composition with the Project Atlas hardening (pre-render reconciliation, source-hierarchy citations, gating conditions, freshness gate). This is the primary recommended path.
-2. **`/forensic-screen {deal_id}`** — once management financials are uploaded (audited or tax + management projections), runs the seven-primitive forensic battery (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital, revenue quality).
-
-> _Legacy:_ `/dd-analyze {deal_id}` predates the Project Atlas hardening and routes through the un-gated legacy memo path (no pre-render reconciliation enforcement, no constrained recommendation enum, war-game auto-included). **Do not recommend it** for new stage-2 work — use `/ic-memo-skeptical` instead. Kept available only for back-compat with existing tile pipelines.
+Exactly one of: Pass / Pursue to NDA / More public data needed.
 
 Deal summary: https://app.ololand.ai/deals/{deal_id}/summary
 ```
 
-### Step 9 — Hand off
+---
 
-After presenting the brief, output a short pre-screen audit log:
+## Private brief template
 
-- **Source set verified:** list of documents in the data room (should be exactly the 10-K + FMP snapshot)
-- **Contamination check:** number of risks whose `file_name` was NOT the 10-K (target: 0)
-- **MC assumption coverage:** sourced / defaulted breakdown
-- **Forensic Screen:** correctly refused (insufficient_inputs) — confirmed stage-2 boundary
-- **Cutoff respected:** as-of date used + filing dates verified
+```
+# Pre-Announcement Private Screen — {Company Name}
 
-The audit log is what differentiates this command from "an LLM read a 10-K and made up some numbers." Always surface it.
+**As-of:** {cutoff date or "today"}
+**Classification:** Private target
+**S-1 status:** {one of:
+  - "Public S-1 filed YYYY-MM-DD (accession ...). Brief cites by S-1 page where applicable."
+  - "DRS (confidential draft) detected YYYY-MM-DD. Content not yet public; form-level metadata only."
+  - "No SEC IPO registration on file."
+}
+**Signal evidence base:** {N S-1 events, M mutual fund marks, K counter-party 10-Ks, L federal contracts}
+**Web research:** {N press / Sacra / sell-side sources cited inline below, all dated ≤ as-of}
+**Deal ID:** {deal_id}
+**Run:** {ISO timestamp}
+
+## Headline
+{One sentence. Examples:
+  - With S-1 ingested: "S-1 reveals $X.XB FY revenue, growing Y%. SOTP base case $ZZB anchors against the {$1.75T} IPO ask at a {-30%} discount."
+  - With PCS band but no S-1: "PCS-implied revenue band $X.X-X.XB anchored on N mutual-fund marks from {fund families}. Base-case EV $XXB, P95 $YYB."
+  - Signal-only (band NULL): "Signal-traced evidence: {N S-1, M N-PORT marks, K counter-party 10-Ks, L federal contracts}. Revenue band not yet derivable without management input or S-1 ingestion."
+}
+
+## Signal-traced evidence base
+| Source | Count | Reliability | Latest as-of |
+|---|---|---|---|
+| S-1 / DRS filings | X | 95 | YYYY-MM-DD |
+| Mutual fund N-PORT marks | XX | 88 | YYYY-MM-DD |
+| Counter-party 10-K mentions | XX | 80 | YYYY-MM-DD |
+| Federal contract awards (USAspending) | XX | 70 | YYYY-MM-DD |
+
+Every quantitative claim below uses inline `[N]` markers. `[S:N]` = ingested S-1 page reference, `[R:N]` = signal_observations row, `[W:N]` = web/press citation. Click-through opens the source.
+
+## Revenue band (if derivable)
+| Estimate | Value | Source |
+|---|---|---|
+| Low | $X.XB | {source — e.g. "USAspending floor"} |
+| Mid | $X.XB | {source — e.g. "mutual fund implied, Baillie Gifford Q1 2026"} confidence X.XX |
+| High | $X.XB | {source — e.g. "S-1 § Operations p.42"} |
+
+## SOTP by segment (bear / base / bull)
+This is the IC-room frame. MC percentiles render in the appendix.
+
+| Segment | Bear ($B) | Base ($B) | Bull ($B) | Multiple anchor | Source |
+|---|---|---|---|---|---|
+| {Segment 1} | X | X | X | {e.g. "10-35× LTM revenue"} | {[S:N] or [R:N]} |
+| ... | | | | | |
+| **Equity value (SOTP)** | **$XXX** | **$XXX** | **$XXX** | — | — |
+
+vs current valuation anchor: {last_round_post_money / mutual_fund_implied / IPO target}
+
+## Optionality not in the base SOTP
+- **Termination clauses** in named contracts (e.g. "Customer X has 90-day mutual termination on the $YYB contract — value as real option with walk-away floor of $ZZB").
+- **Acquisition options** disclosed (strike, expiry, probability-weighted intrinsic value).
+- **Milestone-vested comp dilution** if disclosed.
+
+## Risks (from S-1 risk factors if ingested, else thin)
+Severity counts + top clusters with `[S:N]` page citations where available.
+
+## Where the private-target screen stops
+- Audited financial statements pre-S-1: not available — wait for S-1 or NDA.
+- Cap-table waterfall under exit scenarios: needs NDA + waterfall doc.
+- Customer concentration top-N list: only aggregated >10% disclosures available pre-NDA.
+- Forensic QoE full battery: stage-2 even with S-1 (needs transaction-level data).
+
+## Recommendation
+Exactly one of: Pass / Pursue to NDA / Watch (set up signal alerting).
+
+If "Watch" — the OloLand signal pipeline will continue scanning; set the deal's `monitoring_enabled=true` and the agent will alert on the next material signal (especially an S-1 hit).
+
+Deal summary: https://app.ololand.ai/deals/{deal_id}/summary
+
+## Appendix — Monte Carlo (if revenue band populated)
+Standard P5/P25/P50/P75/P95 EV + Equity table, identical to the public template. The bear/base/bull above is the legible IC frame; this is the distributional backup.
+```
+
+---
+
+## Audit log (applies to both branches)
+
+After presenting the brief, output:
+
+- **Source set verified:** list of documents (public: 10-K + FMP; private: S-1 if any + PCS provenance + web sources cited)
+- **Contamination check:** any document outside the expected set, with reasoning
+- **MC assumption coverage:** sourced / defaulted breakdown (public) OR signal_count by source (private)
+- **Forensic Screen:** correctly refused — confirmed stage-2 boundary
+- **Cutoff respected:** as-of date + filing dates / web result dates verified
+- **Reproducibility hook:** "Reproducible via `/inspect-run` on deal_id {deal_id}; submit corrections via `/dd-correct`."
+
+That last line is the moat. Always surface it.
+
+---
 
 ## URL Conventions (STRICT)
 
