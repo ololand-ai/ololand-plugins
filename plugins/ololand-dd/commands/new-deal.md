@@ -1,10 +1,10 @@
 ---
-description: Create a new deal from a company name or ticker — auto-fetches the latest 10-K and 5 years of financials for public companies; seeds private companies with web research (Phase 3).
+description: Create a new deal from a company name or ticker — auto-fetches the latest 10-K and 5 years of financials for public companies; seeds private companies with web research and auto-ingests a public S-1 if the target has filed to go public.
 ---
 
 # New Deal
 
-Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the system auto-pulls the latest 10-K from SEC EDGAR plus 5 years of standardized financials from FMP. Type a private company name and it seeds the workspace; deep web research lands when Phase 3 ships.
+Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the system auto-pulls the latest 10-K from SEC EDGAR plus 5 years of standardized financials from FMP. Type a private company name and it seeds the workspace from web research — and if that private target has filed a **public** S-1 / IPO-registration statement, the `s1_watcher` pipeline auto-fetches the S-1 into the data room so the analysis can cite it by S-1 page. A **confidential** DRS draft cannot be ingested — its body is sealed at the SEC until conversion to a public S-1, so the read stays press-based until then.
 
 ## Usage
 
@@ -36,6 +36,7 @@ The instruction below is for the model executing this command.
    - For public: that the latest 10-K is downloading and 5 years of FMP financials are being pulled. The `task_id` lets them poll progress.
    - The `resource_uri` (e.g. `ololand://deals/deal_abc123`) — they can subscribe to it via `resources/read` to watch the deal hydrate, instead of repeatedly calling `get_deal`.
    - A direct link to the deal in the web app: `https://app.ololand.ai/deals/{deal_id}/dataroom` (public) or `https://app.ololand.ai/deals/{deal_id}/summary` (private).
+   - For a private target that has filed an S-1: the S-1 is auto-ingested during creation. Confirm via `list_deal_documents(deal_id)` — an S-1 in the data room shows up as a normal document; a detected-but-not-yet-ingested filing shows up as a `kind="pending_filing"` entry. If it's `pending_ingest`, call `ingest_s1(deal_id)` to fetch it; if it's `sealed`, the draft is confidential and nothing can be pulled yet. **Never tell the user OloLand can't ingest S-1s — it can, for public filings.**
 
 5. **Watch ingestion (optional).** If the user wants live progress, call `check_task_status(task_id)` every ~5 seconds until status is `success` or `failure`. For a large public filer like MSFT or NVDA, expect 15-30 seconds end-to-end (10-K download + FMP financials + snapshot persist).
 
@@ -52,7 +53,7 @@ Don't call `create_deal` first when the query could match multiple companies —
 ## After Completion
 
 Suggested next steps to offer the user:
-- `/dd-analyze <deal_id>` — run full due diligence once the 10-K finishes processing.
+- `/dd-analyze <deal_id>` — run full due diligence once the 10-K (or ingested S-1) finishes processing.
 - `/valuation <deal_id>` — DCF / LBO / Monte Carlo.
 - `/risk-report <deal_id>` — 246-category risk taxonomy breakdown.
 - `/talk-to-deal <deal_id> "<question>"` — voice-optimized Q&A on the deal.
