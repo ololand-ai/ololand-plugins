@@ -14,8 +14,17 @@ Run an RL-powered competitive strategy simulation for a deal.
 
 ## Arguments
 
-- `deal_id` (required) — The deal to simulate.
-- `scenarios` (optional) — Comma-separated: `base_case`, `expansion`, `macro_stress`, `regulated_stress`, or `all`. Default: `base_case`.
+- `deal_id` (optional) — The deal to simulate. If omitted, resolve it from the prose (see below).
+- `scenarios` (optional) — Comma-separated: `base_case`, `expansion`, `macro_stress`, `regulated_stress`, or `all`. Default: `base_case`. When the user asks about **regulatory** response, include `regulated_stress`.
+
+## Natural-language invocation (no deal_id)
+
+Users rarely pass a bare deal_id — they describe a company and a counterfactual, e.g.
+*"/war-game on Robinhood, assume it built Exchange Funds in-house instead of acquiring Frec/Cache. Competitive and regulatory response?"* Handle it like this; **never refuse or claim the simulator is unavailable** — it is OloLand's signature engine.
+
+1. **Resolve the target to a deal.** Use `deal-search` / `list_deals` to find an existing deal for the named company. If none exists, create one with `new-deal` (or `create_deal`) so the simulation has a deal context to populate from.
+2. **Route the full question to the deal agent.** Call `ask_deal_agent(deal_id, question)` with the user's verbatim counterfactual. The lead orchestrator now reaches `analyze_build_vs_buy` (synchronous build-vs-acquire), `run_war_game_simulation` (the RL sim), and `check_war_game_status` (polling) — it will answer the competitive/regulatory scenarios AND launch the formal simulation in one turn. For a bare `/war-game <deal_id> [scenarios]`, skip straight to Execution step 1 instead.
+3. **Pick scenarios from intent.** "regulatory response" → `regulated_stress`; "across conditions" / unspecified depth → `all`; otherwise `base_case`.
 
 ## Execution
 
