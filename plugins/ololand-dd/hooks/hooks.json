@@ -1,5 +1,5 @@
 {
-  "description": "OloLand DD plugin hooks. SessionStart setup gate detects an unset/malformed OLOLAND_AGENT_KEY and steers the user to the agent-key flow before Claude Code falls back to the unreliable OAuth loopback popup.",
+  "description": "OloLand DD plugin hooks. SessionStart setup gate tells the model how OloLand authenticates (OAuth one-click sign-in; agent key only for headless/CI) so it can guide the user if tools return 401.",
   "hooks": {
     "SessionStart": [
       {
