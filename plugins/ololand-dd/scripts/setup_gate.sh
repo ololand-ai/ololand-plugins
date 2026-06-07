@@ -1,55 +1,41 @@
 #!/usr/bin/env bash
 # OloLand DD setup gate — SessionStart hook.
 #
-# Why this exists: the plugin's .mcp.json authenticates with a static
-#   Authorization: Bearer ${OLOLAND_AGENT_KEY}
-# When OLOLAND_AGENT_KEY is unset the header goes out empty, the MCP endpoint
-# returns 401, and Claude Code falls back to the OAuth 2.1 *loopback* flow
-# (the "Authorize Claude Code" popup). That popup frequently fails in
-# Cowork / desktop: the browser's redirect to http://localhost:<port>/callback
-# never reaches Claude's local listener ("the link didn't reload Claude"), and
-# a manual paste then reports "expired" because Claude retried with a fresh
-# client + state. The agent key sidesteps OAuth entirely.
+# As of plugin v1.15.0 the MCP server is declared OAuth-native: .mcp.json
+# carries NO static Authorization header, so connecting goes straight to an
+# OAuth 2.1 sign-in (one click in Claude Desktop / Cowork). The OloLand auth
+# server runs on a single canonical host (api.ololand.ai) and self-heals the
+# loopback handoff, so the old "Authorize Claude Code" popup that stranded
+# Cowork users is fixed.
 #
-# This gate makes the missing-key state LOUD at session start — before the user
-# stumbles into the broken OAuth popup — and tells them exactly how to fix it.
+# Because there is no static header anymore, OLOLAND_AGENT_KEY is NOT consumed
+# by the default connection. The key is only for headless / CI hosts where a
+# browser sign-in is impossible AND the user has added their own Authorization
+# header to the MCP server config (see the /setup skill).
+#
+# This gate is a lightweight first-run pointer: it tells the model how OloLand
+# authenticates so it can guide the user if tools return 401. Never echo the key.
 #
 # SessionStart contract: stdout is injected into the conversation as
 # additionalContext (Claude reads it); stderr surfaces in the hook transcript.
-# Never echo the key itself.
 
 set -euo pipefail
 
 key="${OLOLAND_AGENT_KEY:-}"
 
 if [ -n "$key" ]; then
-  if [ "${key#olo_agent_sk_}" != "$key" ]; then
-    echo "[ololand-dd] OLOLAND_AGENT_KEY detected — authenticating via agent key (no OAuth needed)."
-    exit 0
-  fi
-  # Set but not the expected prefix — likely a paste error or an OAuth token.
-  echo "[ololand-dd] OLOLAND_AGENT_KEY is set but does not start with 'olo_agent_sk_'. \
-This is probably a paste error. Generate a fresh agent key at \
-https://api.ololand.ai/connect and re-export OLOLAND_AGENT_KEY, then restart Claude Code. \
-Do NOT use the in-app 'Authorize Claude Code' OAuth popup — it is unreliable in Cowork/desktop." >&2
+  # A key is set — headless/CI intent. It is only used if the user added an
+  # Authorization header to their MCP config; the default manifest is OAuth.
   cat <<'CTX'
-[ololand-dd setup gate] OLOLAND_AGENT_KEY is set but malformed (it must start with `olo_agent_sk_`). The OloLand MCP server will reject it with 401, after which Claude Code may show an "Authorize Claude Code" OAuth popup. That OAuth loopback flow is unreliable in Cowork/desktop (the callback often fails to return and then reports "expired"). Tell the user NOT to use the OAuth popup. Instead have them: 1) visit https://api.ololand.ai/connect, 2) sign in and click "Generate new key" (starts with `olo_agent_sk_`), 3) `export OLOLAND_AGENT_KEY=olo_agent_sk_...`, 4) restart Claude Code. The /setup skill has the full walkthrough.
+[ololand-dd] OLOLAND_AGENT_KEY is set. Note: the default OloLand MCP server (.mcp.json) is OAuth-native and does NOT read this env var — it is only used in headless/CI setups where you have added an `Authorization: Bearer ${OLOLAND_AGENT_KEY}` header to your own MCP server config. For interactive use (Claude Desktop / Cowork), just connect the OloLand server and sign in; no key needed. See the /setup skill.
 CTX
   exit 0
 fi
 
-# Unset / empty — the common first-run trap.
-echo "[ololand-dd] OLOLAND_AGENT_KEY is not set — OloLand tools will not authenticate. \
-Set it up at https://api.ololand.ai/connect (run the /setup skill for steps). \
-Skip the in-app 'Authorize Claude Code' OAuth popup; it is unreliable in Cowork/desktop." >&2
+# No key — the normal interactive case. OAuth one-click is the path.
 cat <<'CTX'
-[ololand-dd setup gate] OLOLAND_AGENT_KEY is NOT set. The OloLand MCP server requires it as a Bearer token, so every OloLand tool call will fail with 401. When that happens Claude Code may pop up an "Authorize Claude Code (plugin:ololand-dd:ololand)" OAuth dialog — DO NOT rely on it. That OAuth loopback flow regularly fails in Cowork/desktop: after the user approves, the browser redirect to http://localhost:<port>/callback never returns to Claude, and a manual paste then reports "expired".
+[ololand-dd] OloLand authenticates via OAuth (one-click sign-in). When you connect the OloLand MCP server, Claude opens a sign-in page at api.ololand.ai — sign in with email or Google and approve. No agent key or manual setup is required for interactive use.
 
-If the user asks about OloLand, setup, authentication, or hits a 401, immediately tell them to use the agent key instead of OAuth:
-  1. Visit https://api.ololand.ai/connect
-  2. Sign in with email or Google, then click "Generate new key" (it starts with `olo_agent_sk_`)
-  3. Add to the shell that launches Claude Code:  export OLOLAND_AGENT_KEY=olo_agent_sk_...
-  4. Reload the shell and restart Claude Code
-The /setup skill contains the full walkthrough and troubleshooting.
+If OloLand tools return 401 ("authentication required"), the server simply isn't connected yet: tell the user to connect/enable the OloLand MCP server in their client and complete the sign-in. Headless/CI users (no browser) instead set OLOLAND_AGENT_KEY and add an Authorization header per the /setup skill.
 CTX
 exit 0
