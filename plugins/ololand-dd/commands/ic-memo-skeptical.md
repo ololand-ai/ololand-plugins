@@ -66,6 +66,18 @@ Poll `check_task_status` until the task completes. When complete, fetch the memo
 
 If any of the five checks fail, regenerate the memo OR surface the violation to the user — do not paper over it.
 
+### Step 5.5 — Mandatory atomic-claim verification before FINAL
+
+A `[source: X]` suffix proves a citation was *attached*, not that the number is *correct*. The citation audit in Step 5 counts un-cited figures; it does NOT confirm the cited figures match the filing. Before presenting the memo as FINAL, verify every number against the deal's ingested documents:
+
+1. Assemble the full memo body text and call `run_atomic_verifiers(deal_id, text=<memo body>)`.
+2. Read `gate_passed` and `blocking_failures`:
+   - `gate_passed: true` → every figure is supported by the retrieved corpus. Proceed to hand-off.
+   - `gate_passed: false` → each entry in `blocking_failures` is a number the ingested filing does **not** support within tolerance (or the corpus is empty). You MUST NOT label the memo FINAL. Correct or remove every unsupported figure and regenerate, OR present the memo to the user as **DRAFT** with the `blocking_failures` list shown verbatim.
+3. Never present a memo as IC-ready / FINAL while `gate_passed` is false.
+
+`run_atomic_verifiers` checks each $-figure and percentage against the top-ranked retrieved chunks at 5% tolerance, so a number that isn't in the filing — *even with a citation attached* — fails. This is the authoring-time mirror of the deterministic gate that blocks `approve_package` server-side: a confident-but-wrong figure (e.g. a revenue number that contradicts the S-1) gets caught here, before the memo reaches committee.
+
 ### Step 6 — Hand off
 
 Output the memo + a short skeptic's audit log:
@@ -74,6 +86,7 @@ Output the memo + a short skeptic's audit log:
 - Reconciliation: any discrepancies the dossier vs public filings showed.
 - Forensic: list of `[gap]` primitives that need data pulls before bid commitment.
 - Citation audit: count of un-cited $-figures (target: 0).
+- Verification: `run_atomic_verifiers` `gate_passed` verdict + count of `blocking_failures` (target: `gate_passed: true`, 0 failures). If any failures, list them — they are unsupported numbers, not minor nits.
 - Derived gating conditions: count by source class (forensic / reconciler / assumption / judgment).
 
 The user gets the memo body AND the audit — the audit is what differentiates this command from `/dd-analyze`.
