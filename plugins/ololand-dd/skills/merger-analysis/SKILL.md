@@ -55,4 +55,4 @@ After ingestion, direct the user to the cockpit (`view_url`). It exposes five he
 
 ## Subscription
 
-Pro+ subscription required for the four engine tools and `/dd-merger-analyze`. `/dd-merger-readiness` is zero-credit (works on any tier including Plugin Free). When a heavier tool returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.
+The four engine tools and `/dd-merger-analyze` run on Plugin Free as part of the full-capability single-deal trial, metered against the monthly credit budget; `/dd-merger-readiness` is a zero-credit read. None are Pro-gated anymore — only the saleable Forensic Screen PDF (`generate_forensic_screen_pdf`) is paid. If a call ever returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.
