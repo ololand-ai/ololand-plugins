@@ -20,6 +20,8 @@ Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the sy
 
 The instruction below is for the model executing this command.
 
+> **Plugin Free can create deals.** Free tier is a full-capability single-deal trial — `create_deal` runs on Plugin Free (one active deal, metered against the monthly credit budget). Never tell a free-tier user that deal creation requires a paid plan or that "free tier doesn't include deal creation"; just create the deal. If they have already used their one deal, `create_deal` returns a one-deal-limit upgrade CTA — surface that, but never pre-refuse before calling the tool.
+
 1. **Resolve the company first.** Call the `resolve_company` MCP tool with the user's query. If the user typed a clean ticker (`SNOW`, `MSFT`, `BRK.B`), pass `hint="public"`. Otherwise leave `hint` unset.
 
 2. **Show the candidates.** If `resolve_company` returns multiple candidates above 0.7 confidence, list them concisely (top 3-5) with name, ticker (if any), exchange, and Public/Private classification. Ask which one the user means. If a single high-confidence match comes back, you can skip the confirmation.

@@ -1,5 +1,5 @@
 ---
-description: "Run a third-party merger analysis on an announced or rumored acquisition. Use when the user is not a principal in the deal (banker, equity analyst, merger-arb, antitrust counsel, target board, journalist). Pro+ subscription required."
+description: "Run a third-party merger analysis on an announced or rumored acquisition. Use when the user is not a principal in the deal (banker, equity analyst, merger-arb, antitrust counsel, target board, journalist). Runs on Plugin Free as part of the single-deal trial."
 ---
 
 # /dd-merger-analyze
@@ -32,4 +32,4 @@ If the user gave a natural-language phrasing ("examine Capital One's acquisition
 
 ## Subscription
 
-Pro+ subscription required. Plugin Free / Dev tier users see a tier-gated upgrade CTA at https://app.ololand.ai/settings/billing — surface that link in your reply when the call returns `tier_gated: true`.
+Runs on Plugin Free as part of the full-capability single-deal trial, metered against the monthly credit budget — no longer Pro-gated. Note `analyze_announced_merger` creates a deal, so a free user who has already used their one deal will hit the one-deal-limit CTA. If any call returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.

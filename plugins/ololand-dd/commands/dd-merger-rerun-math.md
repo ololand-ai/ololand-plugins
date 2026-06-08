@@ -40,4 +40,4 @@ If `status == "insufficient_data"`, name the missing fields and where they typic
 
 ## Subscription
 
-Pro+ subscription required for the four engine tools. Plugin Free / Dev tier sees a tier-gated upgrade CTA — surface it from the response.
+The four engine tools run on Plugin Free as part of the full-capability single-deal trial, metered against the monthly credit budget — no longer Pro-gated. If a call returns `tier_gated: true`, surface the upgrade CTA from the response.
