@@ -55,3 +55,12 @@ S-1 ingestion path — it does, for public filings.
 - Risk severity must be justified with probability (%) and dollar impact
 - Recommendations must be consistent with risk-adjusted returns
 - Sensitivity variables must come from identified risks, not arbitrary selection
+
+## Closing the flywheel
+
+Cross-deal learning (workflow step 6) only compounds if outcomes are fed back in. The loop has two sides, and the read side is worthless without the write side:
+
+- **Write side (this is the part that gets skipped).** At IC, mint the deal's predictions: `run_deal_model(deal_id)` persists a DCFRun + LBORun, then `create_forecast_run(deal_id)` writes typed `enterprise_value` / `irr` / `moic` predictions. Post-close, `record_deal_outcome(deal_id, outcome_status)` opens the outcome row and `record_deal_actuals(deal_id, ...)` records the realized exit and **scores every prediction against what actually happened.** The `/record-outcome` command sequences all four.
+- **Read side.** `find_similar_deals` and `/calibrate-vs-history` consume those graded outcomes to surface the firm's systematic bias ("you overestimate revenue growth by 7pp in deals like this"). With no recorded outcomes on file, calibration has nothing to calibrate against.
+
+**Units are load-bearing for `record_deal_actuals` — a mismatch silently corrupts the accuracy score:** `actual_exit_ev` is **absolute USD** (`450000000`, not `450`); `actual_irr` is a **decimal** (`0.28` = 28%); `actual_moic` is a **multiple** (`3.2`). Confirm magnitudes with the user before recording. Recording outcomes is free (zero-credit) — never gate it on a credit balance.
