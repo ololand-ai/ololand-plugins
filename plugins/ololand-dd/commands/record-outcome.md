@@ -34,7 +34,7 @@ The instructions below are for the model executing this command.
 > - `actual_exit_ev` — **absolute USD**. `450000000` for $450M, NOT `450` and NOT `450000`.
 > - `actual_irr` — a **decimal**. `0.28` means 28%, NOT `28`.
 > - `actual_moic` — a **multiple**. `3.2` means 3.2×, NOT `320`.
-> Confirm the magnitude back to the user before recording ("recording a $450,000,000 exit at 0.28 IRR / 3.2× MOIC — correct?").
+> Confirm the magnitude of **only the metrics the user actually provided** back to them before recording — never echo a placeholder for a metric they didn't give (e.g. "recording a $450,000,000 exit — correct?", or "recording 0.28 IRR / 3.2× MOIC — correct?"). `record_deal_actuals` takes at least one of the three; don't invent the others.
 
 ### A. Mint predictions (underwriting / IC time)
 
@@ -46,7 +46,7 @@ The instructions below are for the model executing this command.
 
 ### B. Record actuals and close the loop (post-close)
 
-4. **Initialize the outcome row (once).** Call `record_deal_outcome(deal_id, outcome_status)` where `outcome_status` is one of: `active`, `closed`, `passed`, `exited`, `merged`, `written_off`. If it returns `"Outcome tracking already exists for deal ..."` with an `existing_outcome_id`, that's fine — proceed to step 5 (the row already exists).
+4. **Initialize the outcome row (once).** Call `record_deal_outcome(deal_id, outcome_status)` where `outcome_status` is one of: `active`, `closed`, `passed`, `exited`, `merged`, `written_off`. The command only takes `<deal_id>`, so derive the status: if the user named it, use that; if they're recording exit actuals (EV/IRR/MOIC), default to `exited` (or `merged` if the deal closed via merger); otherwise ask which applies. If it returns `"Outcome tracking already exists for deal ..."` with an `existing_outcome_id`, that's fine — proceed to step 5 (the row already exists).
 
 5. **Record the realized actuals.** Call `record_deal_actuals(deal_id, ...)` with at least one of `actual_exit_ev` / `actual_irr` / `actual_moic` (the tool rejects a call with none). Optional context: `exit_revenue`, `exit_ebitda`, `total_risk_impact`, `lessons_learned`, `outcome_status`. Re-read the **Units** box above before passing values. The response reports `predictions_closed` plus `ev_prediction_accuracy` / `irr_prediction_accuracy` / `risk_prediction_accuracy` — relay these: they are the score the model just earned on this deal.
 
