@@ -31,6 +31,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/valuation` | Deterministic DCF, multi-tranche LBO, 10,000-path Monte Carlo, comparable transactions, real options |
 | `/unit-economics` | Cohort analysis, CAC payback, NDR, LTV:CAC, magic number — for SaaS and services targets |
 | `/similar-deals` | Cross-deal pattern match against your firm's closed deals with outcome accuracy |
+| `/record-outcome` | Close the institutional-learning flywheel — mint predictions at IC, record realized exit EV / IRR / MOIC post-close, and score every prediction against actuals (the write side `/calibrate-vs-history` reads from) |
 | `/deal-search` | Hybrid vector + keyword + reranked search across the full data room |
 | `/war-game` | RL-powered competitive strategy simulation (MaskablePPO, 1,000-episode rollouts, 16 quarters) |
 | `/talk-to-deal` | Voice-optimized Q&A over the deal's full system of record, with rounded numbers and recommendations |
