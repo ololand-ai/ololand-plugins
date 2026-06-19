@@ -1,5 +1,4 @@
 {
-  "description": "OloLand compliance, citation, and provenance hooks for Claude Cowork finance plugins.",
   "hooks": {
     "PreToolUse": [
       {

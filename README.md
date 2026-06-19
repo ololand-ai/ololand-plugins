@@ -13,9 +13,9 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.20.0 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.20.1 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
 | [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.3.0 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
-| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.0 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
+| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.1 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 
 The plugins compose additively with each other and with Anthropic's first-party finance plugins.
 
@@ -109,7 +109,7 @@ Click `Ololand dd` in the sidebar. The detail view should show:
 | Field | Expected value |
 |---|---|
 | Source | Marketplace (`ololand-plugins`) |
-| Version | **1.20.0** or higher |
+| Version | **1.20.1** or higher |
 | Author | OloLand |
 | Skills tab | ~18 skills including `/playbook-recall`, `/calibrate-vs-history` |
 | Agents tab | **3 agents**: `dd-analyst`, `forensic-screener`, `war-game-strategist` |
@@ -157,7 +157,7 @@ In any Claude Code chat session:
 /plugin
 ```
 
-This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.0 and the three agents.
+This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.1 and the three agents.
 
 ### Step 5 — Authorize the OloLand connector
 
@@ -341,7 +341,7 @@ The `/plugin` command set works in **Claude Code CLI** only.
 
 Likely cached install from before the marketplace rename (was `ololand-dd-plugin`, now `ololand-plugins`). Remove the old marketplace pill, add `ololand-ai/ololand-plugins` fresh, install.
 
-Verify v1.20.0 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
+Verify v1.20.1 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
 
 ### CLI: `/plugin install` fails with "marketplace not found"
 
