@@ -10,14 +10,14 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "version": "1.20.0",
+      "version": "1.20.1",
       "source": "./plugins/ololand-dd",
       "category": "productivity",
       "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 246-category risk taxonomy with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, analytical workbench tools for QoE/compliance/scenarios/earnings, verified forensic screen marketplace support, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin."
     },
     {
       "name": "ololand-compliance-hooks",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./plugins/ololand-compliance-hooks",
       "category": "compliance",
       "description": "Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback, tier-capacity warning, and evidence-quality warning for OloLand's IC approval gate. Populates the empty hooks/ scaffold Anthropic's finance verticals ship with."

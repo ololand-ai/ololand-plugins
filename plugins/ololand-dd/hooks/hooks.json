@@ -1,5 +1,4 @@
 {
-  "description": "OloLand DD plugin hooks. SessionStart setup gate tells the model how OloLand authenticates (OAuth one-click sign-in; agent key only for headless/CI) so it can guide the user if tools return 401.",
   "hooks": {
     "SessionStart": [
       {
