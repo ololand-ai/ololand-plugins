@@ -10,10 +10,10 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "version": "1.19.0",
+      "version": "1.20.0",
       "source": "./plugins/ololand-dd",
       "category": "productivity",
-      "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 246-category risk taxonomy with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin."
+      "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 246-category risk taxonomy with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, analytical workbench tools for QoE/compliance/scenarios/earnings, verified forensic screen marketplace support, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin."
     },
     {
       "name": "ololand-compliance-hooks",
@@ -24,10 +24,10 @@
     },
     {
       "name": "ololand-forensic-qoe",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "source": "./plugins/ololand-forensic-qoe",
       "category": "productivity",
-      "description": "Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and covenant-cascade analysis (cross-default chain modeling). The Pre-LOI Forensic Screen wedge — $7,500 / 72 hours, IC-defensible, vs Big-4 QoE at $150-500K / 4-8 weeks."
+      "description": "Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and covenant-cascade analysis (cross-default chain modeling). The Pre-LOI Forensic Screen wedge — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks."
     }
   ]
 }

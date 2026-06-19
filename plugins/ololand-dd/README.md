@@ -29,6 +29,11 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/ic-memo-skeptical` | Stage-2 IC memo composed via skeptical tile-stitching with public-facts freshness gate, citation audit, and explicit gap-vs-finding framing — preferred memo entry point as of 2026-05-12 |
 | `/risk-report` | 246-category risk matrix with evidence links, dollar quantification, and industry overlays |
 | `/valuation` | Deterministic DCF, multi-tranche LBO, 10,000-path Monte Carlo, comparable transactions, real options |
+| `/qoe-analysis` | Deal-scoped QoE workbench: latest cached result or fresh revenue quality, EBITDA bridge, and working-capital analysis |
+| `/compliance-analysis` | OFAC, HSR, and CFIUS analysis using the deal's context-aware compliance workbench |
+| `/scenario-analysis` | Stress testing, market simulation, and real-options valuation from the scenario workbench |
+| `/earnings-analysis` | Earnings-call transcript analysis for management tone, guidance deltas, and diligence signals |
+| `/verification-marketplace` | Request or track human verification for a forensic screen and signed IC appendix provenance |
 | `/unit-economics` | Cohort analysis, CAC payback, NDR, LTV:CAC, magic number — for SaaS and services targets |
 | `/similar-deals` | Cross-deal pattern match against your firm's closed deals with outcome accuracy |
 | `/record-outcome` | Close the institutional-learning flywheel — mint predictions at IC, record realized exit EV / IRR / MOIC post-close, and score every prediction against actuals (the write side `/calibrate-vs-history` reads from) |
@@ -67,13 +72,18 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 
 **Gauntlet v4 T5 (institutional due diligence):** OloLand 90.5%, Claude alone 88.5%. Dual-judge scoring (Gemini 3.1 Pro + Claude Opus 4.6). Gap widens on forensic, reconciliation, and visual-decision tasks.
 
-## MCP Tools (44)
+## MCP Tools (100+)
 
 | Category | Tools |
 |----------|-------|
 | **Deal Intelligence** | `list_deals`, `get_deal`, `get_deal_summary_tiles`, `get_deal_indicators` |
-| **Financial Valuation** | `get_financial_snapshot`, `get_dcf_valuation`, `run_monte_carlo_simulation`, `analyze_unit_economics` |
-| **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `analyze_forensic_qoe`, `render_risk_matrix_tile` |
+| **Financial Valuation** | `get_financial_snapshot`, `get_dcf_valuation`, `run_monte_carlo_simulation`, `analyze_unit_economics`, `run_scenario_stress_test`, `simulate_market_conditions`, `value_real_options` |
+| **QoE + Forensics** | `analyze_forensic_qoe`, `generate_forensic_screen_pdf`, `run_qoe_analysis`, `get_latest_qoe_analysis`, `run_beneish`, `run_benford`, `build_ebitda_bridge` |
+| **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `render_risk_matrix_tile`, `run_atomic_verifiers`, `check_citation_coverage`, `reconcile_documents` |
+| **Compliance** | `run_ofac_screen`, `run_hsr_analysis`, `run_cfius_risk` |
+| **Human Verification** | `get_deal_verification_status`, `list_deal_verification_requests`, `request_verified_forensic_screen` |
+| **Assumption Controls** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package` |
+| **Earnings Analysis** | `analyze_earnings_call` |
 | **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document` |
 | **Knowledge Graph** | `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
 | **Cross-Deal Learning** | `find_similar_deals` |
@@ -90,11 +100,12 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 
 | Tier | Price | For |
 |------|-------|-----|
-| **MCP Access** | $49/mo | Solo analyst trying OloLand inside Claude |
-| **Professional** | $199/mo | Associate or VP running deals weekly |
-| **Boutique Team** | $499/mo | Small fund, 2–5 seats, shared deal record |
-| **Firm Platform** | $800/seat/mo (5-seat floor = $48K ARR) | Institutional GP — SSO, audit logs, playbook enforcement |
+| **Developer** | Free | Sample-deal access and developer testing |
+| **Pro** | $199/mo | Associate or VP running deals weekly |
+| **Firm** | $800/seat/mo | Institutional GP — SSO, audit logs, playbook enforcement |
 | **Enterprise** | Custom | Multi-fund, VDR integration, data residency |
+| **Pre-LOI Forensic Screen** | $99/deal | 72-hour verified forensic screen workflow |
+| **Full QoE** | $999/deal | Deeper quality-of-earnings package |
 
 First 100 tool calls free on install. Upgrade at [ololand.ai/pricing](https://ololand.ai/pricing).
 

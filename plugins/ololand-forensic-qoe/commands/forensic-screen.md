@@ -1,5 +1,5 @@
 ---
-description: Run a Pre-LOI Forensic Screen — full battery of Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and working-capital deep dive on a deal. The $7,500 / 72-hour wedge product against Big-4 QoE.
+description: Run a Pre-LOI Forensic Screen — full battery of Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and working-capital deep dive on a deal. The $99 / 72-hour SLA wedge product against Big-4 QoE.
 ---
 
 # Pre-LOI Forensic Screen
@@ -86,13 +86,32 @@ The PDF includes 7 sections:
    model versions for reproducibility
 
 Credit cost: **50** (vs. 10-15 for engine-only tools — this is the
-premium SKU; the $7,500/72-hr price is sold via the HTTP route + Stripe).
+premium SKU; the $99/72-hour SKU is sold via the HTTP route + Stripe).
 
-The PDF is the IC-paste-ready artifact. `analyze_forensic_qoe` (the
-older tool) returns structured findings text — useful for in-conversation
-analysis but NOT the SKU deliverable. When in doubt, ask the user
-whether they want "the analysis" (use `analyze_forensic_qoe`) or "the
-PDF" (use `generate_forensic_screen_pdf`).
+The PDF is the IC-paste-ready artifact. `analyze_forensic_qoe` returns
+structured findings text — useful for in-conversation analysis but NOT the
+SKU deliverable. When in doubt, ask the user whether they want "the analysis"
+(use `analyze_forensic_qoe`) or "the PDF" (use
+`generate_forensic_screen_pdf`).
+
+## When the user wants human verification
+
+If the user asks for a verified forensic screen, reviewer sign-off, CPA-style
+review, or IC appendix provenance:
+
+1. Call `get_deal_verification_status(deal_id)` to see whether a request or
+   signed artifact already exists.
+2. If no active request exists and the user wants to queue review, call
+   `request_verified_forensic_screen(deal_id, source_artifact_id=...,
+   forensic_job_id=...)` using any IDs returned by the forensic analysis or
+   PDF job.
+3. Call `list_deal_verification_requests(deal_id)` to show the request queue
+   and status history.
+4. Explain that Phase 1 is a manual concierge reviewer workflow; do not
+   promise instant fulfillment, automated payment, or escrow semantics.
+
+A signed verification creates durable artifact lineage for the IC package.
+Treat the signed artifact as control evidence, not generic marketing copy.
 
 ## Related commands
 

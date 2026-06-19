@@ -13,8 +13,8 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.6.1 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, cross-document reconciliation, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.2.0 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $7,500 / 72 hours, IC-defensible, vs Big-4 QoE at $150-500K / 4-8 weeks. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.20.0 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.3.0 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.0 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 
 The plugins compose additively with each other and with Anthropic's first-party finance plugins.
@@ -69,7 +69,7 @@ If you're running the plugins in a headless environment (CI, server-side automat
 2. Settings → Agent keys → Create new key
 3. Set the env var: `export OLOLAND_AGENT_KEY=olo_agent_sk_...`
 
-The plugin's `.mcp.json` reads `${OLOLAND_AGENT_KEY}` as a Bearer header. If both OAuth and the env var are configured, OAuth takes precedence.
+The published `.mcp.json` files are OAuth-native and do not send an Authorization header. For headless use, add your own MCP server config with `Authorization: Bearer ${OLOLAND_AGENT_KEY}`. If OAuth and a custom header are both configured by your client, OAuth should be treated as the interactive default.
 
 ---
 
@@ -109,7 +109,7 @@ Click `Ololand dd` in the sidebar. The detail view should show:
 | Field | Expected value |
 |---|---|
 | Source | Marketplace (`ololand-plugins`) |
-| Version | **1.5.2** or higher |
+| Version | **1.20.0** or higher |
 | Author | OloLand |
 | Skills tab | ~18 skills including `/playbook-recall`, `/calibrate-vs-history` |
 | Agents tab | **3 agents**: `dd-analyst`, `forensic-screener`, `war-game-strategist` |
@@ -157,7 +157,7 @@ In any Claude Code chat session:
 /plugin
 ```
 
-This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.5.2 and the three agents.
+This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.0 and the three agents.
 
 ### Step 5 — Authorize the OloLand connector
 
@@ -184,6 +184,11 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/risk-matrix <deal_id>` | Render the 246-category risk taxonomy as an interactive tile |
 | `/risk-report <deal_id>` | Structured risk report — severity × likelihood × velocity, with $-impact |
 | `/valuation <deal_id> [method]` | Run DCF / LBO / Monte Carlo / Comps with strict unit enforcement |
+| `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench |
+| `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis |
+| `/scenario-analysis <deal_id> [stress|market|real-options|all]` | Run stress tests, market simulation, and real-options valuation |
+| `/earnings-analysis <deal_id>` | Analyze earnings-call transcript segments for diligence signals |
+| `/verification-marketplace <deal_id> [status|list|request]` | Track or request human verification for a forensic screen |
 | `/war-game <deal_id> [scenarios]` | 16-quarter MaskablePPO competitive simulation across scenarios |
 | `/similar-deals <deal_id>` | Cross-deal memory: find similar past deals, accuracy patterns, valuation ranges |
 | `/playbook-recall <deal_id>` | What worked, what didn't, what was missed in similar past deals from your firm's history |
@@ -336,7 +341,7 @@ The `/plugin` command set works in **Claude Code CLI** only.
 
 Likely cached install from before the marketplace rename (was `ololand-dd-plugin`, now `ololand-plugins`). Remove the old marketplace pill, add `ololand-ai/ololand-plugins` fresh, install.
 
-Verify v1.5.2 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
+Verify v1.20.0 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
 
 ### CLI: `/plugin install` fails with "marketplace not found"
 

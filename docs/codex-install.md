@@ -73,7 +73,7 @@ Expected: Codex calls `ololand.list_deals` and returns your OloLand deals.
 | Plugin | Purpose |
 |---|---|
 | **`ololand-dd`** | Institutional due diligence + middle-office assumption controls + IC approval gate. 16 commands. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist). |
-| **`ololand-forensic-qoe`** | Pre-LOI Forensic Screen wedge (Beneish, Benford, EBITDA bridge, journal-entry, lapping, covenant cascade). $7,500 / 72-hour SKU vs Big-4 QoE $150-500K / 4-8 weeks. |
+| **`ololand-forensic-qoe`** | Pre-LOI Forensic Screen wedge (Beneish, Benford, EBITDA bridge, journal-entry, lapping, covenant cascade). $99 / 72-hour SLA with Full QoE at $999, vs Big-4 QoE $150-500K / 4-8 weeks. |
 | **`ololand-compliance-hooks`** | MNPI guard (PreToolUse), citation enforcer (PostToolUse on memo/CIM/dossier), audit log, tier-capacity warning, evidence-quality warning. Drops into Codex's hooks scaffold the same way it drops into Claude's. |
 
 ## After GA

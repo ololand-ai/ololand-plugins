@@ -25,7 +25,7 @@ Benford's Law states that in many naturally-occurring datasets, the leading digi
 
 ## Execution
 
-1. Call `analyze_forensic_qoe` from the MCP server with `deal_id` and `primitives=["benford"]`.
+1. If the user supplied a transaction list or GL file, parse it into transaction dictionaries and call `run_benford(transactions)`. If the user supplied only `deal_id`, call `analyze_forensic_qoe(deal_id)` and extract the Benford section from the full battery. Do not pass a `primitives` argument.
 2. The engine pulls all GL transactions from the deal's data room (or from `forensic_extraction_service` if extraction has been run).
 3. Computes observed first-digit distribution and compares to Benford expected via χ² goodness-of-fit and Mean Absolute Deviation (MAD).
 4. Flags account categories with the most significant deviations.

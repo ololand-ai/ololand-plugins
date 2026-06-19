@@ -25,7 +25,7 @@ Detects anomalous journal-entry patterns that frequently accompany earnings mana
 
 ## Execution
 
-1. Call `analyze_forensic_qoe` from the MCP server with `deal_id` and `primitives=["journal_entry"]`.
+1. Call `analyze_forensic_qoe(deal_id)` and extract the journal-entry testing section from the full battery. Do not pass a `primitives` argument. If GL timestamps or posting-user fields are missing, classify the result as a diligence gap rather than a clean finding.
 2. The engine runs five tests:
    - **Period-end concentration** — what % of revenue/expense entries land in the last 5 business days of the quarter? Compare to baseline.
    - **Round-number frequency** — what % of entries end in `,000` or `,500`? Above-baseline rates suggest estimation rather than transaction.

@@ -25,7 +25,7 @@ Walks reported EBITDA to adjusted/normalized EBITDA, classifying every add-back.
 
 ## Execution
 
-1. Call `analyze_forensic_qoe` from the MCP server with `deal_id` and `primitives=["ebitda_bridge"]`.
+1. Call `build_ebitda_bridge(deal_id)` from the MCP server. If the user supplied explicit financial data, pass it as `financial_data`. Do not pass a `primitives` argument to `analyze_forensic_qoe`; that tool runs the full deal-scoped battery.
 2. The engine pulls the management EBITDA bridge from the data room (or extracts from CIM/QofE workbook).
 3. For each adjustment, the classifier evaluates:
    - **Recurrence** — does this adjustment appear in 2+ of the last 3 years? (If yes, it's not one-time.)

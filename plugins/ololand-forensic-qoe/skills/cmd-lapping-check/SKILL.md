@@ -25,7 +25,7 @@ Lapping is one of the oldest receivables-fraud schemes: customer A's payment is 
 
 ## Execution
 
-1. Call `analyze_forensic_qoe` from the MCP server with `deal_id` and `primitives=["lapping"]`.
+1. Call `analyze_forensic_qoe(deal_id)` and extract the lapping-detection section from the full battery. Do not pass a `primitives` argument. If AR aging or cash-receipt detail is missing, classify the result as a diligence gap rather than a clean finding.
 2. The engine cross-references cash receipts to AR aging movements and looks for:
    - **Application gaps** — payment received from customer A but applied to customer B's invoice
    - **Aging cycles** — invoices that move from 60-day to 30-day aging after a non-payment cash receipt

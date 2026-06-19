@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.19.0
+version: 1.20.0
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -7,9 +7,10 @@ description: >-
   Carlo / Real Options engines, 246-category risk taxonomy with SaaS /
   healthcare / real-estate / industrial overlays, forensic QoE primitives,
   cross-document reconciliation (CPA > tax > management > AI), MaskablePPO
-  war-game simulation, assumption controls that gate IC approval, and a
-  regulator-grade audit trail with replay and compliance-framework
-  exports. Three sub-agents (dd-analyst, forensic-screener,
+  war-game simulation, assumption controls that gate IC approval,
+  analytical workbench tools for QoE/compliance/scenarios/earnings, verified
+  forensic screen marketplace support, and a regulator-grade audit trail with
+  replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener,
   war-game-strategist) plus a flywheel that retrains from analyst
   corrections. Counter-positions Anthropic's native private-equity plugin.
 shortDescription: Institutional due diligence for M&A and private equity.

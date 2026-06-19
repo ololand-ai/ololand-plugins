@@ -2,7 +2,7 @@
 
 > Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen wedge.
 
-This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone SKU on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available pre-LOI for $7,500 / 72 hours.
+This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone SKU on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen for $99 with a 72-hour SLA. Full QoE is $999.
 
 ## Commands
 
@@ -24,16 +24,18 @@ claude plugin install ololand-forensic-qoe@ololand-plugins
 
 ## What you need set up
 
-Each command calls OloLand's MCP server, which requires:
-- An OloLand account with `OLOLAND_AGENT_KEY` set in your environment
-- The deal already created (use `/new-deal` from the `ololand-dd` plugin)
+Each command calls OloLand's MCP server through this plugin's `ololand` connector. Interactive users authenticate through OAuth on first use; no agent key is required. Headless/CI users can use an `OLOLAND_AGENT_KEY` only if they add their own Authorization header to the MCP server config.
+
+Required setup:
+- An OloLand account and an authorized `ololand` MCP connector
+- The deal already created (use `/new-deal` from the `ololand-dd` plugin, or create it in the web app)
 - Source documents uploaded to the deal's data room (CIM, audited financials, tax returns, GL export, AR aging, management bridges)
 
 The forensic engine auto-detects which primitives have sufficient input and skips the rest. `/forensic-screen` reports which primitives ran and which were skipped due to missing inputs.
 
 ## Why this exists
 
-Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We sell it standalone, pre-LOI, with full methodology disclosure.
+Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We sell it standalone, pre-LOI, with full methodology disclosure, and offer a $999 Full QoE workflow when the buyer wants a deeper package.
 
 For the broader OloLand DD plugin (deterministic DCF/LBO, 246-category risk taxonomy, cross-deal memory), install [`ololand-dd`](../ololand-dd) from the same marketplace.
 

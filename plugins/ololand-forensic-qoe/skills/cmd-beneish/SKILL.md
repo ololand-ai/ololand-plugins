@@ -25,7 +25,7 @@ Compute the Beneish M-Score, an 8-variable model that estimates the probability 
 
 ## Execution
 
-1. Call `analyze_forensic_qoe` from the MCP server with `deal_id` and `primitives=["beneish"]`.
+1. Call `run_beneish(deal_id)` from the MCP server. Do not pass a `primitives` argument to `analyze_forensic_qoe`; that tool runs the full deal-scoped battery.
 2. The engine pulls financial snapshots for the current and prior period from the deal's reconciled financial data.
 3. Computes the 8 Beneish variables: DSRI, GMI, AQI, SGI, DEPI, SGAI, LVGI, TATA.
 4. Aggregates to the M-Score using the original Beneish weights.
