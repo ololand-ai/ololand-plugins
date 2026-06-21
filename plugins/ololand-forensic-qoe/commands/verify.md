@@ -1,5 +1,5 @@
 ---
-description: Verify every dollar and percentage figure in an externally-drafted artifact (an IC memo, analysis, or answer — e.g. one drafted in Claude Cowork) against the sources YOU cite, with no OloLand deal and no ingestion. Per-figure PASS / FAIL / UNVERIFIED with cited-chunk number reconciliation, an NLI derivation check, an independent grader, and a content-hashed provenance pack. The corpus-free "defend every number, cite every source" button for output produced anywhere.
+description: 'Verify every dollar and percentage figure in an externally-drafted artifact (an IC memo, analysis, or answer — e.g. one drafted in Claude Cowork) against the sources YOU cite, with no OloLand deal and no ingestion. Per-figure PASS / FAIL / UNVERIFIED with cited-chunk number reconciliation, an NLI derivation check, an independent grader, and a content-hashed provenance pack. The corpus-free "defend every number, cite every source" button for output produced anywhere.'
 ---
 
 # /verify (corpus-free)
