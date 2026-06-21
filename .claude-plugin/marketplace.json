@@ -24,7 +24,7 @@
     },
     {
       "name": "ololand-forensic-qoe",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "./plugins/ololand-forensic-qoe",
       "category": "productivity",
       "description": "Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and covenant-cascade analysis (cross-default chain modeling). The Pre-LOI Forensic Screen wedge — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks."
