@@ -21,7 +21,7 @@ Then provide the artifact and the deal to verify it against (see Inputs).
 Ask the user for these if missing:
 
 1. **artifact_text** (required) — the drafted memo / analysis / answer to verify. Accept any of: text pasted inline, a path to a local file (read it with your file tool and pass the contents), or the body of something the user generated elsewhere (e.g. a Cowork IC memo).
-2. **deal_id** (required) — the OloLand deal whose **ingested** data room backs the verification. If the user has no deal, do NOT ask them to paste sources — guide them through the funnel (see Execution step 1).
+2. **deal_id** (optional, required for verification) — the OloLand deal whose **ingested** data room backs the verification. If the user has no deal, do NOT block or repeatedly ask for one — proceed to the funnel (see Execution step 1) so they get the `create_deal` path.
 
 Optional:
 
