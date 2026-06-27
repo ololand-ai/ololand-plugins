@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/mnpi_guard.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/mnpi_guard.sh\"",
             "timeout": 10
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/mnpi_guard.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/mnpi_guard.sh\"",
             "timeout": 10
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/audit_log.sh pre",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/audit_log.sh\" pre",
             "timeout": 10
           }
         ]
@@ -38,12 +38,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/citation_enforcer.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/citation_enforcer.sh\"",
             "timeout": 30
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/provenance_writeback.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/provenance_writeback.sh\"",
             "timeout": 30
           }
         ]
@@ -53,12 +53,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/audit_log.sh post",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/audit_log.sh\" post",
             "timeout": 10
           },
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/tier_capacity_warning.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/tier_capacity_warning.sh\"",
             "timeout": 5
           }
         ]
@@ -68,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/evidence_quality_warning.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/evidence_quality_warning.sh\"",
             "timeout": 10
           }
         ]
@@ -78,7 +78,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/citation_enforcer.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/citation_enforcer.sh\"",
             "timeout": 30
           }
         ]
@@ -89,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh\"",
             "timeout": 5
           }
         ]

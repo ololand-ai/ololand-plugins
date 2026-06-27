@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh\"",
             "timeout": 5
           }
         ]
