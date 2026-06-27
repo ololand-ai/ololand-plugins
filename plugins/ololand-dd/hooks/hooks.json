@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh",
+            "command": "[ -n \"${CLAUDE_PLUGIN_ROOT}\" ] && bash \"${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh\" || echo \"[ololand-dd] CLAUDE_PLUGIN_ROOT unset; setup gate skipped\"",
             "timeout": 5
           }
         ]
