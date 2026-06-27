@@ -1,0 +1,69 @@
+---
+description: 'Run OloLand''s Deal Document Conflict Detector across a deal''s data room — surfaces cross-document discrepancies (mismatched figures, dates, entities, ownership, terms, obligations, representations) by reconciling the documents against each other. Every reported conflict cites the conflicting documents/pages, with a severity and a limitations note. Runs as an unattended managed agent over the cross-doc reconciliation engines and dual-writes a replayable run + conflict_report artifact you can defend at IC.'
+---
+
+# /conflicts (cross-document conflict detection)
+
+Runs OloLand's **Deal Document Conflict Detector** over a deal's ingested documents. It reads the data room against itself and surfaces places where two documents disagree — a revenue figure that differs between the CIM and the audited financials, an ownership percentage that moves between the cap table and the SPA, a close date that conflicts across the LOI and the disclosure schedule. Each conflict is traced to the specific documents (and pages) that disagree, so it is a review item you can act on, not a vibe.
+
+This is the discrepancy-hunting complement to `/verify`: `/verify` checks that the figures an artifact *states* are supported by the corpus; `/conflicts` hunts for places the *corpus contradicts itself*.
+
+## Usage
+
+```
+/conflicts <deal_id>
+```
+
+## Arguments
+
+- `deal_id` (required) — the OloLand deal whose ingested documents to scan. Requires a deal with a populated data room (multiple documents — there is nothing to cross-check in a single file).
+
+## Execution
+
+This is an asynchronous managed-agent run. Do not expect an immediate answer; start it, then poll.
+
+1. **Start.** Call `mcp__ololand__run_conflict_detection` with `deal_id`. It returns a `task_id` (with `task_type: "managed_conflict_detection"`).
+   - If it returns `{"error": "Deal not found: …", "error_code": "not_found"}` — the deal id is wrong; ask the user to confirm it with `mcp__ololand__list_deals`.
+   - If it returns `{"error": "Company scope required …"}` — the MCP connection is not company-scoped (it needs a database-backed `olo_agent_sk_*` key, which the OloLand connection provides on sign-in). Tell the user to reconnect / sign in, do not retry blindly.
+   - If the tool itself errors (e.g. the managed executor is unavailable) the call fails closed — relay the error rather than presenting an empty "no conflicts" result.
+2. **Poll.** Call `mcp__ololand__check_task_status` with the `task_id` every few seconds. While `state` is `STARTED` / `PROGRESS`, relay the progress message (it names each engine call, e.g. `Engine call: reconcile_documents`) so the user sees it working. Keep polling until `state` is `SUCCESS` or `FAILURE`.
+3. **On `FAILURE`** — report the `error` verbatim. Do not synthesize a conflict list from nothing.
+4. **On `SUCCESS`** — the `result` object is:
+   - `status` — `"success"` or `"error"` (check this; an `error` status means the run completed but the agent hit a problem mid-flight — relay `error`).
+   - `text` — the conflict report itself: a structured list of conflicts (each with the conflicting sources, the disagreeing values, and a severity) plus a confidence / limitations note. This is the deliverable.
+   - `run_id` — the replayable `agent_runs` row.
+   - `artifact_id` — the persisted `conflict_report` artifact.
+   - `tool_calls` — how many engine calls the detector made.
+
+   Render `text` to the user as-is (it is already structured and source-cited — do not re-summarize or re-rank it), then append the provenance footer below. If `status == "error"`, lead with the error.
+
+## Output
+
+Present the detector's report, then:
+
+```
+Conflict scan — deal: <deal_id>
+<the report text: each conflict with its conflicting sources, values, and severity, + the limitations note>
+
+Provenance: run_id=<run_id>  artifact=<artifact_id>  engine_calls=<tool_calls>
+```
+
+Then call out the highest-severity conflicts first as the items to resolve before IC, and for each, name the two documents that disagree so the user knows exactly what to reconcile.
+
+## Why this matters
+
+Cross-document conflicts are where deals get repriced or broken. A management figure that the audited statements contradict, a rep that the disclosure schedule undercuts, an ownership split the cap table does not match — these are the findings a Big-4 QoE charges six figures and weeks to surface. Running the detector pre-LOI lets you put the discrepancy to management *before* you commit to the engagement, and the cited run + artifact is something you can hand to an IC chair or LP.
+
+## Honest bounds
+
+- The detector reports conflicts it can find by reconciling the **ingested** documents against each other via OloLand's engines (`reconcile_documents`, `list_cross_references`, `search_deal_documents`, financial snapshots, risks). It never fabricates or estimates — and it says so when a tool returns nothing. A clean scan means *no contradictions were found among the documents that were ingested*, not that the data room is complete or internally guaranteed.
+- It surfaces **disagreement between documents**. It does not, by itself, decide which document is right — that is the source-hierarchy judgment (CPA > tax > management > AI) the analyst applies once the conflict is on the table.
+- It is an unattended batch run. For a single number that "looks off" in a specific drafted artifact, `/verify` is the faster, per-figure check.
+
+## Example
+
+```
+/conflicts deal_acme_2026
+```
+
+Companion: `/verify` (corpus-based per-figure verification of a drafted artifact) and the `forensic-qoe` skill (the deterministic QoE battery).
