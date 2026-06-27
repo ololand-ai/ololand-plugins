@@ -89,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh\"",
+            "command": "[ -n \"${CLAUDE_PLUGIN_ROOT}\" ] && bash \"${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh\" || echo \"[ololand-compliance-hooks] CLAUDE_PLUGIN_ROOT unset; session banner skipped\"",
             "timeout": 5
           }
         ]
