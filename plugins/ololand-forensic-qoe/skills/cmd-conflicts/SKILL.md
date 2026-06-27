@@ -36,13 +36,14 @@ This is an asynchronous managed-agent run. Do not expect an immediate answer; st
 2. **Poll.** Call `mcp__ololand__check_task_status` with the `task_id` every few seconds. While `state` is `STARTED` / `PROGRESS`, relay the progress message (it names each engine call, e.g. `Engine call: reconcile_documents`) so the user sees it working. Keep polling until `state` is `SUCCESS` or `FAILURE`.
 3. **On `FAILURE`** — report the `error` verbatim. Do not synthesize a conflict list from nothing.
 4. **On `SUCCESS`** — the `result` object is:
-   - `status` — `"success"` or `"error"` (check this; an `error` status means the run completed but the agent hit a problem mid-flight — relay `error`).
+   - `status` — `"success"` or `"error"`. Check it: an `error` status means the run completed but the agent hit a problem mid-flight.
+   - `error` — `null` on success; on an `error` status, the message string to relay.
    - `text` — the conflict report itself: a structured list of conflicts (each with the conflicting sources, the disagreeing values, and a severity) plus a confidence / limitations note. This is the deliverable.
    - `run_id` — the replayable `agent_runs` row.
    - `artifact_id` — the persisted `conflict_report` artifact.
    - `tool_calls` — how many engine calls the detector made.
 
-   Render `text` to the user as-is (it is already structured and source-cited — do not re-summarize or re-rank it), then append the provenance footer below. If `status == "error"`, lead with the error.
+   Render `text` to the user **unaltered** — it is already structured and source-cited; do not re-summarize, re-rank, or re-order the report body. Then append the provenance footer below it, and put the high-severity call-out (see Output) below that footer. If `status == "error"`, lead with the `error` message instead of the report.
 
 ## Output
 
@@ -55,7 +56,7 @@ Conflict scan — deal: <deal_id>
 Provenance: run_id=<run_id>  artifact=<artifact_id>  engine_calls=<tool_calls>
 ```
 
-Then call out the highest-severity conflicts first as the items to resolve before IC, and for each, name the two documents that disagree so the user knows exactly what to reconcile.
+Then, **below the provenance footer** (leaving the report body above unaltered), call out the highest-severity conflicts first as the items to resolve before IC, and for each, name the two documents that disagree so the user knows exactly what to reconcile.
 
 ## Why this matters
 
