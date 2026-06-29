@@ -34,6 +34,15 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/scenario-analysis` | Stress testing, market simulation, and real-options valuation from the scenario workbench |
 | `/earnings-analysis` | Earnings-call transcript analysis for management tone, guidance deltas, and diligence signals |
 | `/verification-marketplace` | Request or track human verification for a forensic screen and signed IC appendix provenance |
+| `/ic-package` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
+| `/value-impact` | Review or preview the deal/firm value-impact ledger |
+| `/deal-health` | Summarize deal health, open actions, and meeting blockers |
+| `/workbook` | List, read, or create deal-scoped analysis workbooks |
+| `/company-discovery` | Search company discovery from natural-language or structured criteria |
+| `/watchlist` | Create and inspect continuous monitoring watchlists |
+| `/advisory` | Request or inspect buyer-side advisory engagements |
+| `/managed-context-agent` | Launch a configured managed context agent when enabled |
+| `/okf-export` | Export a machine-readable OKF deal bundle |
 | `/unit-economics` | Cohort analysis, CAC payback, NDR, LTV:CAC, magic number — for SaaS and services targets |
 | `/similar-deals` | Cross-deal pattern match against your firm's closed deals with outcome accuracy |
 | `/record-outcome` | Close the institutional-learning flywheel — mint predictions at IC, record realized exit EV / IRR / MOIC post-close, and score every prediction against actuals (the write side `/calibrate-vs-history` reads from) |
@@ -82,12 +91,16 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `render_risk_matrix_tile`, `run_atomic_verifiers`, `check_citation_coverage`, `reconcile_documents` |
 | **Compliance** | `run_ofac_screen`, `run_hsr_analysis`, `run_cfius_risk` |
 | **Human Verification** | `get_deal_verification_status`, `list_deal_verification_requests`, `request_verified_forensic_screen` |
-| **Assumption Controls** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package` |
+| **Assumption Controls + IC Package** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package`, `generate_ic_package`, `approve_ic_package` |
+| **Value Impact** | `get_deal_value_impact`, `get_company_value_impact`, `get_value_impact_assumptions`, `preview_value_impact`, `update_value_impact_assumptions` |
+| **Deal Health + Workbooks** | `get_deal_health_summary`, `list_deal_actions`, `create_deal_action`, `list_deal_workbooks`, `get_workbook`, `create_deal_workbook` |
+| **Company Discovery + Watchlists** | `search_company_discovery`, `natural_language_company_search`, `list_watchlists`, `create_watchlist`, `list_watchlist_matches`, `promote_watchlist_match` |
 | **Earnings Analysis** | `analyze_earnings_call` |
 | **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document` |
-| **Knowledge Graph** | `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
+| **Extracted Knowledge** | `search_extracted_knowledge` plus compatibility aliases `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
 | **Cross-Deal Learning** | `find_similar_deals` |
-| **Reports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier` |
+| **Reports + Exports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier`, `export_deal_okf_bundle` |
+| **Advisory + Managed Agents** | `list_deal_advisory_engagements`, `request_advisory_engagement`, `launch_managed_context_agent` |
 | **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals` |
 | **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
 | **Sourcing** | `batch_triage_companies`, `log_sourced_lead` |

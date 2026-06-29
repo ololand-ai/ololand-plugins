@@ -14,6 +14,8 @@ This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone S
 | `/ebitda-bridge` | EBITDA bridge + adjustment classifier | Walks reported EBITDA to normalized EBITDA, classifying every add-back as one-time / pro-forma / recurring / questionable. |
 | `/journal-test` | Journal-entry tester | Period-end concentration, round-number frequency, weekend postings, reversing-entry anomalies. |
 | `/lapping-check` | Lapping detector | Detects AR-lapping fraud cycles by tracing customer-to-cash application. |
+| `/conflicts` | Deal Document Conflict Detector | Finds cross-document discrepancies in figures, dates, entities, ownership, terms, obligations, and representations. |
+| `/verify` | Corpus verifier | Checks an externally drafted artifact against the ingested deal corpus, with per-figure PASS / FAIL / UNVERIFIED output. |
 
 ## Install
 
