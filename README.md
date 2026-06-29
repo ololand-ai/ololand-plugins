@@ -13,9 +13,9 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.20.1 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.3.0 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
-| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.1 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.20.4 | Institutional due diligence: deterministic financial engines, 246-category risk taxonomy, analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.0 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
+| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.2 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 
 The plugins compose additively with each other and with Anthropic's first-party finance plugins.
 
@@ -109,7 +109,7 @@ Click `Ololand dd` in the sidebar. The detail view should show:
 | Field | Expected value |
 |---|---|
 | Source | Marketplace (`ololand-plugins`) |
-| Version | **1.20.1** or higher |
+| Version | **1.20.4** or higher |
 | Author | OloLand |
 | Skills tab | ~18 skills including `/playbook-recall`, `/calibrate-vs-history` |
 | Agents tab | **3 agents**: `dd-analyst`, `forensic-screener`, `war-game-strategist` |
@@ -157,7 +157,7 @@ In any Claude Code chat session:
 /plugin
 ```
 
-This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.1 and the three agents.
+This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.4 and the three agents.
 
 ### Step 5 — Authorize the OloLand connector
 
@@ -189,6 +189,15 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/scenario-analysis <deal_id> [stress|market|real-options|all]` | Run stress tests, market simulation, and real-options valuation |
 | `/earnings-analysis <deal_id>` | Analyze earnings-call transcript segments for diligence signals |
 | `/verification-marketplace <deal_id> [status|list|request]` | Track or request human verification for a forensic screen |
+| `/ic-package <deal_id> [status|generate|approve]` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
+| `/value-impact <deal_id|company|preview>` | Review or preview the deal/firm value-impact ledger |
+| `/deal-health <deal_id> [actions|create-action]` | Summarize deal health, open actions, and meeting blockers |
+| `/workbook <deal_id|workbook_id> [list|get|create]` | List, read, or create deal-scoped analysis workbooks |
+| `/company-discovery <query>` | Search the company-discovery surface from natural-language or structured criteria |
+| `/watchlist [list|create|matches|promote]` | Create and inspect continuous monitoring watchlists |
+| `/advisory <deal_id> [list|request]` | Request or inspect buyer-side advisory engagements |
+| `/managed-context-agent <deal_id> <agent_key>` | Launch a configured managed context agent when enabled |
+| `/okf-export <deal_id>` | Export a machine-readable OKF deal bundle |
 | `/war-game <deal_id> [scenarios]` | 16-quarter MaskablePPO competitive simulation across scenarios |
 | `/similar-deals <deal_id>` | Cross-deal memory: find similar past deals, accuracy patterns, valuation ranges |
 | `/playbook-recall <deal_id>` | What worked, what didn't, what was missed in similar past deals from your firm's history |
@@ -256,6 +265,8 @@ The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth w
 | `/ebitda-bridge <deal_id>` | EBITDA bridge with adjustment classifier. Tags every add-back as accepted / recurring / questionable. |
 | `/journal-test <deal_id>` | Journal-entry anomaly testing. Period-end concentration, round-numbers, posting authority, weekend entries. |
 | `/lapping-check <deal_id>` | AR-lapping fraud detection. Customer-to-cash trace, application gap detection. |
+| `/conflicts <deal_id>` | Cross-document conflict detector for mismatched figures, dates, ownership, terms, and obligations. |
+| `/verify <deal_id>` | Verify an externally drafted artifact against the ingested deal corpus. |
 
 ### Required inputs
 
@@ -341,7 +352,7 @@ The `/plugin` command set works in **Claude Code CLI** only.
 
 Likely cached install from before the marketplace rename (was `ololand-dd-plugin`, now `ololand-plugins`). Remove the old marketplace pill, add `ololand-ai/ololand-plugins` fresh, install.
 
-Verify v1.20.1 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
+Verify v1.20.4 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
 
 ### CLI: `/plugin install` fails with "marketplace not found"
 

@@ -22,7 +22,7 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
 - `get_financial_snapshot` — revenue, market share, EBITDA margin
 - `get_deal_indicators` — growth rate, leverage, KPIs
 - `research_market` — TAM, growth rate, switching costs, market structure
-- `query_knowledge_graph` — competitor relationships, customer overlap
+- `search_extracted_knowledge` — competitor relationships, customer overlap, commercial-DD insights
 - `find_similar_deals` — calibration: did similar deals' competitive predictions hold?
 
 ### Calibration
@@ -32,7 +32,7 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
 
 1. **Context** — Pull deal profile (`get_deal`, `get_financial_snapshot`, `get_deal_indicators`). Extract focal company's revenue, market share, EBITDA margin.
 
-2. **Market structure** — Call `research_market` and `query_knowledge_graph` to identify competitors. For each competitor, classify by archetype:
+2. **Market structure** — Call `research_market` and `search_extracted_knowledge` to identify competitors. For each competitor, classify by archetype:
    - **Price leader** — competes on cost, willing to compress margins
    - **Innovation leader** — competes on R&D, accepts margin compression for share
    - **Fast follower** — copies winning moves of others within 2-4 quarters
