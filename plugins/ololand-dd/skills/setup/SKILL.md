@@ -28,28 +28,44 @@ If you see OloLand tools in your tools list, you're connected.
 ## Headless / CI (no browser)
 
 Automated environments can't do an interactive sign-in, so they use a
-long-lived **agent key** as a Bearer token instead:
+long-lived **agent key** as a Bearer token. One command does the wiring — no
+hand-editing JSON:
 
-1. Visit **https://api.ololand.ai/connect**, sign in, and click **Generate
-   new key** (starts with `olo_agent_sk_`).
-2. Export it in the environment that launches your MCP host:
+1. Get a key at **https://api.ololand.ai/connect** (sign in → **Generate new
+   key**, starts with `olo_agent_sk_`), and export it:
    ```bash
    export OLOLAND_AGENT_KEY=olo_agent_sk_...
    ```
-3. Point your MCP host at the OloLand server **with an Authorization header**
-   (the published plugin manifest is OAuth-native and does not send one, so
-   add it in your own config):
-   ```json
-   {
-     "mcpServers": {
-       "ololand": {
-         "type": "http",
-         "url": "https://api.ololand.ai/mcp",
-         "headers": { "Authorization": "Bearer ${OLOLAND_AGENT_KEY}" }
-       }
-     }
-   }
+2. Run the setup script — it adds the OloLand MCP server to your `.mcp.json`,
+   preserving any servers already there:
+   ```bash
+   "${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh"
    ```
+   The config references `${OLOLAND_AGENT_KEY}` rather than the literal key, so
+   the secret stays in your environment, not on disk. Flags: `--config <path>`
+   targets a different file; `--inline-key` writes the literal key for ephemeral
+   CI that can't set an env var (gitignore that config).
+3. Restart / reconnect your MCP host and run any OloLand command.
+
+(If you're asking Claude to set this up, it can run that script for you.)
+
+<details>
+<summary>Manual config — equivalent to what the script writes</summary>
+
+The published plugin manifest is OAuth-native and sends no header, so add the
+OloLand server to your own MCP config with an Authorization header:
+```json
+{
+  "mcpServers": {
+    "ololand": {
+      "type": "http",
+      "url": "https://api.ololand.ai/mcp",
+      "headers": { "Authorization": "Bearer ${OLOLAND_AGENT_KEY}" }
+    }
+  }
+}
+```
+</details>
 
 The agent key works in every MCP host and never expires until you revoke it.
 
