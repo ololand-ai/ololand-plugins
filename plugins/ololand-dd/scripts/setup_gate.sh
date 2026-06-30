@@ -36,6 +36,6 @@ fi
 cat <<'CTX'
 [ololand-dd] OloLand authenticates via OAuth (one-click sign-in). When you connect the OloLand MCP server, Claude opens a sign-in page at api.ololand.ai — sign in with email or Google and approve. No agent key or manual setup is required for interactive use.
 
-If OloLand tools return 401 ("authentication required"), the server simply isn't connected yet: tell the user to connect/enable the OloLand MCP server in their client and complete the sign-in. Headless/CI users (no browser) instead generate an agent key at api.ololand.ai/connect, then run `${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh` to wire it in one command (see the /setup skill).
+If OloLand tools return 401 ("authentication required"), the server simply isn't connected yet: tell the user to connect/enable the OloLand MCP server in their client and complete the sign-in. Headless/CI users (no browser) instead generate an agent key at https://api.ololand.ai/connect, then run `${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh` to wire it in one command (see the /setup skill).
 CTX
 exit 0
