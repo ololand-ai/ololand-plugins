@@ -29,7 +29,26 @@ config="./.mcp.json"
 key="${OLOLAND_AGENT_KEY:-}"
 inline=0
 
-usage() { sed -n '2,22p' "$0" | sed 's/^#\{0,1\} \{0,1\}//'; }
+usage() {
+  cat <<'EOF'
+OloLand headless / CI setup — one command instead of hand-editing .mcp.json.
+
+Adds the OloLand MCP server to an .mcp.json with a Bearer-token Authorization
+header. By default the header references ${OLOLAND_AGENT_KEY}, so the key stays
+in the environment, not on disk. Interactive users (Claude Desktop / Cowork)
+don't need this — just connect the OloLand server and sign in.
+
+Get a key at https://api.ololand.ai/connect (sign in -> Generate new key).
+
+Usage:
+  setup_headless.sh [--config PATH] [--key olo_agent_sk_...] [--inline-key]
+
+  --config PATH  Target MCP config (default: ./.mcp.json).
+  --key KEY      Agent key. Defaults to $OLOLAND_AGENT_KEY.
+  --inline-key   Write the literal key instead of the ${OLOLAND_AGENT_KEY}
+                 placeholder (ephemeral CI only; gitignore the config).
+EOF
+}
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -44,7 +63,7 @@ while [ $# -gt 0 ]; do
 done
 
 # Validate the key shape when provided — warn, don't hard-fail (keys may evolve).
-if [ -n "$key" ] && ! printf '%s' "$key" | grep -q '^olo_agent_sk_'; then
+if [ -n "$key" ] && [[ "$key" != olo_agent_sk_* ]]; then
   echo "warning: key does not start with 'olo_agent_sk_' — is this an OloLand agent key?" >&2
 fi
 
@@ -59,6 +78,11 @@ else
   auth='Bearer ${OLOLAND_AGENT_KEY}'
 fi
 
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "error: python3 is required to run this script but was not found in PATH" >&2
+  exit 1
+fi
+
 # Idempotent JSON merge via python3 — preserves any other servers + top-level keys.
 CONFIG_PATH="$config" SERVER_NAME="$SERVER_NAME" MCP_URL="$MCP_URL" AUTH="$auth" python3 - <<'PY'
 import json
@@ -70,7 +94,9 @@ name = os.environ["SERVER_NAME"]
 
 data = {}
 if os.path.exists(path):
-    with open(path) as fh:
+    if os.path.isdir(path):
+        sys.exit(f"error: {path} is a directory, not a file")
+    with open(path, encoding="utf-8") as fh:
         raw = fh.read()
     if raw.strip():
         try:
@@ -91,7 +117,7 @@ servers[name] = {
 }
 
 os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)
-with open(path, "w") as fh:
+with open(path, "w", encoding="utf-8") as fh:
     json.dump(data, fh, indent=2)
     fh.write("\n")
 print(f"wrote OloLand MCP server '{name}' -> {path}")
