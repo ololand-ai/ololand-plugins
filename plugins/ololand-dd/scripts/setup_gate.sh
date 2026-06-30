@@ -27,7 +27,7 @@ if [ -n "$key" ]; then
   # A key is set — headless/CI intent. It is only used if the user added an
   # Authorization header to their MCP config; the default manifest is OAuth.
   cat <<'CTX'
-[ololand-dd] OLOLAND_AGENT_KEY is set. Note: the default OloLand MCP server (.mcp.json) is OAuth-native and does NOT read this env var — it is only used in headless/CI setups where you have added an `Authorization: Bearer ${OLOLAND_AGENT_KEY}` header to your own MCP server config. For interactive use (Claude Desktop / Cowork), just connect the OloLand server and sign in; no key needed. See the /setup skill.
+[ololand-dd] OLOLAND_AGENT_KEY is set. Note: the default OloLand MCP server (.mcp.json) is OAuth-native and does NOT read this env var — it is only used in headless/CI setups where the MCP config sends an `Authorization: Bearer ${OLOLAND_AGENT_KEY}` header. If that header isn't wired up yet, run `${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh` to add it in one command (no hand-editing .mcp.json). For interactive use (Claude Desktop / Cowork), just connect the OloLand server and sign in; no key needed. See the /setup skill.
 CTX
   exit 0
 fi
@@ -36,6 +36,6 @@ fi
 cat <<'CTX'
 [ololand-dd] OloLand authenticates via OAuth (one-click sign-in). When you connect the OloLand MCP server, Claude opens a sign-in page at api.ololand.ai — sign in with email or Google and approve. No agent key or manual setup is required for interactive use.
 
-If OloLand tools return 401 ("authentication required"), the server simply isn't connected yet: tell the user to connect/enable the OloLand MCP server in their client and complete the sign-in. Headless/CI users (no browser) instead set OLOLAND_AGENT_KEY and add an Authorization header per the /setup skill.
+If OloLand tools return 401 ("authentication required"), the server simply isn't connected yet: tell the user to connect/enable the OloLand MCP server in their client and complete the sign-in. Headless/CI users (no browser) instead generate an agent key at api.ololand.ai/connect, then run `${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh` to wire it in one command (see the /setup skill).
 CTX
 exit 0
