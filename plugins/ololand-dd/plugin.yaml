@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.20.6
+version: 1.20.7
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -10,9 +10,10 @@ description: >-
   war-game simulation, assumption controls that gate IC approval,
   analytical workbench tools for QoE/compliance/scenarios/earnings, value-impact
   ledger reads, deal-health actions, workbooks, company discovery, watchlists,
-  IC-package lifecycle dispatch, advisory requests, verified forensic screen
-  marketplace support, and a regulator-grade audit trail with replay and
-  compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener,
+  IC-package lifecycle dispatch, advisory requests, external-artifact grading
+  (the Cowork adoption funnel) and cross-document conflict detection, verified
+  forensic screen marketplace support, and a regulator-grade audit trail with
+  replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener,
   war-game-strategist) plus a flywheel that retrains from analyst corrections.
   Counter-positions Anthropic's native private-equity plugin.
 shortDescription: Institutional due diligence for M&A and private equity.

@@ -184,7 +184,8 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/risk-matrix <deal_id>` | Render the 246-category risk taxonomy as an interactive tile |
 | `/risk-report <deal_id>` | Structured risk report — severity × likelihood × velocity, with $-impact |
 | `/valuation <deal_id> [method]` | Run DCF / LBO / Monte Carlo / Comps with strict unit enforcement |
-| `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench |
+| `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench; optional cross-document conflict scan |
+| `/verify <deal_id>` | Defend every number: verify an OloLand artifact against source docs + engine runs, or grade an externally-drafted memo (e.g. from Claude Cowork) per-claim against the deal corpus |
 | `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis |
 | `/scenario-analysis <deal_id> [stress|market|real-options|all]` | Run stress tests, market simulation, and real-options valuation |
 | `/earnings-analysis <deal_id>` | Analyze earnings-call transcript segments for diligence signals |
