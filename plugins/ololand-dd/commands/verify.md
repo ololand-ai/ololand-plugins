@@ -1,5 +1,5 @@
 ---
-description: "Verify every number and citation in an OloLand artifact (CIM paragraph, IC memo, risk narrative, DCF write-up) against the deal's source documents and deterministic engine runs. Runs the four atomic-claim verifiers + optional citation-marker audit + cross-document reconciliation. The 'defend every number, cite every source' button."
+description: "Verify every number and citation in an artifact (CIM paragraph, IC memo, risk narrative, DCF write-up) against a deal's source documents and deterministic engine runs. Works on OloLand-produced artifacts (four atomic-claim verifiers + citation audit + cross-document reconciliation) AND on externally-drafted artifacts — e.g. a memo written in Claude Cowork — via per-claim corpus grading. The 'defend every number, cite every source' button."
 ---
 
 # /verify
@@ -25,6 +25,18 @@ Optional:
 1. Call `mcp__ololand__run_atomic_verifiers` with `deal_id`, `text`, and `include_dcf_arithmetic`.
 2. If the artifact contains any `[N]` markers, also call `mcp__ololand__check_citation_coverage` with the same `deal_id` and `text`. (Detect with a quick regex on the text — `\[\d+\]` excluding `[EK:N]`.)
 3. If the user signals this is an IC memo or final report (i.e., wants a full audit, not just a spot-check), also call `mcp__ololand__reconcile_documents` with `deal_id`. This walks the CPA > tax > management > AI source hierarchy across the deal's stored financial observations.
+
+## Externally-drafted artifacts (e.g. written in Claude Cowork)
+
+The verifiers above are tuned for OloLand-produced text. When the user pastes an artifact **drafted outside OloLand** — a memo written in Claude Cowork, a draft from another tool, a partner's marked-up paragraph — grade it per-claim against the deal's ingested data room instead:
+
+1. Call `mcp__ololand__grade_external_artifact` with `artifact_text`, `deal_id`, and `mode` (`strict` default; `lenient` for early drafts). Optionally pass a `rubric` string to steer what "supported" means.
+2. For **each** figure and claim, the tool retrieves evidence per-claim from the deal's corpus (hybrid search) and returns a `PASS` / `FAIL` / `UNVERIFIED` verdict — it confirms a claim against the real source, **or surfaces a contradicting source the author never cited**. It also returns a content-hashed provenance pack for IC lineage.
+3. Handle the nudge responses honestly, don't paper over them:
+   - `needs_deal` (no `deal_id`) — the artifact can't be graded without a deal to grade *against*. Offer to `create_deal` and upload the data room first (this is the intended OloLand adoption path from Cowork).
+   - `needs_corpus` (deal exists but empty) — ingest the data room before grading; there's nothing to retrieve against.
+
+Prefer `grade_external_artifact` over `run_atomic_verifiers` whenever the text did **not** come from an OloLand tool — it does the per-claim retrieval an external artifact needs, and it's the surface that turns a Cowork draft into a source-linked, IC-defensible one.
 
 ## Output
 
@@ -57,6 +69,7 @@ If the artifact is going into IC or a regulator-facing deliverable and the verdi
 - During a partner review when a number "looks off".
 - As a pre-commit check on AI-generated risk narratives before they land in `analyst_corrections`.
 - Mid-conversation, after any agent finishes generating a deal-bound artifact — `/verify` it against the same deal.
+- On a memo or analysis **drafted in Claude Cowork or another tool** — grade it against the deal's data room to turn unsourced prose into source-linked, IC-defensible claims (uses `grade_external_artifact`).
 
 ## When NOT to use this
 
