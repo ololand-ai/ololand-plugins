@@ -42,6 +42,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/watchlist` | Create and inspect continuous monitoring watchlists |
 | `/advisory` | Request or inspect buyer-side advisory engagements |
 | `/managed-context-agent` | Launch a configured managed context agent when enabled |
+| `/managed-agent` | Run a cloud-hosted deal specialist (risk, forensic QoE, pre-LOI screen, financing prep, IC memo, or the parallel IC coordinator) asynchronously with full run provenance |
 | `/okf-export` | Export a machine-readable OKF deal bundle |
 | `/unit-economics` | Cohort analysis, CAC payback, NDR, LTV:CAC, magic number — for SaaS and services targets |
 | `/similar-deals` | Cross-deal pattern match against your firm's closed deals with outcome accuracy |
