@@ -26,10 +26,12 @@ Generate a Confidential Information Memorandum (CIM) — the sell-side marketing
 
 ## Execution
 
-1. Call `generate_cim(deal_id, sections=<optional list>)` from the MCP server. This is a long-running operation — it returns a `task_id`, not the CIM itself.
-2. Tell the user generation has started and poll `check_task_status(task_id)` every ~5 seconds until the status is `success` or `failure`. A full 14-section CIM typically takes 30-90 seconds (platform data aggregation, then targeted market research for gaps, then section synthesis).
-3. On success, the task result includes the `cim_id`, `sections_count`, and `word_count`.
-4. On failure, surface the error from the task result — do not retry silently more than once.
+1. If the user asked for specific sections, map each user-phrased name to its exact snake_case identifier from the 14-section list below before calling the tool (e.g. "Executive Summary" → `executive_summary`, "risk section" → `risk_factors`, "financials" → `financial_performance` and/or `financial_projections` — confirm with the user when ambiguous). Only these identifiers are valid `sections` values; the backend silently drops anything else.
+2. Call `generate_cim(deal_id, sections=<optional list>)` from the MCP server. This is a long-running operation — it returns a `task_id`, not the CIM itself.
+3. Tell the user generation has started and poll `check_task_status(task_id)` every ~5 seconds, up to a maximum of ~24 attempts (~2 minutes), until the status is `success` or `failure`. A full 14-section CIM typically takes 30-90 seconds (platform data aggregation, then targeted market research for gaps, then section synthesis).
+4. If the task is still pending after the polling budget, stop polling — do not loop indefinitely. Tell the user generation continues server-side, give them the `task_id`, and invite them to ask again in a minute (you'll re-check with `check_task_status(task_id)`); the finished CIM also appears in the deal workspace regardless.
+5. On success, the task result includes the `cim_id`, `sections_count`, and `word_count`.
+6. On failure, surface the error from the task result — do not retry silently more than once.
 
 ## The 14 sections
 
