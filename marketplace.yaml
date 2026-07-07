@@ -17,3 +17,4 @@ plugins:
   - ololand-dd
   - ololand-compliance-hooks
   - ololand-forensic-qoe
+  - cim-generator
