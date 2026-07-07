@@ -1,0 +1,46 @@
+{
+  "name": "cim-generator",
+  "version": "1.0.0",
+  "description": "Generates 14-section Confidential Information Memorandums (CIMs) — the sell-side marketing document used in M&A to present a target company to potential buyers — from OloLand's reconciled deal data instead of LLM prose. Every section is built from the deal's financial snapshots, knowledge-graph risk/opportunity insights, and market research already on the platform; missing inputs are marked as explicit data gaps rather than invented. View, edit, and export the finished CIM to PDF, DOCX, or PPTX from the deal workspace.",
+  "author": {
+    "name": "OloLand",
+    "email": "support@ololand.ai",
+    "url": "https://ololand.ai"
+  },
+  "homepage": "https://ololand.ai",
+  "repository": "https://github.com/ololand-ai/ololand-plugins",
+  "license": "Apache-2.0",
+  "keywords": [
+    "cim",
+    "m-and-a",
+    "sell-side",
+    "memorandum",
+    "investment-banking",
+    "due-diligence",
+    "private-equity"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "OloLand CIM Generator",
+    "shortDescription": "14-section CIM generator, built from your reconciled deal data.",
+    "longDescription": "Generates 14-section Confidential Information Memorandums (CIMs) — the sell-side marketing document used in M&A to present a target company to potential buyers — from OloLand's reconciled deal data instead of LLM prose. Every section is built from the deal's financial snapshots, knowledge-graph risk/opportunity insights, and market research already on the platform; missing inputs are marked as explicit data gaps rather than invented. View, edit, and export the finished CIM to PDF, DOCX, or PPTX from the deal workspace.",
+    "developerName": "OloLand",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write",
+      "Interactive"
+    ],
+    "websiteURL": "https://ololand.ai",
+    "privacyPolicyURL": "https://ololand.ai/privacy",
+    "termsOfServiceURL": "https://ololand.ai/terms",
+    "defaultPrompt": [
+      "Generate a CIM for this deal.",
+      "Check the status of my CIM generation.",
+      "Generate a CIM covering only the financial sections."
+    ],
+    "brandColor": "#0369A1",
+    "screenshots": []
+  }
+}
