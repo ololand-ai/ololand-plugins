@@ -5,3 +5,4 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 python3 "$repo_root/scripts/generate-plugin-artifacts.py" --check
 python3 "$repo_root/scripts/check-mcp-tool-refs.py"
+python3 "$repo_root/scripts/check-plugin-size.py"
