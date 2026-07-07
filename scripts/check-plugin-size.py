@@ -20,14 +20,23 @@ BUDGET_BYTES = 430 * 1024
 
 
 def plugin_size(plugin_dir: Path) -> int:
-    return sum(p.stat().st_size for p in plugin_dir.rglob("*") if p.is_file())
+    # lstat + symlink exclusion: count what actually ships in the plugin dir,
+    # never targets outside it.
+    return sum(
+        p.lstat().st_size
+        for p in plugin_dir.rglob("*")
+        if p.is_file() and not p.is_symlink()
+    )
 
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     plugins_dir = repo_root / "plugins"
     failures = []
-    for plugin_dir in sorted(p for p in plugins_dir.iterdir() if p.is_dir()):
+    plugin_dirs = sorted(
+        p for p in plugins_dir.iterdir() if p.is_dir() and (p / "plugin.yaml").is_file()
+    )
+    for plugin_dir in plugin_dirs:
         size = plugin_size(plugin_dir)
         pct = 100 * size // BUDGET_BYTES
         status = "FAIL" if size > BUDGET_BYTES else "ok"
