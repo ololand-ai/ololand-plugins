@@ -18,10 +18,10 @@ export OLOLAND_AGENT_KEY="olo_agent_sk_..."
 ### 1. Add the OloLand plugin marketplace
 
 ```bash
-codex plugin marketplace add ololand-ai/ololand-plugins --ref staging
+codex plugin marketplace add ololand-ai/ololand-plugins
 ```
 
-> **Note on `--ref staging`:** required until the Codex marketplace artifacts merge to `main`. Once merged, drop the flag — see "After GA" at the bottom of this doc.
+> The Codex marketplace artifacts live on `main` (the default branch), so no `--ref` flag is needed. If you installed during the pre-GA window with `--ref staging`, remove that marketplace source and re-add it without the flag — the `staging` branch is retired and no longer updated.
 
 ### 2. Enable the plugins in `~/.codex/config.toml`
 
@@ -76,16 +76,6 @@ Expected: Codex calls `ololand.list_deals` and returns your OloLand deals.
 | **`ololand-forensic-qoe`** | Pre-LOI Forensic Screen wedge (Beneish, Benford, EBITDA bridge, journal-entry, lapping, covenant cascade). $99 / 72-hour SLA with Full QoE at $999, vs Big-4 QoE $150-500K / 4-8 weeks. |
 | **`ololand-compliance-hooks`** | MNPI guard (PreToolUse), citation enforcer (PostToolUse on memo/CIM/dossier), audit log, tier-capacity warning, evidence-quality warning. Drops into Codex's hooks scaffold the same way it drops into Claude's. |
 
-## After GA
-
-Once the Codex marketplace artifacts merge to `main`, drop `--ref staging`:
-
-```bash
-codex plugin marketplace add ololand-ai/ololand-plugins
-```
-
-The rest of the install sequence is unchanged.
-
 ## Troubleshooting
 
 | Symptom | Likely cause | Fix |
@@ -93,7 +83,7 @@ The rest of the install sequence is unchanged.
 | `codex mcp list` shows ololand as `disabled` | Bearer-token env var not set or empty | `export OLOLAND_AGENT_KEY="olo_agent_sk_..."` then restart Codex |
 | `Unauthorized` errors on tool calls | Agent key expired or revoked | Generate a new key at [`app.ololand.ai/settings/agent-keys`](https://app.ololand.ai/settings/agent-keys) |
 | Plugin commands not loading | `config.toml` block missing or not in `~/.codex/config.toml` | Re-add the `[plugins."ololand-*@ololand-plugins"]` entries |
-| `Could not fetch marketplace` | `--ref staging` flag missing (during staging window) | Re-run step 1 with `--ref staging` |
+| `Could not fetch marketplace` | Marketplace source pinned to the retired `staging` branch | `codex plugin marketplace remove ololand-plugins && codex plugin marketplace add ololand-ai/ololand-plugins` |
 
 ## Related
 
