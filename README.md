@@ -13,7 +13,7 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.21.1 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.22.0 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
 | [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.1 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.2 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.0.0 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
@@ -194,10 +194,11 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/ic-package <deal_id> [status|generate|approve]` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
 | `/value-impact <deal_id|company|preview>` | Review or preview the deal/firm value-impact ledger |
 | `/deal-health <deal_id> [actions|create-action]` | Summarize deal health, open actions, and meeting blockers |
-| `/workbook <deal_id|workbook_id> [list|get|create]` | List, read, or create deal-scoped analysis workbooks |
+| `/workbook [list|get|create|templates|generate|extraction] <deal_id|workbook_id>` | List, read, create, or template-populate deal-scoped analysis workbooks |
 | `/company-discovery <query>` | Search the company-discovery surface from natural-language or structured criteria |
 | `/watchlist [list|create|matches|promote]` | Create and inspect continuous monitoring watchlists |
 | `/advisory <deal_id> [list|request]` | Request or inspect buyer-side advisory engagements |
+| `/financing <deal_id> [status|analyze|sourcing|lender-package]` | Acquisition-financing prep — deterministic analysis, provider-sourcing prep, lender pre-read packages |
 | `/managed-context-agent <deal_id> <agent_key>` | Launch a configured managed context agent when enabled |
 | `/okf-export <deal_id>` | Export a machine-readable OKF deal bundle |
 | `/war-game <deal_id> [scenarios]` | 16-quarter MaskablePPO competitive simulation across scenarios |
