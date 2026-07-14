@@ -42,7 +42,7 @@ S-1 ingestion path — it does, for public filings.
 ```
 1. Document ingestion → Extract financials, contracts, legal docs (10-K or ingested S-1)
 2. Financial validation → Cross-document reconciliation (CIM vs audited vs management)
-3. Risk extraction → 67-category taxonomy (311 risk factors) with severity scoring (1-5)
+3. Risk extraction → 67-category taxonomy (311 risk factors) with severity scoring (1-10)
 4. Forensic QoE → Beneish M-Score, Benford's Law, EBITDA bridge
 5. Valuation → DCF + LBO + Monte Carlo (deterministic engines)
 6. Cross-deal learning → Similar deal patterns, accuracy calibration
