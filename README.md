@@ -194,7 +194,7 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/ic-package <deal_id> [status|generate|approve]` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
 | `/value-impact <deal_id|company|preview>` | Review or preview the deal/firm value-impact ledger |
 | `/deal-health <deal_id> [actions|create-action]` | Summarize deal health, open actions, and meeting blockers |
-| `/workbook <deal_id|workbook_id> [list|get|create|templates|generate|extraction]` | List, read, create, or template-populate deal-scoped analysis workbooks |
+| `/workbook [list|get|create|templates|generate|extraction] <deal_id|workbook_id>` | List, read, create, or template-populate deal-scoped analysis workbooks |
 | `/company-discovery <query>` | Search the company-discovery surface from natural-language or structured criteria |
 | `/watchlist [list|create|matches|promote]` | Create and inspect continuous monitoring watchlists |
 | `/advisory <deal_id> [list|request]` | Request or inspect buyer-side advisory engagements |

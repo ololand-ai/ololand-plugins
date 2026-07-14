@@ -11,9 +11,9 @@ Use this command when the user asks "how do I finance this acquisition?", "what 
 
 ```
 /financing <deal_id>                    # status of the deal's financing workflow
-/financing <deal_id> analyze [scenario] # run a deterministic financing analysis (base|upside|downside)
-/financing <deal_id> sourcing           # prepare capital-provider sourcing from the latest analysis
-/financing <deal_id> lender-package     # prepare an internal lender pre-read package
+/financing <deal_id> analyze [scenario] [lbo_run_id]   # deterministic financing analysis (base|upside|downside)
+/financing <deal_id> sourcing [amount] [provider_types] # provider sourcing from the latest (or a named) analysis
+/financing <deal_id> lender-package [provider_match_ids] # internal lender pre-read package
 ```
 
 ## Execution
