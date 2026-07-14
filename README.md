@@ -409,7 +409,7 @@ For the full positioning, see [the comparison page](https://ololand.ai/compare/v
 
 Each plugin lives under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, README, and contents. The marketplace catalog at `.claude-plugin/marketplace.json` is the single source of truth for what's published.
 
-Develop on `staging`, push to `origin/staging`, open a PR into `main`. Both `ololand-ai/olo5` and `ololand-ai/ololand-plugins` use **rebase merge only** to keep history linear.
+Branch from `origin/main`, open a PR into `main` (operator ruling 2026-07-14: this repo is **main-only** — it has no staging environment, so unlike `ololand-ai/olo5` there is no staging branch in the flow; the old `staging` branch is retired and stale). The repo allows **merge commits only** (rebase/squash disabled).
 
 To bump a plugin version, update both the plugin's `plugin.json` AND the marketplace.json entry — `scripts/check-version-sync.sh` (run pre-commit) will fail the commit if they drift.
 
