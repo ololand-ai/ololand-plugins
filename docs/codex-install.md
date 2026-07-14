@@ -83,7 +83,7 @@ Expected: Codex calls `ololand.list_deals` and returns your OloLand deals.
 | `codex mcp list` shows ololand as `disabled` | Bearer-token env var not set or empty | `export OLOLAND_AGENT_KEY="olo_agent_sk_..."` then restart Codex |
 | `Unauthorized` errors on tool calls | Agent key expired or revoked | Generate a new key at [`app.ololand.ai/settings/agent-keys`](https://app.ololand.ai/settings/agent-keys) |
 | Plugin commands not loading | `config.toml` block missing or not in `~/.codex/config.toml` | Re-add the `[plugins."ololand-*@ololand-plugins"]` entries |
-| `Could not fetch marketplace` | Marketplace source pinned to the retired `staging` branch | `codex plugin marketplace remove ololand-plugins`, then re-add without `--ref` |
+| `Could not fetch marketplace` | Marketplace source pinned to the retired `staging` branch | `codex plugin marketplace remove ololand-plugins && codex plugin marketplace add ololand-ai/ololand-plugins` |
 
 ## Related
 
