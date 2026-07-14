@@ -37,10 +37,11 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/ic-package` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
 | `/value-impact` | Review or preview the deal/firm value-impact ledger |
 | `/deal-health` | Summarize deal health, open actions, and meeting blockers |
-| `/workbook` | List, read, or create deal-scoped analysis workbooks |
+| `/workbook` | List, read, create, or template-populate deal-scoped analysis workbooks |
 | `/company-discovery` | Search company discovery from natural-language or structured criteria |
 | `/watchlist` | Create and inspect continuous monitoring watchlists |
 | `/advisory` | Request or inspect buyer-side advisory engagements |
+| `/financing` | Acquisition-financing prep — deterministic analysis, provider-sourcing prep, lender pre-read packages |
 | `/managed-context-agent` | Launch a configured managed context agent when enabled |
 | `/managed-agent` | Run a cloud-hosted deal specialist (risk, forensic QoE, pre-LOI screen, financing prep, IC memo, or the parallel IC coordinator) asynchronously with full run provenance |
 | `/okf-export` | Export a machine-readable OKF deal bundle |

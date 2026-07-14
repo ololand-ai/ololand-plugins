@@ -26,7 +26,8 @@ Run a comprehensive due diligence analysis on a deal using OloLand's institution
    - Cross-document reconciliation with source hierarchy
    - Forensic QoE analysis (Beneish M-Score, Benford's Law)
 3. Monitor progress with `check_task_status`.
-4. When complete, summarize findings using `get_deal_summary_tiles`.
+4. For a canonical Full Analysis run, `mcp__ololand__get_analysis_run_status(deal_id)` returns compact status and provenance — which stages committed, artifact lineage, and the post-run managed review verdict when one exists. Use it when the user asks "did the full analysis finish?" or "what did the last full analysis produce?" without a task id in hand (optionally pass `analysis_run_id` for a specific run).
+5. When complete, summarize findings using `get_deal_summary_tiles`.
 
 ## After Completion
 
