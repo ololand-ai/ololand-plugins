@@ -1,10 +1,10 @@
 name: ololand-dd
-version: 1.21.0
+version: 1.21.1
 displayName: OloLand DD
 category: Productivity
 description: >-
   Institutional due diligence for Claude — deterministic DCF / LBO / Monte
-  Carlo / Real Options engines, 246-category risk taxonomy with SaaS /
+  Carlo / Real Options engines, 311-factor risk taxonomy (67 diligence categories) with SaaS /
   healthcare / real-estate / industrial overlays, forensic QoE primitives,
   cross-document reconciliation (CPA > tax > management > AI), MaskablePPO
   war-game simulation, assumption controls that gate IC approval,

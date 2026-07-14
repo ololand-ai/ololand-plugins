@@ -39,7 +39,7 @@ The forensic engine auto-detects which primitives have sufficient input and skip
 
 Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We sell it standalone, pre-LOI, with full methodology disclosure, and offer a $999 Full QoE workflow when the buyer wants a deeper package.
 
-For the broader OloLand DD plugin (deterministic DCF/LBO, 246-category risk taxonomy, cross-deal memory), install [`ololand-dd`](../ololand-dd) from the same marketplace.
+For the broader OloLand DD plugin (deterministic DCF/LBO, 311-factor risk taxonomy, cross-deal memory), install [`ololand-dd`](../ololand-dd) from the same marketplace.
 
 For the comparison vs. Big-4 QoE, see [ololand.ai/compare/vs-big-4-qoe](https://ololand.ai/compare/vs-big-4-qoe).
 

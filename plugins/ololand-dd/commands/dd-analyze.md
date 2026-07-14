@@ -22,7 +22,7 @@ Run a comprehensive due diligence analysis on a deal using OloLand's institution
 1. Verify the deal exists using the `get_deal` MCP tool.
 2. Run `run_due_diligence` with the specified scope. This triggers a multi-agent analysis:
    - Financial statement extraction and validation
-   - Risk extraction across 246 categories (5 dimensions: HR, Legal, Tech, Commercial, Financial)
+   - Risk extraction across 67 categories / 311 risk factors (5 dimensions: HR, Legal, Tech, Commercial, Financial)
    - Cross-document reconciliation with source hierarchy
    - Forensic QoE analysis (Beneish M-Score, Benford's Law)
 3. Monitor progress with `check_task_status`.

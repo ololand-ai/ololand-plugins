@@ -6,7 +6,7 @@ owner:
 description: >-
   OloLand's plugin marketplace for Claude Code and Claude Cowork. Institutional
   buy-side underwriting depth on top of Anthropic's finance plugin lineup:
-  deterministic financial engines, 246-category risk taxonomy, forensic QoE
+  deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), forensic QoE
   primitives, cross-deal learning, and the compliance hooks Anthropic's vertical
   plugins ship empty.
 codex:

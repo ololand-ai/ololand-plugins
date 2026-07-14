@@ -1,10 +1,10 @@
 ---
-description: Generate a structured risk report for a deal — 246-category taxonomy with severity scoring, evidence links, and institutional patterns from similar deals.
+description: Generate a structured risk report for a deal — 67-category taxonomy (311 tracked risk factors) with severity scoring, evidence links, and institutional patterns from similar deals.
 ---
 
 # Risk Report
 
-Generate a comprehensive risk assessment using OloLand's 246-category risk taxonomy.
+Generate a comprehensive risk assessment using OloLand's institutional risk taxonomy — 311 risk factors across 67 categories.
 
 ## Usage
 

@@ -88,7 +88,7 @@ The PDF includes 7 sections:
    lapping detection
 5. **Scenario Defense Insert** — P10/P50/P90 IRR distribution + covenant
    cascade graph + top-3 falsifying scenarios (Pillar 2)
-6. **Risk Taxonomy** — top 10 of 246 risk-taxonomy hits, severity-ordered
+6. **Risk Taxonomy** — top 10 risk-taxonomy hits (of 311 tracked risk factors), severity-ordered
 7. **Methodology + Provenance** — methodology footer with input hash and
    model versions for reproducibility
 

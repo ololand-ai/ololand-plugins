@@ -57,5 +57,5 @@ Don't call `create_deal` first when the query could match multiple companies —
 Suggested next steps to offer the user:
 - `/dd-analyze <deal_id>` — run full due diligence once the 10-K (or ingested S-1) finishes processing.
 - `/valuation <deal_id>` — DCF / LBO / Monte Carlo.
-- `/risk-report <deal_id>` — 246-category risk taxonomy breakdown.
+- `/risk-report <deal_id>` — risk taxonomy breakdown (67 categories / 311 risk factors).
 - `/talk-to-deal <deal_id> "<question>"` — voice-optimized Q&A on the deal.

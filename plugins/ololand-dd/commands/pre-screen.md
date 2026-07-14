@@ -82,7 +82,7 @@ UNLIKE `/ic-memo-skeptical`, MC numerics belong in the BODY of the public brief,
 
 ### Step 6-Public — Pull deal indicators
 
-`get_deal_indicators(deal_id)` + `render_risk_matrix_tile(deal_id)`. Report severity counts (high / medium / low), top 3-5 risk categories, 246-taxonomy concentration.
+`get_deal_indicators(deal_id)` + `render_risk_matrix_tile(deal_id)`. Report severity counts (high / medium / low), top 3-5 risk categories, taxonomy concentration (67 categories).
 
 ### Step 7-Public — Forensic Screen skip
 

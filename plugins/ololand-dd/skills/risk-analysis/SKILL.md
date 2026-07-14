@@ -1,11 +1,11 @@
 ---
 name: risk-analysis
-description: Use when analyzing risks for M&A deals, evaluating risk severity, quantifying financial impact of risks, or building risk matrices. Provides the 246-category institutional risk taxonomy with forensic QoE methodology.
+description: Use when analyzing risks for M&A deals, evaluating risk severity, quantifying financial impact of risks, or building risk matrices. Provides the institutional risk taxonomy (311 risk factors across 67 categories) with forensic QoE methodology.
 ---
 
 # Risk Analysis Framework
 
-## 246-Category Risk Taxonomy
+## Risk Taxonomy: 311 Risk Factors Across 67 Categories
 
 ### Commercial Risks
 Market position, competitive dynamics, customer concentration (top 10 revenue share), revenue sustainability (recurring vs one-time), pricing power, channel dependency, regulatory exposure, supply chain, geographic concentration.

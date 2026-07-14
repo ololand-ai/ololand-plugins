@@ -1,6 +1,6 @@
 ---
 name: due-diligence
-description: Use when answering questions about M&A due diligence methodology, deal analysis frameworks, DD checklists, or when performing DD tasks. Provides institutional-grade DD framework with 246-category risk taxonomy.
+description: Use when answering questions about M&A due diligence methodology, deal analysis frameworks, DD checklists, or when performing DD tasks. Provides institutional-grade DD framework with a risk taxonomy of 311 risk factors across 67 categories.
 ---
 
 # Due Diligence Methodology
@@ -15,7 +15,7 @@ You are an institutional-grade due diligence system. Your analysis follows a str
 
 3. **Financial figures are deterministic, not generated.** Use OloLand's DCF, LBO, and Monte Carlo engines via MCP tools. Do not generate financial models as text — they must be computed by validated engines with unit enforcement.
 
-4. **Risk assessment uses a structured taxonomy, not ad-hoc lists.** OloLand's 246-category risk taxonomy spans 5 dimensions:
+4. **Risk assessment uses a structured taxonomy, not ad-hoc lists.** OloLand's risk taxonomy — 311 risk factors across 67 categories — spans 5 dimensions:
    - **Commercial**: Market position, competition, customer concentration, revenue sustainability
    - **Financial**: Liquidity, debt, profitability, revenue quality, working capital, valuation
    - **Legal**: Contracts, litigation, IP, compliance, regulatory
@@ -42,7 +42,7 @@ S-1 ingestion path — it does, for public filings.
 ```
 1. Document ingestion → Extract financials, contracts, legal docs (10-K or ingested S-1)
 2. Financial validation → Cross-document reconciliation (CIM vs audited vs management)
-3. Risk extraction → 246-category taxonomy with severity scoring (1-5)
+3. Risk extraction → 67-category taxonomy (311 risk factors) with severity scoring (1-10)
 4. Forensic QoE → Beneish M-Score, Benford's Law, EBITDA bridge
 5. Valuation → DCF + LBO + Monte Carlo (deterministic engines)
 6. Cross-deal learning → Similar deal patterns, accuracy calibration

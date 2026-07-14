@@ -1,16 +1,16 @@
 ---
 name: risk-taxonomy
-description: Use when assessing, categorizing, or quantifying deal risks — OloLand uses a 246-category institutional risk taxonomy across five dimensions; every surfaced risk must be classified per this framework and quantified rather than left as narrative.
+description: Use when assessing, categorizing, or quantifying deal risks — OloLand uses an institutional risk taxonomy of 311 risk factors across 67 categories in five dimensions; every surfaced risk must be classified per this framework and quantified rather than left as narrative.
 ---
 
-# 246-Category Risk Taxonomy
+# Risk Taxonomy — 311 Risk Factors Across 67 Categories
 
 Every risk surfaced from a deal must be classified along five dimensions. Narrative-only risk lists fail the verifier-stack standard.
 
 ## The five dimensions
 
 1. **Risk family** — one of: Financial, Commercial, Operational, Legal/Regulatory, Strategic
-2. **Risk category** — the specific subcategory within the family (one of the 246 leaf categories — full taxonomy is part of the OloLand backend; representative subset below)
+2. **Risk category** — the specific subcategory within the family (one of the 311 leaf risk factors, grouped into 67 categories — full taxonomy is part of the OloLand backend; representative subset below)
 3. **Severity** — Low (1-3), Medium (4-6), High (7-8), Deal-Killer (9-10) on a 10-point scale
 4. **Likelihood** — Probability the risk materializes during a 3-year hold (Low / Medium / High)
 5. **Financial impact** — Estimated dollar impact band: `<$1M` / `$1-5M` / `$5-25M` / `$25-100M` / `>$100M`
@@ -49,7 +49,7 @@ Every risk surfaced should look like this:
   Source: 10-K p.14, Risk Factors
 ```
 
-Never surface a risk without categorization. If you cannot classify a risk, the right output is "I observed a potential risk but could not classify it under the 246-category framework. The category that may apply is X; the missing input that would let me classify it is Y."
+Never surface a risk without categorization. If you cannot classify a risk, the right output is "I observed a potential risk but could not classify it under the 67-category framework. The category that may apply is X; the missing input that would let me classify it is Y."
 
 ## Quantification over narrative
 
