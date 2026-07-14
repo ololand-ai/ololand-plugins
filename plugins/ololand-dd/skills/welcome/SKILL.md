@@ -17,7 +17,7 @@ You're connected to OloLand's M&A intelligence engine — 44 tools for instituti
 **Run analysis:**
 - `/dd-analyze` — Full due diligence workflow (risk + valuation + forensic)
 - `/valuation` — DCF, LBO, Monte Carlo, comps
-- `/risk-report` — 246-category risk assessment
+- `/risk-report` — risk assessment across 67 categories / 311 risk factors
 - `/similar-deals` — Find comparable transactions from deal history
 - `/war-game` — Competitive strategy simulation
 

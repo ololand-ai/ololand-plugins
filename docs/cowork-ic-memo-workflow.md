@@ -56,7 +56,7 @@ Goal: turn a raw VDR — sometimes thousands of documents — into structured, s
 
 - **Smart-chunking with post-chunk table classification** — financial-statement tables aren't naively split mid-cell
 - **Cross-document reconciliation** with a hard source hierarchy: CPA audited > tax return > management model > AI extracted. When numbers conflict, the higher-authority source wins; conflicts surface as risks rather than getting silently averaged.
-- **Fine-tuned Qwen 3 4B risk extractor** on Vertex AI (model-first, Claude fallback) → feeds the 246-category risk taxonomy
+- **Fine-tuned Qwen 3 4B risk extractor** on Vertex AI (model-first, Claude fallback) → feeds the risk taxonomy (67 categories / 311 risk factors)
 - **Per-extraction provenance attached:** `evidence_strength`, `source_excerpt`, `file_name`, page references — populates the evidence pack the IC approval gate later reads
 
 **Source connectors that FEED OloLand's pipeline (these are inputs, not the pipeline):**
@@ -82,12 +82,12 @@ Goal: build defensible valuations grounded in extracted financials.
 
 ### Phase 4 — Forensic QoE + risk
 
-Goal: catch earnings-quality red flags and surface the 246-category risk register with evidence-graded probabilities.
+Goal: catch earnings-quality red flags and surface the risk register (67 categories / 311 tracked risk factors) with evidence-graded probabilities.
 
 | Tool | Role |
 |---|---|
 | **ololand-forensic-qoe** | Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, covenant-cascade analysis. **The Pre-LOI Forensic Screen wedge** — $99 / 72-hour SLA, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks |
-| **ololand-dd: `get_deal_risks`** | 246-category risk taxonomy with `probability_source` / `probability_confidence` / `probability_rendering` (qualitative vs numeric) |
+| **ololand-dd: `get_deal_risks`** | risk taxonomy (67 categories / 311 risk factors) with `probability_source` / `probability_confidence` / `probability_rendering` (qualitative vs numeric) |
 | **ololand-dd: `get_evidence_links`** | Risk → source document mapping |
 | **ololand-dd: `analyze_forensic_qoe`** | Aggregated forensic findings tile |
 | Moody's / D&B Risk Analytics | External credit signal (optional) |

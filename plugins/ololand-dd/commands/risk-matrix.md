@@ -1,5 +1,5 @@
 ---
-description: Render the 246-category risk matrix as an interactive inline tile.
+description: Render the 67-category risk matrix (311 tracked risk factors) as an interactive inline tile.
 ---
 
 You have access to the `render_risk_matrix_tile` MCP tool from the OloLand server.

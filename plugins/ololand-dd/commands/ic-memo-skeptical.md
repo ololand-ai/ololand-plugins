@@ -34,7 +34,7 @@ Call each of these individually. Do NOT call `run_due_diligence`. The point of t
 
 - `export_deal_dossier(deal_id)` — financial snapshot, comparable companies, precedent transactions, deal metadata. Inspect `failed_sources`: if non-empty, name those gaps in the memo.
 - `get_dcf_valuation(deal_id)` — DCF enterprise value, equity value, WACC, terminal growth. Note whether the run uses a Gordon Growth perpetuity or a transaction-multiple exit; both are valid but produce different EVs.
-- `render_risk_matrix_tile(deal_id)` and `get_deal_indicators(deal_id)` — 246-category risk concentration + deal health score. Do NOT paste the raw 85+ risk count; use the ranked clusters that come back in the tile.
+- `render_risk_matrix_tile(deal_id)` and `get_deal_indicators(deal_id)` — risk-taxonomy concentration (67 categories / 311 risk factors) + deal health score. Do NOT paste the raw 85+ risk count; use the ranked clusters that come back in the tile.
 - `analyze_forensic_qoe(deal_id)` — Beneish M-Score, Benford's Law, EBITDA bridge, lapping detection. For each primitive, classify the output as `[finding]` (engine ran, result computed) or `[gap]` (status in `{insufficient_data, insufficient_sample, not_reliable, unavailable, not_computed}` — diligence ask, not clean bill of health).
 - `find_similar_deals(deal_id)` — institutional memory check. If the response is `status: "no_usable_corpus"`, say so explicitly; do not fabricate a cohort.
 

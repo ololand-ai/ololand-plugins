@@ -2,7 +2,7 @@
 
 The underwriting layer inside Claude. Every hour of your diligence survives into the deal record.
 
-Anthropic's native `private-equity` plugin ships DD checklists, memo drafts, and unit-economics prompts — the scaffold. OloLand ships the institutional layer on top: deterministic financial engines, a 246-category risk taxonomy, forensic quality of earnings, cross-document reconciliation with source hierarchy, and a model fine-tuned on your firm's own deal history.
+Anthropic's native `private-equity` plugin ships DD checklists, memo drafts, and unit-economics prompts — the scaffold. OloLand ships the institutional layer on top: deterministic financial engines, a risk taxonomy of 311 risk factors across 67 diligence categories, forensic quality of earnings, cross-document reconciliation with source hierarchy, and a model fine-tuned on your firm's own deal history.
 
 ## Install
 
@@ -27,7 +27,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/pre-screen` | Pre-NDA public-company screen — creates the deal, ingests filings only (no web, no news, no merger filings), extracts risks, runs Monte Carlo, outputs a 1-page brief with Pass / Pursue-to-NDA / More-Data recommendation |
 | `/dd-analyze` | Full due diligence pipeline — extract → reconcile → risk → DCF / LBO / MC / real options → forensic QoE → investment memo |
 | `/ic-memo-skeptical` | Stage-2 IC memo composed via skeptical tile-stitching with public-facts freshness gate, citation audit, and explicit gap-vs-finding framing — preferred memo entry point as of 2026-05-12 |
-| `/risk-report` | 246-category risk matrix with evidence links, dollar quantification, and industry overlays |
+| `/risk-report` | Risk matrix across 67 diligence categories (311 tracked risk factors) with evidence links, dollar quantification, and industry overlays |
 | `/valuation` | Deterministic DCF, multi-tranche LBO, 10,000-path Monte Carlo, comparable transactions, real options |
 | `/qoe-analysis` | Deal-scoped QoE workbench: latest cached result or fresh revenue quality, EBITDA bridge, and working-capital analysis |
 | `/compliance-analysis` | OFAC, HSR, and CFIUS analysis using the deal's context-aware compliance workbench |
@@ -63,7 +63,7 @@ OloLand + Claude is the one-two punch.
 Before Claude sees a single token, OloLand has already:
 
 - **Ingested every document** into a hybrid vector + sparse index with Anthropic's Contextual Retrieval method (67% fewer failed retrievals)
-- **Classified risk** across a 246-category taxonomy using a fine-tuned Qwen 3 4B model on Vertex AI
+- **Classified risk** across a 67-category / 311-factor taxonomy using a fine-tuned Qwen 3 4B model on Vertex AI
 - **Reconciled every number** with a source hierarchy (CPA-audited > tax return > management model > AI-extracted) and flagged >2% spreads
 - **Built a knowledge graph** linking entities, covenants, and claims across the corpus
 - **Run forensic QoE** — Beneish M-Score, Benford's Law, EBITDA bridge, revenue quality, journal entry testing, lapping detection
@@ -116,7 +116,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 |------|-------|-----|
 | **Developer** | Free | Sample-deal access and developer testing |
 | **Pro** | $199/mo | Associate or VP running deals weekly |
-| **Firm** | $800/seat/mo | Institutional GP — SSO, audit logs, playbook enforcement |
+| **Team** | $499/mo | 2 seats included, +$199/additional seat — SSO, audit logs, playbook enforcement |
 | **Enterprise** | Custom | Multi-fund, VDR integration, data residency |
 | **Pre-LOI Forensic Screen** | $99/deal | 72-hour verified forensic screen workflow |
 | **Full QoE** | $999/deal | Deeper quality-of-earnings package |
