@@ -1,11 +1,12 @@
 ---
-description: Source deals — discover targets, enrich contacts, dedupe against CRM, and draft personalized founder outreach.
+description: Source deals — discover and persist targets, capture supported contacts, and prepare outreach copy for review.
 argument-hint: "[criteria, e.g. 'industrial services in Texas $10-50M EBITDA']"
 ---
 
 # Deal Sourcing
 
-End-to-end sourcing pipeline that compounds: every sourced company persists as a lead in the system of record, so the next run dedupes and outcomes feed the flywheel.
+End-to-end sourcing pipeline that compounds: every selected company persists in
+the tenant-owned sourcing ledger before contact enrichment or outreach begins.
 
 ## Usage
 
@@ -19,28 +20,57 @@ If no criteria provided, ask the user for sector, geography, size band (revenue 
 
 Load the `deal-sourcing` skill, then run this pipeline:
 
-1. **Discover targets** — `mcp__ololand__search_targets` with the user's criteria. Cap at 25 candidates per run.
-2. **Dedupe against CRM** — for each candidate, check Salesforce (via Apollo or direct SF integration) for an existing account or open opportunity. Drop duplicates and surface "already in pipeline" matches separately.
-3. **Enrich** — `mcp__claude_ai_Apollo_io__apollo_organizations_enrich` for firmographics; `mcp__claude_ai_Apollo_io__apollo_contacts_search` to find founder/CEO/CFO contacts (one per company, prioritize founder > CEO > CFO).
-4. **Find a hook** — for each enriched company, look for a recent signal: funding round, hiring spike, leadership change, news mention. Pull from `mcp__ololand__deep_market_research` or `mcp__ololand__research_market` with company name + last 90 days.
-5. **Draft outreach** — for each (company, contact, hook) tuple, draft a 60-90 word email that opens with the specific signal, ties it to the fund's thesis, and proposes a 20-min intro call. Save as Gmail draft via `mcp__claude_ai_Gmail__gmail_create_draft`.
-6. **Persist** — for each new lead, call `mcp__ololand__log_sourced_lead` with:
-   - `deal_id` (the sourcing project/pipeline deal ID)
-   - `email`, `name`, `company` from Apollo enrichment
-   - `sourcing_hook` (the signal you found)
-   - `sourcing_criteria` (the user's original search criteria)
-   - `apollo_enrichment_data` (full Apollo response for the company)
-   LeadService auto-dedupes on email+source. This is what compounds.
+1. **Discover targets** — call `mcp__ololand__search_company_discovery` with:
+   - `query`: the user's sector/product/market thesis
+   - `mode: "discover"`
+   - `company_scope: "private"` unless the user explicitly includes public targets
+   - `filters`: geography, industry/sector, ownership, size, and negative filters
+   - `limit: 25`
+   Use `mcp__ololand__natural_language_company_search` only when the criteria
+   cannot be represented as structured filters.
+2. **Create the mandate** — call `mcp__ololand__create_watchlist` with the
+   user's original criteria and a descriptive name. Reuse an existing watchlist
+   only when its criteria are materially identical.
+3. **Persist candidates immediately** — pass the selected discovery result
+   objects unchanged to `mcp__ololand__save_sourcing_candidates`, with
+   `watchlist_id` set to the ID returned or reused in step 2 and `candidates`
+   set to the selected result objects. This captures the source snapshot,
+   evidence references, match rationale, and candidate stage before any
+   third-party enrichment. Repeated calls are idempotent.
+4. **Capture supported contacts** — when a discovery result includes an
+   executive with a real email, phone number, or LinkedIn URL, select at most
+   one founder/CEO/CFO and pass that returned evidence to
+   `mcp__ololand__openclaw_import_contacts` with
+   `source_system: "company_discovery"`. OloLand performs tenant-scoped identity
+   dedupe and central do-not-contact checks. If discovery did not return usable
+   contact evidence, leave the candidate shortlisted and report the gap.
+5. **Link the relationship** — call
+   `mcp__ololand__update_sourcing_candidate` with the step-2 `watchlist_id`,
+   saved candidate `match_id`, resulting `outreach_contact_id`, and
+   `sourcing_stage: "enriched"`.
+6. **Find a hook** — prefer the candidate's returned `search_snippets`,
+   `signal_summary`, and `ma_signal_summary`. If those are insufficient, perform
+   a current public-web search for a funding round, hiring spike, leadership
+   change, product launch, or expansion. Do not call deal-scoped research tools
+   before a Deal exists.
+7. **Prepare outreach copy** — write a 60-90 word proposed email in the command
+   response using the specific hook. This is reviewable copy, not a Gmail or
+   OloLand outreach draft, and it is never sent. Keep the candidate at
+   `enriched` (or `shortlisted` when no contact was captured).
+
+This plugin declares only the OloLand MCP server. Do not claim Apollo or Gmail
+operations, and do not fabricate contact or draft IDs.
 
 ## Output
 
 Report a table:
 
-| Company | Contact | Hook | Status (new/dup) | Draft ID |
+| Company | Contact evidence | Hook | Candidate stage | Outreach copy |
 
-Plus a summary: N discovered, M new (after dedupe), K drafts created.
+Plus a summary: N discovered, M saved, D deduped/updated, C contacts captured.
 
 ## After Completion
 
 - Suggest `/dd-analyze <company>` for the most promising target.
-- Remind the user: drafts are NOT sent automatically — review in Gmail before sending.
+- Remind the user: the proposed copy was not saved or sent; move it to the
+  firm's approved outreach system only after review.
