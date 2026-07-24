@@ -32,9 +32,11 @@ Load the `deal-sourcing` skill, then run this pipeline:
    user's original criteria and a descriptive name. Reuse an existing watchlist
    only when its criteria are materially identical.
 3. **Persist candidates immediately** — pass the selected discovery result
-   objects unchanged to `mcp__ololand__save_sourcing_candidates`. This captures
-   the source snapshot, evidence references, match rationale, and candidate
-   stage before any third-party enrichment. Repeated calls are idempotent.
+   objects unchanged to `mcp__ololand__save_sourcing_candidates`, with
+   `watchlist_id` set to the ID returned or reused in step 2 and `candidates`
+   set to the selected result objects. This captures the source snapshot,
+   evidence references, match rationale, and candidate stage before any
+   third-party enrichment. Repeated calls are idempotent.
 4. **Capture supported contacts** — when a discovery result includes an
    executive with a real email, phone number, or LinkedIn URL, select at most
    one founder/CEO/CFO and pass that returned evidence to
@@ -43,8 +45,9 @@ Load the `deal-sourcing` skill, then run this pipeline:
    dedupe and central do-not-contact checks. If discovery did not return usable
    contact evidence, leave the candidate shortlisted and report the gap.
 5. **Link the relationship** — call
-   `mcp__ololand__update_sourcing_candidate` with the resulting
-   `outreach_contact_id` and `sourcing_stage: "enriched"`.
+   `mcp__ololand__update_sourcing_candidate` with the step-2 `watchlist_id`,
+   saved candidate `match_id`, resulting `outreach_contact_id`, and
+   `sourcing_stage: "enriched"`.
 6. **Find a hook** — prefer the candidate's returned `search_snippets`,
    `signal_summary`, and `ma_signal_summary`. If those are insufficient, perform
    a current public-web search for a funding round, hiring spike, leadership

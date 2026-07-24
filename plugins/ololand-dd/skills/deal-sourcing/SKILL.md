@@ -24,7 +24,9 @@ so a missing connector never loses the analyst's market map.
 - Create or reuse a materially identical watchlist with
   `mcp__ololand__create_watchlist`.
 - Pass the selected company-discovery result objects unchanged to
-  `mcp__ololand__save_sourcing_candidates`.
+  `mcp__ololand__save_sourcing_candidates`, with `watchlist_id` set to the
+  created/reused watchlist ID and `candidates` set to the selected result
+  objects.
 - This is the required persistence step. The tool is idempotent and preserves
   discovery snapshots, source systems, evidence references, score/rationale,
   workflow stage, and later deal-conversion lineage.
@@ -38,7 +40,8 @@ so a missing connector never loses the analyst's market map.
   `source_system: "company_discovery"`. This is the tenant-scoped relationship
   graph and central suppression/dedupe boundary.
 - Link the returned contact to the candidate with
-  `mcp__ololand__update_sourcing_candidate` and advance it to `enriched`.
+  `mcp__ololand__update_sourcing_candidate`, passing the same `watchlist_id`,
+  the saved candidate `match_id`, and advancing it to `enriched`.
 - When no supported identity evidence exists, leave the candidate shortlisted
   and report that contact enrichment remains outstanding.
 
