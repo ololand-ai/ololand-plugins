@@ -15,6 +15,7 @@ This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone S
 | `/journal-test` | Journal-entry tester | Period-end concentration, round-number frequency, weekend postings, reversing-entry anomalies. |
 | `/lapping-check` | Lapping detector | Detects AR-lapping fraud cycles by tracing customer-to-cash application. |
 | `/conflicts` | Deal Document Conflict Detector | Finds cross-document discrepancies in figures, dates, entities, ownership, terms, obligations, and representations. |
+| `/legal-risk` | `analyze_covenants` + `analyze_mac_mae` | Analyzes sourced covenant clauses and MAC/MAE provisions, preserving source quotes and risk scope. |
 | `/verify` | Corpus verifier | Checks an externally drafted artifact against the ingested deal corpus, with per-figure PASS / FAIL / UNVERIFIED output. |
 
 ## Install

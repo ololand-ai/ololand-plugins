@@ -22,11 +22,10 @@ evidence quote, verifier verdicts, approval note, version lineage.
    are DB-backed and stay readable after the task id expires. Each patch
    carries op, before/after text, evidence, and verifier verdicts.
 4. **Approve & commit (HUMAN step)**: in the web app under
-   **Deal → Document Edits** (`/deals/<deal_id>/patches`), or via
-   `approve_patch(patch_id, note?)` then
-   `commit_version(node_id, patch_ids)` (per-node, approved patches only).
-   Never auto-approve on the user's behalf — surface the pending patches
-   and let the user decide.
+   **Deal → Document Edits** (`/deals/<deal_id>/patches`). The MCP rail is
+   fail-closed for human approvals: never call `approve_patch` or
+   `commit_version` through MCP. Never auto-approve on the user's behalf —
+   surface the pending patches and let the user decide in the app.
 
 ## Writing instructions that land deterministically
 
@@ -54,7 +53,8 @@ blindly; re-read the patch list and adjust the instruction.
 ## What this is NOT
 
 - Not committed automatically — `pending_approval` is the terminal state
-  of the agent's work; humans own `approve_patch` + `commit_version`.
+  of the agent's work; humans approve and commit in the app only. The MCP
+  `approve_patch` and `commit_version` tools are never callable approval paths.
 - Not available when `AGENT_SDK_DOC_EDITING_ENABLED` is off — the tool
   returns a clear disabled message; relay it, do not retry.
 - Not for creating new documents — it edits text of existing deal

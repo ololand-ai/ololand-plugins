@@ -34,4 +34,4 @@ Report data-readiness tier for each side of a third-party merger-analysis deal s
 
 ## Subscription
 
-Zero-credit read — works on any tier including Plugin Free. The heavy engines (premium / accretion / DCF / HHI) now also run on Plugin Free as part of the full-capability single-deal trial, metered against the monthly credit budget — they are no longer Pro-gated. Only the saleable Forensic Screen PDF (`generate_forensic_screen_pdf`) is paid.
+Zero-credit read — works on any tier including Developer. The heavy engines (premium / accretion / DCF / HHI) now also run on Developer as part of the bounded single-deal trial, metered against the monthly credit budget — they are no longer Pro-gated. Only the saleable Forensic Screen PDF (`generate_forensic_screen_pdf`) is paid.

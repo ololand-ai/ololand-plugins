@@ -23,8 +23,8 @@ Use this command when the user asks to generate the canonical 8-section IC packa
    - `mcp__ololand__get_assumption_evidence_pack`
 3. `generate` — assemble the best available structured `deal_data` from deal, financial snapshot, valuation, risks, verification status, and assumptions. Then call `mcp__ololand__generate_ic_package`.
 4. Poll the returned `task_id` using `mcp__ololand__check_task_status`.
-5. `approve` — only after the user explicitly says to approve, call `mcp__ololand__approve_ic_package`.
-6. If approval returns `readiness_blocked`, `verifier_blocked`, or `bad_request`, surface the blocker verbatim and recommend the smallest remediation step.
+5. `approve` — only after the user explicitly says to approve, direct them to the in-app human-session IC package approval surface. Do **not** call `approve_ic_package` through MCP; the MCP rail is fail-closed for human approvals.
+6. If the in-app approval surface reports `readiness_blocked`, `verifier_blocked`, or `bad_request`, surface the blocker verbatim and recommend the smallest remediation step.
 
 ## Output
 
@@ -38,7 +38,6 @@ Render:
 
 ## Guardrails
 
-- Approval is a controlled workflow, not a drafting shortcut. Never call `approve_ic_package` without explicit user instruction.
+- Approval is a controlled workflow, not a drafting shortcut. Approval is app/human-session only; never invoke `approve_ic_package` through MCP, even with explicit user instruction.
 - Do not set `override_verifier_block=true` unless the user explicitly gives an override reason. Preserve the reason.
 - If assumptions are unresolved or evidence is missing, do not summarize as "ready".
-

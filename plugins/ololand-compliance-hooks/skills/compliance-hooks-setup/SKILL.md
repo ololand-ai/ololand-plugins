@@ -11,7 +11,7 @@ This plugin populates the empty `hooks/hooks.json` scaffold that Anthropic's ver
 
 - **PreToolUse → MNPI Guard** (Bash, Write, Edit, MultiEdit). Blocks tool calls whose input mentions material non-public information patterns without a `# mnpi:cleared` marker.
 - **PostToolUse → Citation Enforcer** (matches `mcp__ololand__generate_investment_memo`, `generate_cim`, `export_deal_dossier`, plus all Write/Edit/MultiEdit). Scans for $-amounts, %, and multiples without an adjacent citation. Warns by default; set `OLOLAND_CITATION_BLOCK=1` to upgrade to a hard deny.
-- **PostToolUse → Provenance Writeback**. Appends NDJSON to `~/.ololand/provenance/YYYY-MM-DD.ndjson` after every generative tool call. Mirrors to OloLand's audit API if `OLOLAND_AGENT_KEY` is set.
+- **PostToolUse → Provenance Writeback**. Appends NDJSON to `~/.ololand/provenance/YYYY-MM-DD.ndjson` after every generative tool call. The ledger stays local; server-side MCP rail auditing is authoritative for OloLand tool calls.
 - **Pre + PostToolUse → Audit Log** (matches all `mcp__ololand__*`). Mirrors every OloLand MCP call into `~/.ololand/audit/YYYY-MM-DD.ndjson` with phase, tool name, and a 2KB payload head.
 - **SessionStart → Banner**. Confirms hooks are armed and surfaces the env vars worth setting.
 
@@ -24,8 +24,7 @@ Anthropic's `private-equity/hooks/hooks.json` ships as `[]`. Same for the other 
 | Var | Default | Purpose |
 |---|---|---|
 | `OLOLAND_CITATION_BLOCK` | `0` | Set to `1` to make the citation enforcer block (exit 2) rather than warn. |
-| `OLOLAND_AGENT_KEY` | unset | If set, provenance + audit lines are mirrored to `${OLOLAND_API_URL}/api/agent/audit`. |
-| `OLOLAND_API_URL` | `https://app.ololand.ai` | Override the API base for self-hosted OloLand deployments. |
+| `OLOLAND_AGENT_KEY` | unset | MCP connector authentication for headless clients; these hooks do not send it anywhere. |
 
 ## Local logs
 
@@ -36,7 +35,7 @@ Both ledgers live in `~/.ololand/`:
 ~/.ololand/provenance/YYYY-MM-DD.ndjson    # every generative output
 ```
 
-Inspect with `jq -c '.' ~/.ololand/provenance/$(date -u +%Y-%m-%d).ndjson`.
+Inspect with `jq -c '.' ~/.ololand/provenance/$(date -u +%Y-%m-%d).ndjson`. The OloLand MCP rail separately records server-side tool-call audit events.
 
 ## Composing with other plugins
 

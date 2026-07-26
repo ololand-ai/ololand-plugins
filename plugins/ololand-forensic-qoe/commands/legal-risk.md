@@ -1,0 +1,20 @@
+---
+description: Analyze sourced covenant clauses and merger-agreement MAC/MAE language with page-level quotes and risk classification.
+argument-hint: "<deal_id>"
+---
+
+# Covenant + MAC/MAE Risk
+
+Use this workflow when a forensic review needs sourced legal-risk analysis in addition to the accounting battery.
+
+1. Call `mcp__ololand__list_deal_documents(deal_id)` and identify the credit agreement/loan documents and merger agreement.
+2. Retrieve the raw clause text with `mcp__ololand__grep_filing` or `mcp__ololand__search_deal_documents`; do not pass an LLM summary.
+3. Call `mcp__ololand__analyze_covenants(text)` for leverage, coverage, cross-default, and other covenant terms. Preserve each returned `source_quote`.
+4. Call `mcp__ololand__analyze_mac_mae(text)` on the raw MAC/MAE provision. Preserve `source_quotes`, carve-outs, scope, and risk assessment.
+5. Report the deal risk level, exact source quotes/page references, and any missing or insufficient text. These analyzers are deterministic text-in/dict-out MCP tools and do not finalize legal conclusions.
+
+## Guardrails
+
+- Source every clause from the deal corpus before analysis; never invent covenant or MAC/MAE terms.
+- Keep accounting findings and legal-clause findings separate, then explain their interaction (for example, a covenant breach plus a broad MAC/MAE carve-out).
+- This workflow does not approve patches, IC packages, or document versions; those approvals are app/human-session only.

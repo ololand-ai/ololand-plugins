@@ -1,19 +1,21 @@
 name: ololand-compliance-hooks
-version: 0.2.2
+version: 0.2.3
 displayName: OloLand Compliance Hooks
 category: Compliance
 description: >-
   Drop-in compliance, citation, and provenance hooks for Anthropic's Claude
   Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation
-  enforcement, audit-log writeback, tier-capacity warning, and evidence-quality
-  warning for OloLand's IC approval gate. Populates the empty hooks/ directory
+  enforcement, local provenance/audit ledgers, tier-capacity warning, and
+  evidence-quality warning for OloLand's IC approval gate. Server-side MCP rail
+  auditing remains authoritative. Populates the empty hooks/ directory
   Anthropic's private-equity, financial-analysis, investment-banking,
   equity-research, and wealth-management vertical plugins ship with.
 marketplaceDescription: >-
   Drop-in compliance, citation, and provenance hooks for Anthropic's Claude
   Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer,
-  audit-log writeback, tier-capacity warning, and evidence-quality warning for
-  OloLand's IC approval gate. Populates the empty hooks/ scaffold Anthropic's
+  local provenance/audit ledgers, tier-capacity warning, and evidence-quality
+  warning for OloLand's IC approval gate. Server-side MCP rail auditing remains
+  authoritative. Populates the empty hooks/ scaffold Anthropic's
   finance verticals ship with.
 shortDescription: Compliance, citation, and provenance hooks for finance workflows.
 developerName: OloLand

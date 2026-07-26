@@ -7,5 +7,5 @@
 set -euo pipefail
 
 cat <<'BANNER'
-[ololand-compliance-hooks armed] PreToolUse MNPI guard active. PostToolUse citation enforcer active (warn mode; set OLOLAND_CITATION_BLOCK=1 to deny). Provenance ledger writing to ~/.ololand/provenance/. Audit log writing to ~/.ololand/audit/. Set OLOLAND_AGENT_KEY to mirror to the OloLand audit API.
+[ololand-compliance-hooks armed] PreToolUse MNPI guard active. PostToolUse citation enforcer active (warn mode; set OLOLAND_CITATION_BLOCK=1 to deny). Local provenance ledger: ~/.ololand/provenance/. Local audit ledger: ~/.ololand/audit/. OloLand MCP rail auditing remains authoritative for server-side calls.
 BANNER
