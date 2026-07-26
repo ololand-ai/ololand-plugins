@@ -1,12 +1,12 @@
 ---
-description: Run a pre-LOI screen on a public or private target. Branches on the resolver's classification. For public targets, constrains evidence to pre-cutoff filings (10-K + FMP). For private targets, uses PCS-traced signal evidence (SEC N-PORT marks, counter-party 10-Ks, USAspending, S-1 if filed) plus scoped web research. Outputs a 1-page brief with bear/base/bull SOTP framing.
+description: Run a pre-LOI screen on a public or private target. Branches on the resolver's classification. For public targets, constrains evidence to pre-cutoff canonical annual filings (10-K, 20-F, or 40-F, plus substantive exhibits) + FMP. For private targets, uses PCS-traced signal evidence plus scoped web research. Outputs a 1-page brief with bear/base/bull SOTP framing.
 ---
 
 # Pre-Announcement Screen — public or private target
 
 Run an end-to-end **stage-1** screen of a target company. This command auto-detects whether the target is public or private and routes accordingly:
 
-- **Public target** (resolver returns `classification == "public"`): constrain evidence to the latest 10-K + FMP financial snapshot. Web search is **off** so the artifact reflects only what was knowable from pre-cutoff filings.
+- **Public target** (resolver returns `classification == "public"`): constrain evidence to the latest canonical annual filing (10-K, 20-F, or 40-F) plus substantive exhibits and FMP financial snapshot. Web search is **off** so the artifact reflects only what was knowable from pre-cutoff filings.
 - **Private target** (resolver returns `classification == "private"`): use the PrivateCompanySnapshot (PCS) seeded from the four primary-source signal adapters (SEC N-PORT marks, counter-party 10-K mentions, USAspending federal contract awards, and the S-1 watcher if the target has filed). Deep-research web search is **on** — there is no 10-K to anchor against, so press / news / Sacra-style commentary IS the public-trace evidence layer for a private target. Honor the `as-of` cutoff if supplied.
 
 The audit log at the end is what separates this from "an LLM wrote a memo." Always surface it.
@@ -48,17 +48,17 @@ Call `create_deal` with:
 - `ticker_override` — from Step 1
 - `cik_override` — from Step 1
 - `hint` — `"public"`
-- `deal_mode` — `"screening"`
+- `analysis_policy` — `"screen"` (canonical; `deal_mode="screening"` is a compatibility alias)
 
 Watch ingestion with `check_task_status` until `state == "SUCCESS"`. Public-filer ingestion typically completes in 15-30s. Capture the resulting `deal_id`.
 
 ### Step 3-Public — Confirm the document set is pre-cutoff and pristine
 
-Call `list_deal_documents(deal_id)`. Expected output: exactly the 10-K from EDGAR plus the FMP financial snapshot. Nothing else.
+Call `list_deal_documents(deal_id)`. Expected output: the canonical annual filing (10-K, 20-F, or 40-F), any substantive exhibits, plus the FMP financial snapshot. Nothing else.
 
 If you see ANY additional uploaded PDFs (proxy statements, merger communications, 8-K announcement decks, transaction press releases, news articles), halt and tell the user: this deal was pre-seeded with announcement-era materials and is not a clean pre-screen target. Recommend creating a fresh deal via `/new-deal` and retrying.
 
-If `as-of` was provided, verify the 10-K's `filing_date` is before the cutoff. If the most recent available 10-K post-dates the cutoff, walk back to the prior fiscal year's 10-K and surface this as a known limitation.
+If `as-of` was provided, verify each annual filing's `filing_date` is before the cutoff. If the most recent available annual filing post-dates the cutoff, walk back to the prior annual filing and surface this as a known limitation.
 
 ### Step 4-Public — Read the financial spine from explicit tiles
 
@@ -71,7 +71,7 @@ If `as-of` was provided, verify the 10-K's `filing_date` is before the cutoff. I
 **Use instead:**
 
 - `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Source: FMP snapshot. Inspect the `as_of` date.
-- `get_deal_risks(deal_id, limit=150)` — 10-K-extracted risks. Every `source_excerpt` must reference the 10-K filename. Any risk whose `file_name` is NOT the 10-K is a contamination signal — surface as `[gap]` and exclude.
+- `get_deal_risks(deal_id, limit=150)` — annual-filing-extracted risks. Every `source_excerpt` must reference the canonical annual-filing filename. Any risk whose `file_name` is outside the annual filing or substantive exhibits is a contamination signal — surface as `[gap]` and exclude.
 - `search_deal_documents(deal_id, query)` — for specific quotes or numbers.
 
 ### Step 5-Public — Run Monte Carlo
@@ -86,7 +86,7 @@ UNLIKE `/ic-memo-skeptical`, MC numerics belong in the BODY of the public brief,
 
 ### Step 7-Public — Forensic Screen skip
 
-Do NOT call `generate_forensic_screen_pdf`. In the brief: "The Pre-LOI Forensic Screen (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection) is a stage-2 product. It requires management-supplied transaction-level data and runs once the NDA is signed. Pre-NDA, the closest signal is the Revenue Quality risk class flagged from the 10-K."
+Do NOT call `generate_forensic_screen_pdf`. In the brief: "The Pre-LOI Forensic Screen (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection) is a stage-2 product. It requires management-supplied transaction-level data and runs once the NDA is signed. Pre-NDA, the closest signal is the Revenue Quality risk class flagged from the canonical annual filing."
 
 ### Step 8-Public — Compose the public brief
 
@@ -106,7 +106,7 @@ Call `create_deal` with:
 
 - `query` — the user's original text
 - `hint` — `"private"`
-- `deal_mode` — `"screening"`
+- `analysis_policy` — `"screen"` (canonical; `deal_mode="screening"` is a compatibility alias)
 
 `create_deal` for private targets dispatches `research_private_company_task` which runs in sequence: Apollo enrichment + GLEIF + Wayback first/investor snapshot + Sonnet synthesis + **PCS seed**. The PCS seed step runs four primary-source adapters with `watchlist=[target_name]` and persists `RawSignal` rows for everything found:
 
@@ -182,7 +182,7 @@ Identical structure to the public branch. The signal counts + reliability scores
 # Pre-Announcement Public Screen — {Company Name} ({Ticker})
 
 **As-of:** {cutoff date or "today"}
-**Sources:** 10-K dated {filing_date} (period: {period_of_report}) + FMP financial snapshot. No web search, no news, no transaction filings.
+**Sources:** {annual_filing_type} dated {filing_date} (period: {period_of_report}) plus substantive exhibits + FMP financial snapshot. No web search, no news, no transaction filings.
 **Deal ID:** {deal_id}
 **Run:** {ISO timestamp}
 
@@ -192,8 +192,8 @@ Identical structure to the public branch. The signal counts + reliability scores
 ## Financial spine
 | Metric | Value | Source |
 |---|---|---|
-| Revenue (LTM) | $X.XB | FMP / 10-K |
-| EBITDA (LTM) | $XM | FMP / 10-K |
+| Revenue (LTM) | $X.XB | FMP / {annual_filing_type} |
+| EBITDA (LTM) | $XM | FMP / {annual_filing_type} |
 | EBITDA margin | X.X% | derived |
 | Net debt | $X.XB | balance sheet |
 | Revenue growth (5yr CAGR) | X.X% | historical |
@@ -211,14 +211,14 @@ Identical structure to the public branch. The signal counts + reliability scores
 
 VaR(5%): $XXX M | CVaR(5%): $XXX M | Assumption coverage: XX% (sourced) / XX% (defaulted)
 
-## Risk concentration (X categorized risks from 10-K only)
+## Risk concentration (X categorized risks from canonical annual filing and substantive exhibits only)
 | Severity | Count |
 |---|---|
 | High | X |
 | Medium | XX |
 | Low | XX |
 
-Top 5 risk clusters with one-line summaries and 10-K page references.
+Top 5 risk clusters with one-line summaries and annual-filing page references.
 
 ## Recommendation
 Exactly one of: Pass / Pursue to NDA / More public data needed.
@@ -311,7 +311,7 @@ Standard P5/P25/P50/P75/P95 EV + Equity table, identical to the public template.
 
 After presenting the brief, output:
 
-- **Source set verified:** list of documents (public: 10-K + FMP; private: S-1 if any + PCS provenance + web sources cited)
+- **Source set verified:** list of documents (public: 10-K/20-F/40-F plus substantive exhibits + FMP; private: S-1 if any + PCS provenance + web sources cited)
 - **Contamination check:** any document outside the expected set, with reasoning
 - **MC assumption coverage:** sourced / defaulted breakdown (public) OR signal_count by source (private)
 - **Forensic Screen:** correctly refused — confirmed stage-2 boundary

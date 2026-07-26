@@ -37,7 +37,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/ic-package` | Generate or approve the canonical IC package with assumption and verifier blockers preserved |
 | `/value-impact` | Review or preview the deal/firm value-impact ledger |
 | `/deal-health` | Summarize deal health, open actions, and meeting blockers |
-| `/workbook` | List, read, create, or template-populate deal-scoped analysis workbooks |
+| `/workbook` | List, read, create, or template-populate deal-scoped analysis workbooks; includes the persisted/downloadable LBO-oriented Excel-model bridge (DCF generation not ready) |
 | `/company-discovery` | Search company discovery from natural-language or structured criteria |
 | `/watchlist` | Create and inspect continuous monitoring watchlists |
 | `/advisory` | Request or inspect buyer-side advisory engagements |
@@ -93,7 +93,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `render_risk_matrix_tile`, `run_atomic_verifiers`, `check_citation_coverage`, `reconcile_documents` |
 | **Compliance** | `run_ofac_screen`, `run_hsr_analysis`, `run_cfius_risk` |
 | **Human Verification** | `get_deal_verification_status`, `list_deal_verification_requests`, `request_verified_forensic_screen` |
-| **Assumption Controls + IC Package** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package`, `generate_ic_package`, `approve_ic_package` |
+| **Assumption Controls + IC Package** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package`, `generate_ic_package` (IC approval is app/human-session only; never call `approve_ic_package` via MCP) |
 | **Value Impact** | `get_deal_value_impact`, `get_company_value_impact`, `get_value_impact_assumptions`, `preview_value_impact`, `update_value_impact_assumptions` |
 | **Deal Health + Workbooks** | `get_deal_health_summary`, `list_deal_actions`, `create_deal_action`, `list_deal_workbooks`, `get_workbook`, `create_deal_workbook` |
 | **Company Discovery + Watchlists** | `search_company_discovery`, `natural_language_company_search`, `list_watchlists`, `create_watchlist`, `list_watchlist_matches`, `promote_watchlist_match` |

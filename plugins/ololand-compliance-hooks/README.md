@@ -10,8 +10,8 @@ This plugin populates that scaffold.
 
 - **PreToolUse MNPI guard** — blocks tool calls whose input mentions material non-public information patterns without an explicit `# mnpi:cleared` marker.
 - **PostToolUse citation enforcer** — scans CIM/IC-memo/dossier outputs for $-amounts, %, and multiples without source citations. Warns by default; blocks when `OLOLAND_CITATION_BLOCK=1`.
-- **PostToolUse provenance writeback** — appends NDJSON to `~/.ololand/provenance/` and optionally mirrors to OloLand's audit API.
-- **Pre + PostToolUse audit log** — mirrors every `mcp__ololand__*` call into `~/.ololand/audit/` for IC defensibility.
+- **PostToolUse provenance writeback** — appends NDJSON to the local `~/.ololand/provenance/` ledger.
+- **Pre + PostToolUse audit log** — records every `mcp__ololand__*` call in the local `~/.ololand/audit/` ledger. Server-side MCP rail auditing remains authoritative; this plugin does not POST to a remote audit endpoint.
 - **SessionStart banner** — confirms hooks are armed.
 
 ## Install
@@ -40,12 +40,11 @@ Hooks compose additively across plugins. Multiple `PreToolUse` matchers all fire
 | Env var | Default | Purpose |
 |---|---|---|
 | `OLOLAND_CITATION_BLOCK` | `0` | Set to `1` to upgrade citation enforcer from warn to deny. |
-| `OLOLAND_AGENT_KEY` | unset | Mirror audit + provenance lines to the OloLand API. |
-| `OLOLAND_API_URL` | `https://app.ololand.ai` | Override for self-hosted OloLand. |
+| `OLOLAND_AGENT_KEY` | unset | MCP connector authentication for headless clients; not used by these local ledgers. |
 
 ## Why this exists
 
-OloLand's thesis: Anthropic ships breadth, OloLand ships depth. The empty `hooks/` directory is the most visible depth gap in Anthropic's lineup. This plugin closes that gap on the same Cowork surface.
+OloLand's thesis: Anthropic ships breadth, OloLand ships depth. The empty `hooks/` directory is the most visible depth gap in Anthropic's lineup. This plugin closes that gap on the same Cowork surface. MCP calls are audited by the OloLand rail; the hooks retain local append-only provenance and audit ledgers for session evidence.
 
 See `docs/superpowers/specs/2026-05-05-cowork-augment-plugins-design.md` in the OloLand monorepo for the full design.
 

@@ -86,7 +86,7 @@ Goal: catch earnings-quality red flags and surface the risk register (67 categor
 
 | Tool | Role |
 |---|---|
-| **ololand-forensic-qoe** | Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, covenant-cascade analysis. **The Pre-LOI Forensic Screen wedge** — $99 / 72-hour SLA, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks |
+| **ololand-forensic-qoe** | Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and `/legal-risk` for sourced covenant, cross-default, and MAC/MAE clause analysis. **The Pre-LOI Forensic Screen wedge** — $99 / 72-hour SLA, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks |
 | **ololand-dd: `get_deal_risks`** | risk taxonomy (67 categories / 311 risk factors) with `probability_source` / `probability_confidence` / `probability_rendering` (qualitative vs numeric) |
 | **ololand-dd: `get_evidence_links`** | Risk → source document mapping |
 | **ololand-dd: `analyze_forensic_qoe`** | Aggregated forensic findings tile |

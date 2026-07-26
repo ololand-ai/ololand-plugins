@@ -1,10 +1,10 @@
 ---
-description: Create a new deal from a company name or ticker — auto-fetches the latest 10-K and 5 years of financials for public companies; seeds private companies with web research and auto-ingests a public S-1 if the target has filed to go public.
+description: Create a new deal from a company name or ticker — auto-fetches the latest canonical annual filing (10-K, 20-F, or 40-F, plus substantive exhibits) and 5 years of financials for public companies; seeds private companies with web research and auto-ingests a public S-1 if the target has filed to go public.
 ---
 
 # New Deal
 
-Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the system auto-pulls the latest 10-K from SEC EDGAR plus 5 years of standardized financials from FMP. Type a private company name and it seeds the workspace from web research — and if that private target has filed a **public** S-1 / IPO-registration statement, the `s1_watcher` pipeline auto-fetches the S-1 into the data room so the analysis can cite it by S-1 page. A **confidential** DRS draft cannot be ingested — its body is sealed at the SEC until conversion to a public S-1, so the read stays press-based until then.
+Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the system auto-pulls the latest canonical annual filing (10-K, 20-F, or 40-F, with substantive exhibits) from the relevant filing source plus 5 years of standardized financials from FMP. Type a private company name and it seeds the workspace from web research — and if that private target has filed a **public** S-1 / IPO-registration statement, the `s1_watcher` pipeline auto-fetches the S-1 into the data room so the analysis can cite it by S-1 page. A **confidential** DRS draft cannot be ingested — its body is sealed at the SEC until conversion to a public S-1, so the read stays press-based until then.
 
 ## Usage
 
@@ -20,7 +20,7 @@ Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the sy
 
 The instruction below is for the model executing this command.
 
-> **Plugin Free can create deals.** Free tier is a full-capability single-deal trial — `create_deal` runs on Plugin Free (one active deal, metered against the monthly credit budget). Never tell a free-tier user that deal creation requires a paid plan or that "free tier doesn't include deal creation"; just create the deal. If they have already used their one deal, `create_deal` returns a one-deal-limit upgrade CTA — surface that, but never pre-refuse before calling the tool.
+> **Developer can create deals.** Developer is a bounded single-deal trial — `create_deal` runs on Developer (one active deal, metered against the monthly credit budget). Never pre-refuse deal creation; if the one-deal limit is reached, surface the tool's upgrade CTA.
 
 1. **Resolve the company first.** Call the `resolve_company` MCP tool with the user's query. If the user typed a clean ticker (`SNOW`, `MSFT`, `BRK.B`), pass `hint="public"`. Otherwise leave `hint` unset.
 
@@ -31,11 +31,11 @@ The instruction below is for the model executing this command.
    - `ticker_override` — set to the picked candidate's ticker (uppercased) if the user disambiguated. This bypasses the resolver so we don't risk a different result the second time.
    - `cik_override` — set to the picked candidate's CIK if available.
    - `hint` — `"public"` or `"private"` if the user was explicit.
-   - `deal_mode` — `"screening"` (default, 1 CIM, 15-30 min answer) or `"formal_dd"` (full doc set, longer process). Ask only if the user signals interest in formal DD.
+   - `analysis_policy` — `"screen"` (default) or `"full"`. Prefer this canonical analysis-depth control. The legacy `deal_mode` (`"screening"` / `"formal_dd"`) is a compatibility alias; ask only if the user signals interest in formal DD.
 
 4. **Report what was kicked off.** From the `create_deal` response, tell the user:
    - The `deal_id` and `classification` (public/private/unresolved).
-   - For public: that the latest 10-K is downloading and 5 years of FMP financials are being pulled. The `task_id` lets them poll progress.
+   - For public: that the latest canonical annual filing (10-K, 20-F, or 40-F, plus substantive exhibits) is downloading and 5 years of FMP financials are being pulled. The `task_id` lets them poll progress.
    - The `resource_uri` (e.g. `ololand://deals/deal_abc123`) — they can subscribe to it via `resources/read` to watch the deal hydrate, instead of repeatedly calling `get_deal`.
    - A direct link to the deal in the web app: `https://app.ololand.ai/deals/{deal_id}/dataroom` (public) or `https://app.ololand.ai/deals/{deal_id}/summary` (private).
    - For a private target that has filed an S-1: the S-1 is auto-ingested during creation. Confirm via `list_deal_documents(deal_id)` — an S-1 in the data room shows up as a normal document; a detected-but-not-yet-ingested filing shows up as a `kind="pending_filing"` entry. If it's `pending_ingest`, call `ingest_s1(deal_id)` to fetch it; if it's `sealed`, the draft is confidential and nothing can be pulled yet. **Never tell the user OloLand can't ingest S-1s — it can, for public filings.**
@@ -55,7 +55,7 @@ Don't call `create_deal` first when the query could match multiple companies —
 ## After Completion
 
 Suggested next steps to offer the user:
-- `/dd-analyze <deal_id>` — run full due diligence once the 10-K (or ingested S-1) finishes processing.
+- `/dd-analyze <deal_id>` — run full due diligence once the annual filing (10-K, 20-F, or 40-F; or ingested S-1) finishes processing.
 - `/valuation <deal_id>` — DCF / LBO / Monte Carlo.
 - `/risk-report <deal_id>` — risk taxonomy breakdown (67 categories / 311 risk factors).
 - `/talk-to-deal <deal_id> "<question>"` — voice-optimized Q&A on the deal.
