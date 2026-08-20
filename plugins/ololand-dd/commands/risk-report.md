@@ -46,6 +46,39 @@ Present as structured markdown with:
 - Institutional memory section (patterns from similar deals; omit if no usable cohort)
 - Recommended mitigants for Critical/High risks
 
+## Adding a risk the AI missed
+
+When the analyst identifies a risk that AI extraction didn't catch, call
+`mcp__ololand__add_manual_risk(deal_id, section_name, category,
+risk_description, severity)`. `section_name` is one of `financial` /
+`commercial` / `legal` / `hr` / `tech`; `severity` defaults to `high` since a
+manual entry implies analyst conviction (the LLM may reassess it on
+enhancement). This creates a manual `KnowledgeInsight` and queues AI
+enhancement (severity score, impact, mitigation, citations) that completes in
+30-90 seconds — tell the user the risk is immediately visible in the deal's
+risk panels but full analysis is still filling in. A `status:
+"already_registered"` response is a success shape (idempotent dedup on
+deal+category+description), not an error.
+
+## Recording a firm-wide risk policy
+
+If the analyst states a **standing rule** rather than a judgment about one
+finding — "we don't care about customer concentration under 20% in this
+sector, stop flagging it", "always escalate key-person risk" — this is a
+firm-governance write, not a per-finding correction. Call
+`mcp__ololand__set_firm_risk_policy(risk_category, policy, rationale,
+scope_conditions, active)` with `policy` one of `waive` / `downweight` /
+`escalate`. `rationale` is required — an unexplained waiver defeats the point
+of recording it. This writes one `firm_risk_policies` row scoped to the
+caller's own company (there is no `company_id` argument to spoof another
+tenant). Active policies surface as firm context to future analysis; they do
+**not** silently suppress detection — extraction and severity scoring are
+unchanged, so a waived risk is still found and still visible, just labeled
+with how the firm has decided to treat it. Confirm this distinction to the
+user before recording a `waive` policy so they don't expect the risk to stop
+appearing. A single one-off disagreement about one finding is
+`submit_risk_correction`, not this tool.
+
 ## Output URL Conventions (STRICT)
 
 When linking to OloLand web app pages in your output, the domain is **`app.ololand.ai`** — never `.com`. Use these canonical paths:

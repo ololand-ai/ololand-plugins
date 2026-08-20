@@ -74,3 +74,38 @@ Plus a summary: N discovered, M saved, D deduped/updated, C contacts captured.
 - Suggest `/dd-analyze <company>` for the most promising target.
 - Remind the user: the proposed copy was not saved or sent; move it to the
   firm's approved outreach system only after review.
+
+## Standing sourcing mandates (thesis)
+
+A watchlist (steps 2-5 above) is a one-off discovery run's persistence layer.
+A **thesis** is a different, longer-lived object: a standing sourcing mandate
+(sectors, sub-sectors, geography, financial parameters, deal types,
+qualitative criteria) that the signal pipeline continuously matches against,
+surfacing hits in the Search Monitor over time. These are sourcing mandates,
+**not strategy or SWOT frameworks** — do not describe them that way.
+
+Use this when the user wants to save standing acquisition criteria rather
+than run a one-time discovery pass:
+
+- **Create** — call `mcp__ololand__create_thesis` with `thesis_name` and
+  whichever of `description`, `fund_name`, `sectors`, `sub_sectors`,
+  `geography`, `geography_exclusions`, `financial_parameters`, `deal_types`,
+  `qualitative_criteria`, `signal_config` the user specified.
+- **List** — call `mcp__ololand__list_theses`, optionally filtered by
+  `status` (`active` | `paused` | `closed`), before creating a new one — reuse
+  an existing mandate whose criteria materially overlap rather than
+  duplicating it.
+- **Update** — call `mcp__ololand__update_thesis` with `thesis_id` and only
+  the fields that changed; omitted fields are left alone.
+- **Deactivate** — call `mcp__ololand__deactivate_thesis` with `thesis_id`
+  (default `status="paused"`, reversible — never a hard delete; pass
+  `status="closed"` when the user means it's done for good). Reactivate with
+  `update_thesis(thesis_id, status="active")`.
+- **Review matches** — call `mcp__ololand__list_thesis_matches(thesis_id)` for
+  the mandate's current non-dismissed signal matches, highest composite score
+  first. Promising matches still go through the discovery pipeline above
+  (persist as a sourcing candidate, capture supported contacts) before any
+  outreach copy is drafted.
+
+Report the `view_url` each call returns (the Search Monitor tab) rather than
+constructing a link.
