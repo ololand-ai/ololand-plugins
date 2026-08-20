@@ -56,9 +56,17 @@ mp = json.load(open(marketplace_json))
 versions = {p["name"]: p["version"] for p in mp["plugins"]}
 
 text = open(readme_path, encoding="utf-8").read()
-# Match table rows like: | [`ololand-dd`](./plugins/ololand-dd) | v1.23.0 | ... |
-row_re = re.compile(r"^\|\s*\[`([a-z0-9-]+)`\]\([^)]*\)\s*\|\s*v([0-9][0-9.]*)\s*\|", re.MULTILINE)
+# Match the same SemVer subset accepted by generate-plugin-artifacts.py,
+# including prerelease and build metadata (for example, 1.2.0-rc.1).
+version = r"[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?"
+row_re = re.compile(rf"^\|\s*\[`([a-z0-9-]+)`\]\([^)]*\)\s*\|\s*v({version})\s*\|", re.MULTILINE)
+candidate_re = re.compile(r"^\|\s*\[`([a-z0-9-]+)`\]\([^)]*\)\s*\|", re.MULTILINE)
 readme_versions = dict(row_re.findall(text))
+known_names = set(versions)
+for match in candidate_re.finditer(text):
+    name = match.group(1)
+    if name in known_names and not row_re.match(text, match.start()):
+        print(f"unparseable version row: {name} README.md (expected v{version})")
 
 for name, mp_version in versions.items():
     readme_version = readme_versions.get(name)

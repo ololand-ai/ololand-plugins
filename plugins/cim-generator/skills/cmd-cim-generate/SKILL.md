@@ -46,13 +46,18 @@ Use this when the user wants to see, quote, or reason about a CIM that was alrea
 
 `executive_summary`, `investment_highlights`, `company_history`, `products_services`, `market_analysis`, `sales_marketing`, `customer_analysis`, `management_employees`, `operations_technology`, `industry_competition`, `growth_opportunities`, `financial_performance`, `financial_projections`, `risk_factors`.
 
-## After completion
+## After generation
 
 The CIM is not returned as chat text — it is a structured document persisted on the deal, with an audit trail back to the platform data and searches used to build it. Report to the user:
 
 - **`cim_id`** and how many of the 14 sections were generated.
 - **Where to view/edit/export it**: the deal workspace's Artifacts panel at `https://app.ololand.ai/deals/{deal_id}` — the CIM appears there as a `CIM` artifact with PDF, DOCX, and PPTX export on demand, and inline section editing.
 - Suggest `/forensic-screen <deal_id>` (from the `ololand-forensic-qoe` plugin, if installed) as a pre-LOI complement if the user is preparing a sell-side process and wants the buy-side forensic view too.
+
+## After read
+
+- Present the requested sections' content directly in the response, and note any requested section that was not found in the latest draft.
+- Remind the user that the CIM is a generated artifact rather than primary source evidence; cite or validate underlying claims against the data-room tools before relying on them for diligence or an external deliverable.
 
 ## Notes
 

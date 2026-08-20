@@ -18,7 +18,11 @@ If no criteria provided, ask the user for sector, geography, size band (revenue 
 
 ## Execution
 
-Load the `deal-sourcing` skill, then run this pipeline:
+First classify the request. If it asks to create, list, update, deactivate, or
+review matches for a standing thesis, route directly to the thesis operations
+below. Do not load `deal-sourcing` or run the one-off discovery, watchlist,
+candidate-persistence, contact-import, or outreach pipeline for a thesis
+request. Otherwise, load the `deal-sourcing` skill and run this pipeline:
 
 1. **Discover targets** — call `mcp__ololand__search_company_discovery` with:
    - `query`: the user's sector/product/market thesis
