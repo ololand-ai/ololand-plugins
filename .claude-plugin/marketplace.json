@@ -31,7 +31,7 @@
     },
     {
       "name": "cim-generator",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/cim-generator",
       "category": "productivity",
       "description": "14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace."
