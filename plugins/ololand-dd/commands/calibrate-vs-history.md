@@ -25,6 +25,7 @@ Uses cross-deal outcome data to adjust the current deal's headline projections b
    - **Bias** — mean of (realized − underwritten) across similar deals
    - **Variance** — standard deviation of the bias
    - **Confidence** — sample size and recency
+   > For the firm's **authoritative** measured bias — computed by the backend over every scored prediction, not derived from this cohort — call `get_firm_calibration` (`/firm-calibration`). Use it to sanity-check the cohort bias computed here; a large divergence usually means the cohort is too small to trust.
 5. Apply the bias to the current deal's projection. Return both the management projection and the calibrated projection side-by-side, with the bias explanation.
 
 ## Output
@@ -51,5 +52,6 @@ Returns: "Your firm has overestimated revenue growth in similar industrial-servi
 
 ## Related commands
 
+- `/firm-calibration` — the firm-wide counterpart: how accurate this firm's predictions have been overall, measured by the backend rather than derived per-cohort here. Use it when the question is "are we systematically optimistic?" rather than "how should THIS deal move".
 - `/similar-deals` — raw similarity output
 - `/playbook-recall` — what worked / didn't / was missed in similar past deals
