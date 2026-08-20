@@ -9,6 +9,7 @@ This plugin wraps OloLand's deterministic CIM (Confidential Information Memorand
 | Command | Wraps | What it does |
 |---|---|---|
 | `/cim-generate` | `generate_cim` (async, poll via `check_task_status`) | Generates all 14 CIM sections (or a chosen subset) for a deal and reports the result location. |
+| `/cim-generate read` | `get_latest_cim` | Reads back the latest completed CIM draft (or a chosen subset of sections) without starting a new generation run. |
 
 ## Install
 

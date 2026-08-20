@@ -14,6 +14,15 @@ so a missing connector never loses the analyst's market map.
 
 ## Pipeline
 
+### Thesis routing
+
+Classify thesis intent before starting this one-off pipeline. Requests to
+create, list, update, deactivate, or review matches for a standing sourcing
+mandate must go directly to the corresponding thesis MCP operation; do not
+run discovery, create a watchlist, persist candidates, import contacts, or
+draft outreach first. A thesis is a long-lived sourcing mandate, not a SWOT
+or strategy framework.
+
 ### 1. Discovery
 - Use `mcp__ololand__search_company_discovery` with `mode: "discover"`,
   `company_scope: "private"`, and explicit filters (sector, geography, size,

@@ -41,7 +41,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/company-discovery` | Search company discovery from natural-language or structured criteria |
 | `/watchlist` | Create and inspect continuous monitoring watchlists |
 | `/advisory` | Request or inspect buyer-side advisory engagements |
-| `/financing` | Acquisition-financing prep — deterministic analysis, provider-sourcing prep, lender pre-read packages |
+| `/financing` | Acquisition-financing prep — deterministic analysis, provider-sourcing prep, lender pre-read packages, rule-governed capital-programme eligibility signals |
 | `/managed-context-agent` | Launch a configured managed context agent when enabled |
 | `/managed-agent` | Run a cloud-hosted deal specialist (risk, forensic QoE, pre-LOI screen, financing prep, IC memo, or the parallel IC coordinator) asynchronously with full run provenance |
 | `/okf-export` | Export a machine-readable OKF deal bundle |
@@ -52,7 +52,9 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/deal-search` | Hybrid vector + keyword + reranked search across the full data room |
 | `/war-game` | RL-powered competitive strategy simulation (MaskablePPO, 1,000-episode rollouts, 16 quarters) |
 | `/talk-to-deal` | Voice-optimized Q&A over the deal's full system of record, with rounded numbers and recommendations |
-| `/source` | Find deals matching your firm's investment criteria across sourcing signals |
+| `/source` | Find deals matching your firm's investment criteria across sourcing signals; create standing sourcing-thesis mandates that drive the Search Monitor |
+| `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals and market context, with outcome labels and SEC filing citations |
+| `/deal-canvas` | Create or update charts, KPI rows, tables, and infographics on the deal canvas — every value engine-bound or cited, never invented |
 
 ## What's Different From Raw Claude
 
@@ -91,22 +93,25 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Deal Intelligence** | `list_deals`, `get_deal`, `get_deal_summary_tiles`, `get_deal_indicators` |
 | **Financial Valuation** | `get_financial_snapshot`, `get_dcf_valuation`, `run_monte_carlo_simulation`, `analyze_unit_economics`, `run_scenario_stress_test`, `simulate_market_conditions`, `value_real_options` |
 | **QoE + Forensics** | `analyze_forensic_qoe`, `generate_forensic_screen_pdf`, `run_qoe_analysis`, `get_latest_qoe_analysis`, `run_beneish`, `run_benford`, `build_ebitda_bridge` |
-| **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `render_risk_matrix_tile`, `run_atomic_verifiers`, `check_citation_coverage`, `reconcile_documents` |
+| **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `render_risk_matrix_tile`, `run_atomic_verifiers`, `check_citation_coverage`, `reconcile_documents`, `add_manual_risk`, `set_firm_risk_policy` |
 | **Compliance** | `run_ofac_screen`, `run_hsr_analysis`, `run_cfius_risk` |
 | **Human Verification** | `get_deal_verification_status`, `list_deal_verification_requests`, `request_verified_forensic_screen` |
 | **Assumption Controls + IC Package** | `list_deal_assumptions`, `get_assumption_control_summary`, `get_assumption_evidence_pack`, `set_assumption_status`, `get_ic_package`, `generate_ic_package` (IC approval is app/human-session only; never call `approve_ic_package` via MCP) |
 | **Value Impact** | `get_deal_value_impact`, `get_company_value_impact`, `get_value_impact_assumptions`, `preview_value_impact`, `update_value_impact_assumptions` |
 | **Deal Health + Workbooks** | `get_deal_health_summary`, `list_deal_actions`, `create_deal_action`, `list_deal_workbooks`, `get_workbook`, `create_deal_workbook` |
+| **Deal Canvas** | `create_deal_chart`, `create_deal_artifact`, `update_deal_artifact` |
 | **Company Discovery + Watchlists** | `search_company_discovery`, `natural_language_company_search`, `list_watchlists`, `create_watchlist`, `list_watchlist_matches`, `promote_watchlist_match` |
+| **Sourcing Theses** | `create_thesis`, `update_thesis`, `deactivate_thesis`, `list_theses`, `list_thesis_matches` |
 | **Earnings Analysis** | `analyze_earnings_call` |
-| **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document` |
+| **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document`, `list_deal_files`, `read_deal_file`, `grep_deal_files`, `read_section`, `read_table`, `read_note` |
 | **Extracted Knowledge** | `search_extracted_knowledge` plus compatibility aliases `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
-| **Cross-Deal Learning** | `find_similar_deals` |
+| **Cross-Deal Learning** | `find_similar_deals`, `compare_deals_by_attribute` |
 | **Reports + Exports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier`, `export_deal_okf_bundle` |
 | **Advisory + Managed Agents** | `list_deal_advisory_engagements`, `request_advisory_engagement`, `launch_managed_context_agent` |
-| **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals` |
+| **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals`, `search_precedent_deals` |
 | **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
 | **Sourcing** | `batch_triage_companies`, `save_sourcing_candidates`, `update_sourcing_candidate`, `log_sourced_lead` |
+| **Financing** | `get_financing_workflow_status`, `run_financing_analysis`, `prepare_financing_sourcing`, `prepare_financing_lender_package`, `list_capital_programs`, `prepare_capital_plan`, `evaluate_capital_eligibility` |
 | **Voice** | `talk_to_deal` |
 | **CRE Underwriting** | `run_cre_stress_test`, `run_cre_debt_sizing`, `verify_sponsor_assumptions` |
 | **Conversation Sessions** | `create_conversation_session`, `list_conversation_sessions`, `get_conversation_session_summary` |
