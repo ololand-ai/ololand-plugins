@@ -32,7 +32,9 @@ Generate a Confidential Information Memorandum (CIM) — the sell-side marketing
 
 Use this when the user wants to see, quote, or reason about a CIM that was already generated, instead of starting a new generation run.
 
-1. Call `mcp__ololand__get_latest_cim(deal_id, sections=<optional list>)`. This reads the most recently completed CIM draft — it does not trigger generation, so if none exists yet, tell the user to run `/cim-generate <deal_id>` first rather than treating an empty result as an error.
+1. Call `mcp__ololand__get_latest_cim(deal_id, sections=<optional list>)`. Inspect the returned top-level `status` before deciding what to tell the user:
+   - `status: "not_found"` means no CIM generation exists yet; only in this case suggest running `/cim-generate <deal_id>`.
+   - `status: "not_ready"` means a generation record exists but no completed draft is available. If `latest_generation.status` is `generating` (or another in-progress status), report that generation is still in progress and give the user the `view_url` or generation details to re-check later. Do not start a second generation. For any other not-ready status, report that the latest draft is not ready and invite a later re-check; do not treat it as not-found.
 2. **The returned CIM is a generated artifact, not primary source evidence.** Before relying on any claim in it for diligence or an external deliverable, validate it against the data-room retrieval tools (`search_deal_documents`, `get_financial_snapshot`, etc.) — never present CIM prose as if it were itself the cited source.
 3. Present the requested sections' content, and note if any requested section wasn't found in the latest draft.
 
