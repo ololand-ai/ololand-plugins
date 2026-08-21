@@ -54,6 +54,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/talk-to-deal` | Voice-optimized Q&A over the deal's full system of record, with rounded numbers and recommendations |
 | `/source` | Find deals matching your firm's investment criteria across sourcing signals; create standing sourcing-thesis mandates that drive the Search Monitor |
 | `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals and market context, with outcome labels and SEC filing citations |
+| `/firm-calibration` | How accurate this firm's own predictions have been — accuracy by prediction type, systematic biases, risk-category precision, and the fields analysts keep overriding (firm-wide; `/calibrate-vs-history` is the per-deal counterpart) |
 | `/deal-canvas` | Create or update charts, KPI rows, tables, and infographics on the deal canvas — every value engine-bound or cited, never invented |
 
 ## What's Different From Raw Claude
@@ -105,7 +106,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Earnings Analysis** | `analyze_earnings_call` |
 | **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document`, `list_deal_files`, `read_deal_file`, `grep_deal_files`, `read_section`, `read_table`, `read_note` |
 | **Extracted Knowledge** | `search_extracted_knowledge` plus compatibility aliases `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
-| **Cross-Deal Learning** | `find_similar_deals`, `compare_deals_by_attribute` |
+| **Cross-Deal Learning** | `find_similar_deals`, `compare_deals_by_attribute`, `get_firm_calibration` |
 | **Reports + Exports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier`, `export_deal_okf_bundle` |
 | **Advisory + Managed Agents** | `list_deal_advisory_engagements`, `request_advisory_engagement`, `launch_managed_context_agent` |
 | **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals`, `search_precedent_deals` |
