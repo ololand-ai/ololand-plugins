@@ -93,7 +93,7 @@ The PDF includes 7 sections:
    model versions for reproducibility
 
 Credit cost: **50** (vs. 10-15 for engine-only tools — this is the
-premium SKU; the $99/72-hour SKU is sold via the HTTP route + Stripe).
+premium report tool; the same report is generated in-app for Pro, Team, and Enterprise workspaces — subscription-only since 2026-08-26, no per-deal price).
 
 The PDF is the IC-paste-ready artifact. `analyze_forensic_qoe` returns
 structured findings text — useful for in-conversation analysis but NOT the

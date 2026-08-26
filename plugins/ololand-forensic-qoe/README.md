@@ -2,7 +2,7 @@
 
 > Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen wedge.
 
-This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone SKU on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen for $99 with a 72-hour SLA. Full QoE is $999.
+This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone plugin on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen for $99 with a 72-hour SLA. Full QoE is $999.
 
 ## Commands
 
