@@ -13,8 +13,8 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.24.0 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.2 | Forensic Quality-of-Earnings primitives as a standalone wedge SKU: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.24.1 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.3 | Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.3 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.1.0 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
@@ -47,7 +47,7 @@ The only thing you need is a free OloLand account. **No env var setup, no manual
 | Rail | Cost | Access |
 |---|---|---|
 | **Developer (free)** | Sign up at https://app.ololand.ai/signup | Sandbox-only — full MCP tool access against the included sample deal (`Paragon Flight School (Sample)`). Unlimited calls. No payment, no credit card. |
-| **Platform (paid)** | Pro $199/mo, Team $499/mo (2 seats included, +$199/seat), Enterprise (custom), or per-deal SKUs — Pre-LOI Forensic Screen $99 / Full QoE $999 (see [pricing](https://ololand.ai/pricing)) | Access to your own deals + cross-deal memory + outcome flywheel + production volumes |
+| **Platform (paid)** | Pro $199/mo, Team $499/mo (2 seats included, +$199/seat), Enterprise (custom) (see [pricing](https://ololand.ai/pricing)) | Access to your own deals + cross-deal memory + outcome flywheel + production volumes |
 
 You can install the plugins on a free Developer account and explore everything against the sample deal — DCF, LBO, Monte Carlo, forensic QoE, risk taxonomy, war-game, all of it. When you're ready to run on your own data, upgrade to a paid plan.
 

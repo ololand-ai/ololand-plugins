@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "version": "1.24.0",
+      "version": "1.24.1",
       "source": "./plugins/ololand-dd",
       "category": "productivity",
       "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 311-factor risk taxonomy (67 diligence categories) with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, analytical workbench tools for QoE/compliance/scenarios/earnings, value-impact ledger reads, deal-health actions, workbooks with template-driven population, acquisition-financing prep (deterministic analysis, provider-sourcing prep, lender pre-reads), company discovery, watchlists, IC-package lifecycle dispatch, advisory requests, external-artifact grading (the Cowork adoption funnel) and cross-document conflict detection, verified forensic screen marketplace support, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin."
@@ -24,7 +24,7 @@
     },
     {
       "name": "ololand-forensic-qoe",
-      "version": "0.6.2",
+      "version": "0.6.3",
       "source": "./plugins/ololand-forensic-qoe",
       "category": "productivity",
       "description": "Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and sourced covenant, cross-default, and MAC/MAE clause analysis. The Pre-LOI Forensic Screen wedge — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks."

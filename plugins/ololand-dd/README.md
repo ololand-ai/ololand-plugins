@@ -126,8 +126,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Pro** | $199/mo | Associate or VP running deals weekly |
 | **Team** | $499/mo | 2 seats included, +$199/additional seat — SSO, audit logs, playbook enforcement |
 | **Enterprise** | Custom | Multi-fund, VDR integration, data residency |
-| **Pre-LOI Forensic Screen** | $99/deal | 72-hour verified forensic screen workflow |
-| **Full QoE** | $999/deal | Deeper quality-of-earnings package |
+| **Forensic reports** (Pre-LOI Forensic Screen, Full QoE) | Included in Pro and above | Generated in-app or via `generate_forensic_screen_pdf`; no per-deal price since 2026-08-26 |
 
 First 100 tool calls free on install. Upgrade at [ololand.ai/pricing](https://ololand.ai/pricing).
 
