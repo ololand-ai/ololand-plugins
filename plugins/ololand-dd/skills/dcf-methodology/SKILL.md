@@ -37,6 +37,10 @@ OloLand's deterministic DCF engine has specific conventions. Use these when disc
 ## Interpretation guardrails
 
 - DCF is a scenario, not truth. State the key assumption drivers (revenue growth, EBITDA margin trajectory, terminal multiple).
+- Bind every reported DCF output to the run, publication, financial-snapshot, and receipt identifiers returned by the valuation tool. Do not infer its basis from the newest financial snapshot or from a separate financial read.
+- State whether each material assumption was returned as applied, caller-supplied, or defaulted. Do not claim an assumption was used merely because it appears in a separate deal, risk, or market response.
+- If identity is absent or enterprise value is returned as `ev_not_meaningful`, withhold the valuation conclusion and label the result unavailable/not meaningful. A new model run is a write-like workflow and requires the user's explicit request; after it runs, re-fetch the DCF before reporting it.
+- The current canonical snapshot may have collapsed reported and adjusted EBITDA labels. Treat the returned model as `canonical_snapshot`, relay the returned `adjusted_case` status, and never infer a second case from an uncited CIM number or a latest QoE result.
 - If liquidity, covenant, control, or audit evidence contradicts the DCF, the deterministic engines (forensic QoE, scenario defense) override the DCF anchor. Use the `forensic-qoe` skill to find those signals first.
 - Surface when a DCF is computed on data flagged for material weakness — that diminishes confidence regardless of the math. Use the `citation-discipline` skill to cite the material-weakness disclosure inline alongside the DCF output.
 
@@ -48,6 +52,7 @@ When citing DCF output to a user, include:
 - **Implied EV/EBITDA multiple**
 - **Sensitivity band** (low / base / high EV)
 - **Key assumptions used** (WACC, terminal growth, tax rate, CapEx %)
+- **Model identity** (returned run/publication/snapshot/receipt identifiers) and assumption-application status
 - **A one-sentence credibility note** tying back to evidence from filings — anchored with `[N]` citations to the source documents.
 
 Example:

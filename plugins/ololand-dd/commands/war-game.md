@@ -20,21 +20,23 @@ Run an RL-powered competitive strategy simulation for a deal.
 ## Natural-language invocation (no deal_id)
 
 Users rarely pass a bare deal_id — they describe a company and a counterfactual, e.g.
-*"/war-game on Robinhood, assume it built Exchange Funds in-house instead of acquiring Frec/Cache. Competitive and regulatory response?"* Handle it like this; **never refuse or claim the simulator is unavailable** — it is OloLand's signature engine.
+*"/war-game on Robinhood, assume it built Exchange Funds in-house instead of acquiring Frec/Cache. Competitive and regulatory response?"* Treat the counterfactual as a caller-supplied hypothetical. If the simulator or required deal evidence is unavailable, relay that result; do not present an empty or inferred result as a simulation.
 
-1. **Resolve the target to a deal.** Use `deal-search` / `list_deals` to find an existing deal for the named company. If none exists, create one with `new-deal` (or `create_deal`) so the simulation has a deal context to populate from.
-2. **Route the full question to the deal agent.** Call `ask_deal_agent(deal_id, question)` with the user's verbatim counterfactual. The lead orchestrator now reaches `analyze_build_vs_buy` (synchronous build-vs-acquire), `run_war_game_simulation` (the RL sim), and `check_task_status` / `get_war_game_results` (polling/results) — it will answer the competitive/regulatory scenarios AND launch the formal simulation in one turn. For a bare `/war-game <deal_id> [scenarios]`, skip straight to Execution step 1 instead.
+1. **Resolve the target to an existing deal.** Use `deal-search` / `list_deals` to find an existing deal for the named company. If none exists, say that a deal context is required; do not create one automatically.
+2. **Separate review from execution.** For an audit, review, or read-only request, call `ask_deal_agent(deal_id, question, required_sections=["answer", "evidence", "assumptions", "open_questions"])` with the user's verbatim counterfactual, then inspect and relay `boundary_gate`, `completion_contract`, and `grader_passed`. If a pre-upgrade server rejects `required_sections`, use the compatibility fallback defined in `/talk-to-deal` and disclose that the server-side completion control was unavailable. Do not claim that this read rail launched a simulation or any other mutation. For a request that explicitly asks to run the simulation, continue to Execution step 1.
 3. **Pick scenarios from intent.** "regulatory response" → `regulated_stress`; "across conditions" / unspecified depth → `all`; otherwise `base_case`.
+4. Do not claim a buyer/acquirer identity, strategy, expected synergy, or likely action unless a tenant-authorized returned source supports it with an inline citation. Keep caller-provided buyer premises labeled hypothetical.
 
 ## Execution
 
-1. Call `run_war_game_simulation` from the MCP server with the deal_id and scenarios.
+1. Confirm that the user explicitly requested execution, then call `run_war_game_simulation` from the MCP server with the deal_id and scenarios.
 2. The simulation auto-populates from deal context:
    - **Focal company**: Revenue, market share, EBITDA margin from financial snapshot
    - **Competitors**: Extracted from commercial DD, classified by archetype (price leader, innovation leader, fast follower, niche defender, cash cow)
    - **Market**: TAM, growth rate, switching costs from market intelligence
 3. A MaskablePPO agent runs 1000 episodes of 16-quarter simulations.
 4. Poll progress with `check_task_status` when a task id is returned, then fetch results with `get_war_game_results` when the simulation id or batch id is available.
+5. Relay an unavailable or error status as such. Do not infer scenario output, buyer behavior, or completion from a queued task or missing result.
 
 ## Results
 
