@@ -44,7 +44,9 @@ Before any valuation, verify input data consistency:
 - Compare revenue/EBITDA across: CIM, audited financials, management model, tax returns
 - Source hierarchy: CPA audited > tax return > management model > AI extracted
 - Flag discrepancies > 2% spread
-- Use reconciled (highest-confidence) values for models
+- Treat separately reconciled document values as evidence about a discrepancy, not as permission to rewrite an identified model. Report the exact model-returned input and the higher-confidence document value side by side, with their distinct citations and the variance.
+- Never substitute, recalculate, relabel, or explain a governed DCF/LBO using a separately reconciled figure unless the exact model lineage (run, publication, snapshot, and receipt) proves that figure was applied. Otherwise preserve the governed model as returned and report the discrepancy in a separate reconciliation section.
+- A reconciled value may enter a new model only through an explicitly authorized model workflow that records that exact value in its returned assumption/input lineage. Until a governed read binds the resulting run to the required identity, keep that result an unpublished candidate and do not imply the existing governed model incorporated the reconciliation.
 
 ## Risk Context and Model Integrity
 

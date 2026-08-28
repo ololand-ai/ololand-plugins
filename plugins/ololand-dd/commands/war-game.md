@@ -25,7 +25,7 @@ Users rarely pass a bare deal_id — they describe a company and a counterfactua
 1. **Resolve the target to an existing deal.** Use `deal-search` / `list_deals` to find an existing deal for the named company. If none exists, say that a deal context is required; do not create one automatically.
 2. **Separate review from execution.** For an audit, review, or read-only request, follow `/plan`: create or reuse the deal conversation session, submit the user's verbatim counterfactual with `submit_plan_for_approval`, render the plan, and stop for approval. After approval, direct the user to continue the same session in the OloLand app or normal SSE/message endpoint with the exact plan attached as `approved_plan` on `SubmitMessageRequest`. Do not call the MCP `ask_deal_agent` or `talk_to_deal` tools for this planned execution: they cannot carry the server-bound field, and quoted plan prose is not approval. If the client cannot use the normal endpoint, report the governed review as unavailable on this rail; do not run a simulation or infer an answer. For a request that explicitly asks to run the simulation, continue to Execution step 1; that is a bounded, fixed-purpose tool call rather than a conversational executor turn.
 3. **Pick scenarios from intent.** "regulatory response" → `regulated_stress`; "across conditions" / unspecified depth → `all`; otherwise `base_case`.
-4. Do not claim a buyer/acquirer identity, strategy, expected synergy, or likely action unless a tenant-authorized returned source supports it with an inline citation. Keep caller-provided buyer premises labeled hypothetical.
+4. Separate factual buyer premises from simulator predictions. Do not claim a buyer/acquirer identity, observed strategy, historical action, expected synergy, or any other real-world premise unless a tenant-authorized returned source supports it with an inline citation. Keep caller-provided buyer premises labeled hypothetical. A completed simulator's modeled strategy, likely action, competitor response, EV distribution, or robustness score may be relayed without a document citation only when it is clearly labeled **simulator prediction** and tied to the exact returned simulation identity and scenario; never restate that prediction as a sourced fact.
 
 ## Execution
 
@@ -36,11 +36,11 @@ Users rarely pass a bare deal_id — they describe a company and a counterfactua
    - **Market**: TAM, growth rate, switching costs from market intelligence
 3. A MaskablePPO agent runs 1000 episodes of 16-quarter simulations.
 4. Poll progress with `check_task_status` when a task id is returned, then fetch results with `get_war_game_results` when the simulation id or batch id is available.
-5. Relay an unavailable or error status as such. Do not infer scenario output, buyer behavior, or completion from a queued task or missing result.
+5. Relay an unavailable or error status as such. Do not infer scenario output, buyer behavior, or completion from a queued task or missing result. Present predictions only from a completed result that returns its `simulation_id` and `scenario_label`; a task id, batch id, or prose description alone is not prediction provenance.
 
 ## Results
 
-For each scenario, the simulation returns:
+For each completed scenario, report the returned values under a heading such as `Simulator prediction — simulation <simulation_id>, scenario <scenario_label>`. These prediction fields do not need document citations because the simulation identity is their provenance; any factual input or buyer premise repeated alongside them still does. The simulation returns:
 - **Optimal strategy path**: Quarter-by-quarter moves (HOLD, PRICING, PRODUCT, EXPANSION, M&A, COST_CUTTING)
 - **EV distribution**: Mean, median, P5/P25/P75/P95, VaR, CVaR
 - **Critical decision points**: Top 3 non-trivial strategic moves and when to make them
