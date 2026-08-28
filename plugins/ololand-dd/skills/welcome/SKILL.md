@@ -15,7 +15,7 @@ You're connected to OloLand's M&A intelligence engine — 44 tools for instituti
 - "Run a risk-adjusted DCF with sensitivity analysis"
 
 **Run analysis:**
-- `/dd-analyze` — Full due diligence workflow (risk + valuation + forensic)
+- `/dd-analyze` — Extraction, reconciliation, risk, and financial-snapshot pipeline; it does not run valuation, forensic, war-game, or memo engines
 - `/valuation <deal_id> read all` — inspect governed DCF/LBO and source-backed comps; use `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>` only when you explicitly want a fresh model candidate
 - `/risk-report` — risk assessment across 67 categories / 311 risk factors
 - `/similar-deals` — Find comparable transactions from deal history

@@ -16,7 +16,7 @@ opens a sign-in page at **api.ololand.ai**, you approve, and you're done.
 2. Claude opens the OloLand sign-in page at **https://api.ololand.ai** — sign
    in with email or Google and click **Approve**.
 3. That's it. Try any OloLand command:
-   - `/dd-analyze` — Run full due diligence on a deal
+   - `/dd-analyze` — Run extraction, reconciliation, risk, and financial-snapshot processing for a deal
    - `/similar-deals` — Find comparable transactions
 
 If you see OloLand tools in your tools list, you're connected.
