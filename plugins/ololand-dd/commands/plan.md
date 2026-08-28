@@ -41,16 +41,21 @@ Then ask the user:
 
 > Approve this plan? Reply "yes" to execute, "no" to adjust, or rewrite any step.
 
-On approval, continue the conversation via the normal message endpoint
-(`mcp__ololand__ask_deal_agent` or `mcp__ololand__talk_to_deal`)
-attaching the plan as context. *Quote the steps in your follow-up so the
-executor sees what was approved.*
+On approval, continue the **same session** through OloLand's first-party app or
+normal SSE/message endpoint, attaching the exact returned plan in the
+`approved_plan` field of `SubmitMessageRequest`. The external MCP
+`ask_deal_agent` and `talk_to_deal` tools do not currently accept a
+server-bound `approved_plan`; do not call them for the planned execution, and
+do not treat quoted plan prose or a conversational "yes" as a substitute for
+that binding. If the current client cannot send `approved_plan` through the
+normal session endpoint, stop and report that governed execution is
+unavailable on this rail.
 
 On rejection, ask what should change and re-plan.
 
 ## When to use
 
-- **Before any non-trivial deal question.** "Write the IC memo" or "What are the top three risks" or "Run the DCF and compare to comps" should *always* be planned before execution.
+- **Before any non-trivial deal question that will be answered by the conversational executor.** "Write the IC memo", "What are the top three risks", or "Run the DCF and compare to comps" should *always* be planned before an agent executor turn.
 - **When the user asked for something ambiguous.** The planner surfaces `open_questions` — let the user resolve those before tool calls fire.
 - **When the user is cost-conscious.** Plan mode is one cheap call; the executor that follows is many. Approving a tight plan beats an executor that escalates because the prompt was vague.
 - **Before any escalation to ic-memo, risk-chat, or forensic-chat templates.** The planner will signal `escalation_required: true` when appropriate.
@@ -58,6 +63,7 @@ On rejection, ask what should change and re-plan.
 ## When NOT to use
 
 - For lookup-style questions ("what's the deal id?", "how many documents are uploaded?"). These take one tool call regardless; planning is overhead.
+- For a fixed-purpose deterministic tool that the user explicitly invoked with bounded parameters. The user's explicit run request is the authority for that one named tool; it does not authorize a conversational executor or follow-on writes.
 - For corrections to a previous turn — use `/dd-correct` instead.
 - For methodology questions ("how does the forensic QoE work?"). Use `/load-skill` (or `mcp__ololand__load_skill`) directly.
 
