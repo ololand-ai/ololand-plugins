@@ -1,12 +1,12 @@
 ---
-description: Compose an IC investment memo using the skeptical tile-stitching pattern — public-facts refresh, individual engine tiles, web fetches, and explicit gap-vs-finding framing. Refuses to render a memo against a stale stored deal record.
+description: Draft an in-session IC investment memo with one bounded Monte Carlo run using the skeptical tile-stitching pattern — public-facts refresh, individual engine tiles, web fetches, and explicit gap-vs-finding framing. Refuses to render against a stale stored deal record or an unbound simulation.
 ---
 
 # Skeptical IC Memo
 
 Compose an IC-defensible investment memo using OloLand's lower-level tile + web-fetch pattern. Designed to produce the output style that survives IC scrutiny — every $-figure cited, every engine output framed as `[finding]` or `[gap]`, no boilerplate gating conditions, no overtrusted simulation outputs.
 
-This is the **preferred** memo entry point as of 2026-05-12. The high-level `run_due_diligence` + `generate_investment_memo` chain still works but is less defensive: it bundles auto-included engines (war-game), bypasses the public-facts freshness check, and lets the LLM invent verdict labels. `/ic-memo-skeptical` hard-codes the orchestration that produces tighter artifacts.
+This is the **preferred** memo entry point as of 2026-05-12. `run_due_diligence` is a separate bounded extraction pipeline; it does not run valuation, war-game, forensic QoE, conflict detection, or memo generation. The deprecated `generate_investment_memo` entry point invokes the memo task without the public-facts freshness precondition. `/ic-memo-skeptical` makes each additional read or bounded engine call explicit and hard-codes the orchestration that produces tighter artifacts.
 
 ## Usage
 
@@ -18,6 +18,10 @@ This is the **preferred** memo entry point as of 2026-05-12. The high-level `run
 
 - `deal_id` (required) — The deal to memo. Works on both public-target (ticker / CIK) and private deals; the public-facts gate only fires when applicable.
 
+## Bounded Monte Carlo authority
+
+The user's explicit invocation of, or unambiguous request to run, `/ic-memo-skeptical <deal_id>` authorizes exactly one `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` call in Step 4 for that deal. It does not authorize any other valuation engine, war-game, different deal, retry, or later/background run. Automatic routing to this command or a generic request for memo commentary does not grant this authority. If the call fails or returns no `simulation_id`, record Monte Carlo as a `[gap]` and stop before drafting. If it succeeds, only the exact response carrying that new `simulation_id` may be used in the in-session draft. **Never call `compose_ic_memo` from this command:** that tool has no simulation-binding or MC-exclusion parameter and could reuse an older persisted simulation even after a successful new run. Never infer, substitute, or reuse a prior simulation identity.
+
 ## Orchestration (every step is required; do not skip)
 
 Execute in order. The model invoking this command must walk each step, log the result, and surface gaps as diligence asks rather than papering over them.
@@ -25,7 +29,7 @@ Execute in order. The model invoking this command must walk each step, log the r
 ### Step 1 — Ground the deal record
 
 1. Call `get_deal` to read the stored Deal.value, Deal.stage, ticker, and CIK.
-2. **If ticker or CIK is set**, immediately call `fetch_public_deal_facts(deal_id)`. This is the freshness check — `compose_ic_memo(web_facts_required=True)` will refuse to run if you skip it.
+2. **If ticker or CIK is set**, immediately call `fetch_public_deal_facts(deal_id)`. This is the freshness check required before the in-session draft.
 3. Inspect the response's `staleness.is_stale`. When `true`, the stored row is older than a recent public 8-K announcement. Surface this as a banner ABOVE the executive summary; do not silently use the stored EV/stage as authoritative. Quote the announcement date and source URL.
 
 ### Step 2 — Build the financial spine from tiles, not from a black-box DD pipeline
@@ -47,24 +51,24 @@ For deals with a ticker:
 
 For private deals, skip this step. The freshness gate doesn't apply.
 
-### Step 4 — Run Monte Carlo and forensic strictly as diligence prompts
+### Step 4 — Run the one authorized Monte Carlo strictly as a diligence prompt
 
-- `run_monte_carlo_simulation(deal_id)` — inspect `assumption_provenance` per parameter. When `default_used` is true on 2+ of revenue_growth / ebitda_margin / wacc / terminal_growth, present the MC output as **sensitivity analysis ONLY** — do not cite mean / median / P5 / P95 / VaR / CVaR numerics in the main memo body. Caveat that the distribution reflects default priors and is not a defended forecast. Appendix-only.
+- Under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Require a non-empty `simulation_id` in that exact response before using any returned Monte Carlo value, and carry that identity into the Step 5 audit log. Inspect `assumption_provenance` per parameter. When `default_used` is true on 2+ of revenue_growth / ebitda_margin / wacc / terminal_growth, present the MC output as **sensitivity analysis ONLY** — do not cite mean / median / P5 / P95 / VaR / CVaR numerics in the main memo body. Caveat that the distribution reflects default priors and is not a defended forecast. Appendix-only. If the call fails or returns no `simulation_id`, record the exact `[gap]` statement from the authority section, **stop before Step 5 and report that governed memo drafting is unavailable because the run cannot be bound**. Do not retry or reuse any older simulation.
 - DO NOT invoke `run_war_game_simulation` from this command. War-game is opt-in; the user has to ask for it explicitly. The robustness score is a composite (35% EV stability + 35% path consistency + 30% tail resilience), not a probability, and pasting "base case is robust at 74%" as IC evidence is the exact failure mode this command exists to prevent.
 
-### Step 5 — Generate the memo with the freshness gate ON
+### Step 5 — Draft directly from the exact collected outputs
 
-Call `compose_ic_memo(deal_id, web_facts_required=True)`. This is the gated replacement for `generate_investment_memo`. It will refuse to render if step 1's freshness check was skipped or expired.
+Author the memo in the current session from only the Step 1-4 responses and the public sources fetched in Step 3. Do not call `compose_ic_memo`, `generate_investment_memo`, or another persisted memo generator. Those rails cannot bind the exact Step 4 simulation, so using them would make simulation lineage ambiguous. Include the exact Step 4 `simulation_id` in the skeptic's audit log and use Monte Carlo values only from the same response that supplied it. This deliverable is an explicitly **non-persisted draft**, not a canonical IC package; canonical memo generation remains unavailable on this command until the backend exposes simulation binding or exclusion.
 
-Poll `check_task_status` until the task completes. When complete, fetch the memo and verify the following before presenting it to the user:
+Before presenting the draft, verify the following:
 
 1. The Executive Summary opens with the staleness banner (if `staleness.is_stale` was true in step 1).
 2. The Recommendation section opens with exactly one of `Pass:` / `Needs More Data:` / `Conditional Go:` / `Go:` (verbatim, with colon). The post-process audit will rewrite an invented label like "CONDITIONAL GO" to canonical casing, but flag if you see one.
-3. Every headline $-figure (revenue, EBITDA, debt, EV, transaction value) is followed by a `[source: X]` suffix. Un-cited figures are logged to `metadata.citation_audit` — surface the count to the user.
+3. Every headline $-figure (revenue, EBITDA, debt, EV, transaction value) is followed by a `[source: X]` suffix. Scan the completed draft and count any un-cited figures yourself; this direct-draft path has no generated `metadata.citation_audit` object.
 4. The Conditions Precedent list under the Recommendation cites the engine signals each condition came from. No boilerplate "obtain legal opinion" unless tied to a specific finding.
-5. Monte Carlo numerics do not appear in the main body if MC's `tool_treatment.placement` was "appendix".
+5. Monte Carlo numerics do not appear in the main body when the default-heavy rule in Step 4 requires appendix-only treatment, and every Monte Carlo value used comes from the response carrying the audit log's exact `simulation_id`.
 
-If any of the five checks fail, regenerate the memo OR surface the violation to the user — do not paper over it.
+If any of the five checks fail, correct the in-session draft or surface the violation to the user — do not paper over it.
 
 ### Step 5.5 — Mandatory atomic-claim verification before FINAL
 
@@ -85,11 +89,12 @@ Output the memo + a short skeptic's audit log:
 - Freshness: `fetch_public_deal_facts` called at <timestamp>; staleness verdict.
 - Reconciliation: any discrepancies the dossier vs public filings showed.
 - Forensic: list of `[gap]` primitives that need data pulls before bid commitment.
+- Monte Carlo lineage: exact `simulation_id` from the single authorized Step 4 response and whether its numerics were limited to the appendix.
 - Citation audit: count of un-cited $-figures (target: 0).
 - Verification: `run_atomic_verifiers` `gate_passed` verdict + count of `blocking_failures` (target: `gate_passed: true`, 0 failures). If any failures, list them — they are unsupported numbers, not minor nits.
 - Derived gating conditions: count by source class (forensic / reconciler / assumption / judgment).
 
-The user gets the memo body AND the audit — the audit is what differentiates this command from `/dd-analyze`.
+The user gets the non-persisted memo draft AND the audit — the audit is what differentiates this command from `/dd-analyze`.
 
 ## Why this command exists
 
@@ -103,7 +108,7 @@ The Project Atlas / GBTG IC memo (2026-05-11, deal4fdd2334a0bd) was generated vi
 
 The root cause is structural: a single high-level template can't be retrofitted with skepticism after the fact. `/ic-memo-skeptical` enforces the orchestration that produces tighter artifacts — at the cost of more tokens per memo, more steps for the user to follow, and no "one command, one PDF" magic.
 
-If the user explicitly asks for the "fast" or "old" path, route them to `/dd-analyze`. Otherwise this is the default.
+There is no fast or old memo path. Do not route a memo request to `/dd-analyze`: that command is extraction-only and does not produce an investment memo. Use this command's complete orchestration for memo generation; explain the distinction if the user asks for a faster or legacy path.
 
 ## URL Conventions (STRICT)
 

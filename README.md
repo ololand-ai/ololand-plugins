@@ -13,7 +13,7 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.24.1 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.24.2 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
 | [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.3 | Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.3 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.1.0 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
@@ -180,11 +180,11 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 
 | Command | What it does |
 |---|---|
-| `/dd-analyze <deal_id>` | Full DD: financial extraction → risk assessment → valuation → forensic flags → IC-grade synthesis |
+| `/dd-analyze <deal_id>` | Run the deal extraction and risk-analysis pipeline; valuation reads or fresh model candidates are separate explicit `/valuation` actions |
 | `/new-deal <ticker_or_name>` | Create a new deal from a ticker (auto-fetches 10-K) or company name |
 | `/risk-matrix <deal_id>` | Render the risk taxonomy (67 categories / 311 risk factors) as an interactive tile |
 | `/risk-report <deal_id>` | Structured risk report — severity × likelihood × velocity, with $-impact |
-| `/valuation <deal_id> [method]` | Run DCF / LBO / Monte Carlo / Comps with strict unit enforcement |
+| `/valuation <deal_id> read [method]` | Read governed DCF / LBO and source-backed Comps. To create a fresh model candidate, explicitly use `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>`; bare and legacy method-only calls are read-only. |
 | `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench; optional cross-document conflict scan |
 | `/verify <deal_id>` | Defend every number: verify an OloLand artifact against source docs + engine runs, or grade an externally-drafted memo (e.g. from Claude Cowork) per-claim against the deal corpus |
 | `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis |

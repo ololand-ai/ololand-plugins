@@ -44,4 +44,4 @@ Report:
 
 Then suggest:
 - `/risk-report <deal_id>` if anomalies are high severity
-- `/valuation <deal_id>` to reflect cohort findings in the model
+- `/valuation <deal_id> read all` to compare cohort findings with the governed model without changing it. Do not claim the cohort findings were incorporated. A fresh candidate requires a separate explicit `/valuation <deal_id> refresh dcf`, and only the returned model lineage can prove whether those inputs were applied.

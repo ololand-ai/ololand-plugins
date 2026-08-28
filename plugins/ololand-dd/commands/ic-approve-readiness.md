@@ -56,7 +56,7 @@ Returns: "BLOCKED. Tier-1 (2): 'FY27 22% growth requires geo expansion' (unverif
 ## Related commands
 
 - `/assumption-controls` — interactive review and status transitions for assumption controls
-- `/dd-analyze` — full DD synthesis before IC
+- `/dd-analyze` — populate bounded extraction, risk, and financial-snapshot inputs before IC synthesis; use a separate explicit reconciliation action when needed
 
 ## Output URL Conventions (STRICT)
 

@@ -48,14 +48,14 @@ Goal: turn a raw VDR — sometimes thousands of documents — into structured, s
 **OloLand's ingest pipeline:**
 
 - `upload_deal_document` — single-doc upload (PDF, XLSX, DOCX, etc., via URL or base64)
-- `run_due_diligence` — kicks off the full corpus extraction pipeline (PDF → Tika → smart-chunking → table classification → Qdrant indexing → multi-extractor pass)
+- `run_due_diligence` — dispatches the bounded extraction pipeline (financial snapshot, five-dimension risk extraction, and target-only commercial findings)
 - `list_deal_documents` — VDR index
 - `search_deal_documents` — hybrid dense + sparse → RRF fusion → Cohere rerank
 
 **Capabilities competing tools lack:**
 
 - **Smart-chunking with post-chunk table classification** — financial-statement tables aren't naively split mid-cell
-- **Cross-document reconciliation** with a hard source hierarchy: CPA audited > tax return > management model > AI extracted. When numbers conflict, the higher-authority source wins; conflicts surface as risks rather than getting silently averaged.
+- **Source-backed evidence and risk provenance** attached to extraction outputs. Cross-document reconciliation is a separate explicit tool/workflow; the bounded dispatch does not claim to complete it.
 - **Fine-tuned Qwen 3 4B risk extractor** on Vertex AI (model-first, Claude fallback) → feeds the risk taxonomy (67 categories / 311 risk factors)
 - **Per-extraction provenance attached:** `evidence_strength`, `source_excerpt`, `file_name`, page references — populates the evidence pack the IC approval gate later reads
 
@@ -73,12 +73,12 @@ Goal: build defensible valuations grounded in extracted financials.
 |---|---|
 | Daloopa / Aiera | Pre-normalized public-company line items + transcript signal |
 | FactSet / LSEG / FMP | Comps, precedent transactions, macro |
-| **ololand-dd: `get_financial_snapshot`** | Cross-doc reconciled financials with source hierarchy |
+| **ololand-dd: `get_financial_snapshot`** | Extracted financial snapshot with returned source/provenance fields |
 | **ololand-dd: `get_dcf_valuation`** | Deterministic DCF with sensitivity tables |
-| **ololand-dd: `run_monte_carlo_simulation`** | Stochastic DCF with **per-parameter `assumption_provenance`** (default_used flagged per input) |
+| **ololand-dd: `run_monte_carlo_simulation`** | Write-like stochastic DCF with **per-parameter `assumption_provenance`**. This generic phase does not authorize a run: use an explicit `/valuation <deal_id> run monte-carlo` or a named workflow whose visible contract grants one bounded call. |
 | **ololand-dd: `analyze_unit_economics`** | LTV/CAC, cohort retention, ARR mechanics |
 
-**Critical rule from `dd-analyst` agent:** Monte Carlo with `default_used=true` on 2+ of {revenue_growth, ebitda_margin, wacc, terminal_growth} is **sensitivity analysis**, not a defended valuation distribution. Don't promote default-heavy MC output into the IC narrative.
+**Critical rules from `dd-analyst` agent:** Tool availability and automatic skill/agent routing are not execution authority. In DD Analyst Full DD mode, the user must explicitly select the displayed workflow that includes one bounded Monte Carlo call; other modes remain read-only. Monte Carlo with `default_used=true` on 2+ of {revenue_growth, ebitda_margin, wacc, terminal_growth} is **sensitivity analysis**, not a defended valuation distribution. Don't promote default-heavy MC output into the IC narrative.
 
 ### Phase 4 — Forensic QoE + risk
 
@@ -116,7 +116,7 @@ Then generate:
 |---|---|
 | **ololand-dd: `/assumption-controls <deal_id>`** | Interactive ledger review + status transitions |
 | **ololand-dd: `/ic-approve-readiness <deal_id>`** | Two-tier blocker pre-flight + warnings + snapshot summary |
-| **ololand-dd: `/dd-analyze <deal_id>`** | Full DD synthesis |
+| **ololand-dd: `/dd-analyze <deal_id>`** | Bounded deal extraction, risk analysis, and financial-snapshot pipeline; reconciliation and fresh model runs require separate explicit actions |
 | Notion | Collaborative memo drafting + circulation |
 | Docusign | IC sign-off (optional) |
 

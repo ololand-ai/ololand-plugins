@@ -44,7 +44,7 @@ The instructions below are for the model executing this command.
 
 Run this path only while the deal is live and its outcome is genuinely unknown. **Do not run it to "backfill" a deal that has already closed** — see the look-ahead guardrail above.
 
-1. **Run the deterministic models.** Call `run_deal_model(deal_id)` (defaults to `stages=["dcf","lbo"]`, `scenario_name="base"`). This persists a DCFRun + LBORun from the deal's existing financial snapshot — the DCF backs the `enterprise_value` prediction, the LBO backs `irr` / `moic`. No assumptions are required; the engines read the snapshot. If it returns `"Deal model pipeline returned no snapshot."`, the deal has no financial snapshot yet — tell the user to run `/dd-analyze` or `/valuation` first, then retry.
+1. **Run the deterministic models.** Call `run_deal_model(deal_id)` (defaults to `stages=["dcf","lbo"]`, `scenario_name="base"`). This persists a DCFRun + LBORun from the deal's existing financial snapshot — the DCF backs the `enterprise_value` prediction, the LBO backs `irr` / `moic`. No assumptions are required; the engines read the snapshot. If it returns `"Deal model pipeline returned no snapshot."`, the deal has no financial snapshot yet — tell the user to complete ingestion/extraction through `/dd-analyze` first, then retry. `/valuation` reads or models an existing snapshot; it does not create a missing one.
 
 2. **Mint the forecast.** Call `create_forecast_run(deal_id)` (defaults: `trigger="manual"`, `prediction_horizon_days=365`). This reads the runs from step 1 and writes typed `DealPrediction` rows: `enterprise_value` (absolute USD), `irr` (decimal), `moic` (multiple). Report `predictions_created` and `prediction_types` back to the user.
 
@@ -81,4 +81,5 @@ Each closed outcome makes all three sharper. Nothing else in the toolchain can a
 
 - `/calibrate-vs-history` — the payoff: historical-bias-corrected projections.
 - `/similar-deals` — outcome-weighted cross-deal pattern match.
-- `/dd-analyze`, `/valuation` — produce the financial snapshot the models read.
+- `/dd-analyze` — produce the financial snapshot the models read.
+- `/valuation <deal_id> read all` — inspect valuation outputs once a snapshot exists; bare or legacy method-only invocations are read-only.

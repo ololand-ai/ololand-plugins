@@ -40,4 +40,4 @@ Follow with the `corpus_coverage` note verbatim (or a faithful summary of it), t
 
 ## After Completion
 
-If the user is evaluating a specific deal, suggest `/valuation <deal_id>` to see how the precedent range compares to the deal's own DCF/Comps output.
+If the user is evaluating a specific deal, suggest `/valuation <deal_id> read all` to compare the precedent range with governed DCF/LBO and source-backed Comps without starting a model run.
