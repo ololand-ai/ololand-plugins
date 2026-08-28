@@ -25,6 +25,9 @@ OloLand uses validated computation engines for all financial models. Never gener
 
 ### Monte Carlo Simulation
 - **Tool**: `run_monte_carlo_simulation(deal_id, num_iterations)`
+- **Execution boundary**: This tool creates a new simulation. Call it only
+  when the user explicitly requests a run or refresh; otherwise report that
+  this workflow has no governed Monte Carlo read endpoint.
 - Vectorized stochastic engine (not loop-bound)
 - Distribution support: Normal, LogNormal, Triangular
 - Gaussian copula for correlated variables
@@ -43,11 +46,22 @@ Before any valuation, verify input data consistency:
 - Flag discrepancies > 2% spread
 - Use reconciled (highest-confidence) values for models
 
-## Risk-Adjusted Valuation
+## Risk Context and Model Integrity
 
-Every valuation must incorporate risk findings:
-1. Identify top 3 risks from risk analysis
-2. Quantify dollar impact per risk (which line items, how much, when)
-3. Adjust base case assumptions accordingly
-4. Run sensitivity analysis on risk-driven variables (not arbitrary)
-5. Present risk-adjusted range alongside base case
+Risk findings must remain separate from the governed valuation unless the
+identified model's own returned assumption lineage proves an approved,
+source-derived bridge for that exact model identity.
+
+- Present automated dollar impacts and WACC premiums as separately labeled
+  `heuristic_scenario` context. They are not source-derived or approved model
+  inputs merely because the risk engine returned them.
+- Do not alter, relabel, or substitute a governed DCF/LBO case using automated
+  risk amounts or WACC premiums. Do not require or invent a risk-adjusted range.
+- An adjustment may be described as applied only when the exact governed model
+  identity (run, publication, snapshot, and receipt) returns assumption lineage
+  proving a `source_derived` approved bridge. Otherwise report the governed
+  base case and the risk scenario separately, with `dcf_application_allowed`
+  stated as returned.
+- Keep the publication/candidate identity rules intact: a candidate run is not
+  the current decision artifact until a governed read binds it to the required
+  publication, receipt, snapshot, and matching run identity.
