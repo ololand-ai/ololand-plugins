@@ -40,7 +40,7 @@ OloLand's deterministic DCF engine has specific conventions. Use these when disc
 - Bind every reported DCF output to the run, publication, financial-snapshot, and receipt identifiers returned by the valuation tool. Do not infer its basis from the newest financial snapshot or from a separate financial read.
 - State whether each material assumption was returned as applied, caller-supplied, or defaulted. Do not claim an assumption was used merely because it appears in a separate deal, risk, or market response.
 - If identity is absent or enterprise value is returned as `ev_not_meaningful`, withhold the valuation conclusion and label the result unavailable/not meaningful. A new model run is a write-like workflow and requires the user's explicit request; after it runs, re-fetch the DCF before reporting it.
-- The current canonical snapshot may have collapsed reported and adjusted EBITDA labels. Treat the returned model as `canonical_snapshot`, relay the returned `adjusted_case` status, and never infer a second case from an uncited CIM number or a latest QoE result.
+- The current canonical snapshot may have collapsed reported and adjusted EBITDA labels. Treat the returned model as `canonical_snapshot` only when its exact governed identity does not carry a publication-bound EBITDA bridge proving a distinct basis. When that lineage does prove a distinct adjusted basis, preserve the returned basis label and `adjusted_case` status. Never infer a second case from an uncited CIM number or a latest QoE result.
 - If liquidity, covenant, control, or audit evidence contradicts the DCF, the deterministic engines (forensic QoE, scenario defense) override the DCF anchor. Use the `forensic-qoe` skill to find those signals first.
 - Surface when a DCF is computed on data flagged for material weakness — that diminishes confidence regardless of the math. Use the `citation-discipline` skill to cite the material-weakness disclosure inline alongside the DCF output.
 
@@ -53,8 +53,9 @@ When citing DCF output to a user, include:
 - **Sensitivity band** (low / base / high EV)
 - **Key assumptions used** (WACC, terminal growth, tax rate, CapEx %)
 - **Model identity** (returned run/publication/snapshot/receipt identifiers) and assumption-application status
+- **EBITDA basis** exactly as returned for that identity, including `adjusted_case` status
 - **A one-sentence credibility note** tying back to evidence from filings — anchored with `[N]` citations to the source documents.
 
-Example:
+Illustrative format — replace every placeholder with the exact returned value and identifier:
 
-> DCF Enterprise Value: `$84.3M` base, `$67.1M` low / `$104.2M` high (WACC 9.5% ± 1.5%, terminal growth 2.5% ± 0.5%). Implied EV/EBITDA = 10.9x base. Key driver: revenue growth assumption of 4.5% (5-year CAGR from FY20-FY25 [1]). Credibility caveat: the FY25 financials carry a going-concern qualification [2]; the DCF is a useful scenario but covenant/liquidity evidence should override it for entry-price decisions.
+> DCF Enterprise Value: `<base EV>` base, `<low EV>` low / `<high EV>` high. Model identity: run `<dcf_run_id>`, publication `<publication_id>`, snapshot `<snapshot_id>`, receipt `<receipt_id>`; EBITDA basis `<returned basis>`, `adjusted_case=<returned status>`. Assumptions: WACC `<value>` (`<applied|supplied|defaulted>`), terminal growth `<value>` (`<status>`), tax rate `<value>` (`<status>`), CapEx `<value>` (`<status>`). Implied EV/EBITDA = `<multiple>` base. Key driver: `<source-backed driver>` [1]. Credibility caveat: `<source-backed limitation>` [2]; the DCF is a scenario and contradictory covenant, liquidity, or audit evidence should override it for entry-price decisions.
