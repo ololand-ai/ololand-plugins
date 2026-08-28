@@ -13,8 +13,9 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
 ## Available MCP Tools
 
 ### Strategy Simulation
-- `run_war_game_simulation` — launches the MaskablePPO simulation; returns simulation_id or batch_id
-- `check_task_status` — polls for completion of long-running simulations
+- `run_war_game_simulation` — launches preparation; returns a Celery `task_id`
+- `check_task_status` — polls that launch task; its completed payload supplies the simulation or batch identity
+- `get_war_game_results` — reads authoritative completed results by exact `simulation_id` or `batch_id`
 - `analyze_build_vs_buy` — companion analysis for M&A vs internal build decisions
 
 ### Deal Context (auto-populates simulation inputs)
@@ -30,6 +31,12 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
 
 ## Workflow
 
+### Execution authority
+
+- This agent may call `run_war_game_simulation` only when the user explicitly asks to **run/execute** the war-game for the active deal and named scenarios. Merely asking for a review, strategy opinion, comparison, or plan is not execution authority: follow `/plan`, render the plan, and stop for the first-party app or normal session endpoint to continue with the returned plan payload supplied as `approved_plan`. That field is execution context, not a persisted or hash-validated approval identity.
+- If explicit execution is absent, do not call `run_war_game_simulation`, even after gathering context. If the user explicitly asks to run it, make exactly the bounded call supported by the tool (`deal_id` and `scenarios`); do not invent extra arguments or retry a failed call.
+- If the request contains a custom premise that changes the business, buyer, capability, market, or competitive setup, fail closed as unsupported on this MCP rail. The simulation tool cannot carry that premise: do not discard it, translate it into an invented argument, substitute a different analysis, or run the default deal-context simulation as if it answered the question.
+
 1. **Context** — Pull deal profile (`get_deal`, `get_financial_snapshot`, `get_deal_indicators`). Extract focal company's revenue, market share, EBITDA margin.
 
 2. **Market structure** — Call `research_market` and `search_extracted_knowledge` to identify competitors. For each competitor, classify by archetype:
@@ -39,15 +46,15 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
    - **Niche defender** — protects a specific segment fiercely, ignores others
    - **Cash cow** — harvests, doesn't reinvest, ripe for share-take
 
-3. **Scenarios** — Run `run_war_game_simulation` across 4 scenarios in a single batch:
+3. **Scenarios** — Run exactly the validated scenario labels the user selected. Do not expand `base_case` or another named subset into a broader paid batch; run all four only when the user explicitly requests `all` or all four labels:
    - `base_case` — current macro and regulatory environment
    - `expansion` — TAM grows 1.5x, switching costs drop
    - `macro_stress` — recession shock in Q5-Q8, customer churn doubles
    - `regulated_stress` — compliance regime tightens, regulated competitor behavior changes
 
-4. **Poll** — `check_task_status` until each simulation completes (typical 60-180 seconds per scenario).
+4. **Poll and fetch** — poll the returned launch `task_id` with `check_task_status`. On completion, require the returned exact `simulation_id` or `batch_id`, then call `get_war_game_results` with that identity. A task status is not a simulation result; if the launch fails, completes without an identity, or the authoritative result is unavailable/incomplete, stop and report that gap. Do not fall back to an older or merely latest run.
 
-5. **Synthesize the strategy comparison** — Single matrix:
+5. **Synthesize the strategy comparison** — Only from completed scenarios returned by `get_war_game_results`, using a single matrix:
 
    | Scenario | Optimal Q1-Q4 path | Mean EV | P5 EV | P95 EV | Robustness | Top competitor response |
    |---|---|---|---|---|---|---|

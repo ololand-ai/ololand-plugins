@@ -25,7 +25,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | Command | What it does |
 |---------|--------------|
 | `/pre-screen` | Pre-NDA public/private screen — public targets receive one bounded Monte Carlo run; private targets receive a signal-only PCS brief with valuation withheld until a dedicated governed private-company tool exists |
-| `/dd-analyze` | Run the deal extraction, reconciliation, risk, and financial-snapshot pipeline; it does not itself authorize a fresh Monte Carlo run |
+| `/dd-analyze` | Run the bounded deal extraction, risk, and financial-snapshot pipeline; it does not itself authorize a fresh Monte Carlo run or perform cross-document reconciliation |
 | `/ic-memo-skeptical` | Stage-2 IC memo with one bounded Monte Carlo run, skeptical tile-stitching, public-facts freshness gate, citation audit, and explicit gap-vs-finding framing |
 | `/risk-report` | Risk matrix across 67 diligence categories (311 tracked risk factors) with evidence links, dollar quantification, and industry overlays |
 | `/valuation` | Read governed DCF/LBO and source-backed Comps by default; create a DCF/LBO/Monte Carlo candidate only with explicit `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>` syntax; bare and legacy method-only calls are read-only |
@@ -63,21 +63,21 @@ Using Claude alone on a 1,000-document data room is thorough but slow, non-deter
 
 OloLand + Claude is the one-two punch.
 
-### First Punch — OloLand (the record)
+### First Punch — OloLand (the governed record and workflows)
 
-Before Claude sees a single token, OloLand has already:
+OloLand separates durable source records from explicitly invoked analysis workflows:
 
 - **Ingested every document** into a hybrid vector + sparse index with Anthropic's Contextual Retrieval method (67% fewer failed retrievals)
-- **Classified risk** across a 67-category / 311-factor taxonomy using a fine-tuned Qwen 3 4B model on Vertex AI
-- **Reconciled every number** with a source hierarchy (CPA-audited > tax return > management model > AI-extracted) and flagged >2% spreads
+- **Persists risk findings** with taxonomy, source, and run lineage when the relevant extraction workflow runs
+- **Preserves financial provenance** and applies the source hierarchy when a reconciliation workflow has the required evidence; it does not claim that every number is automatically reconciled
 - **Built a knowledge graph** linking entities, covenants, and claims across the corpus
-- **Run forensic QoE** — Beneish M-Score, Benford's Law, EBITDA bridge, revenue quality, journal entry testing, lapping detection
-- **Computed valuations** with deterministic engines — DCF with strict unit enforcement, multi-tranche LBO with cash sweep + PIK, vectorized Monte Carlo with Gaussian copula, Black-Scholes real options
-- **Pattern-matched** against your firm's last fifty deals — accuracy bands, mitigation history, covenant outcomes
+- **Runs forensic QoE when invoked and adequately sourced** — Beneish M-Score, Benford's Law, EBITDA bridge, revenue quality, journal entry testing, and lapping detection; unavailable inputs remain explicit gaps
+- **Runs and publishes valuation workflows when invoked on an eligible basis** — DCF, LBO, Monte Carlo, and real-options outputs retain their model and source identities
+- **Surfaces firm-history comparisons when invoked** — accuracy bands, mitigation history, and covenant outcomes from available recorded deals
 
 ### Second Punch — Claude (the reasoning)
 
-Claude reasons over a reconciled, structured, provenance-chipped subset. It synthesizes. It writes the memo. It builds the deck. It answers the partner's hard question — because the answer is already in the record.
+Claude reasons over the structured, provenance-bearing evidence and completed workflow outputs that are actually available. It synthesizes, writes the memo, builds the deck, and keeps missing or unverified work visible rather than treating it as completed.
 
 ### The Track Record
 

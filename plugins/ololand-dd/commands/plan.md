@@ -39,13 +39,15 @@ Reasoning: <reasoning>
 
 Then ask the user:
 
-> Approve this plan? Reply "yes" to execute, "no" to adjust, or rewrite any step.
+> Approve this plan? Reply "yes" to approve the handoff, "no" to adjust, or rewrite any step. A same-chat "yes" records intent only; it does not execute the plan. Execution requires continuing this same session in OloLand's first-party app or normal session endpoint with the returned plan payload supplied as `approved_plan`.
 
 On approval, continue the **same session** through OloLand's first-party app or
-normal SSE/message endpoint, attaching the exact returned plan in the
-`approved_plan` field of `SubmitMessageRequest`. The external MCP
-`ask_deal_agent` and `talk_to_deal` tools do not currently accept a
-server-bound `approved_plan`; do not call them for the planned execution, and
+normal SSE/message endpoint, attaching the returned plan payload in the
+`approved_plan` field of `SubmitMessageRequest`. This field supplies execution
+context; it is not currently a persisted or hash-validated approval identity,
+so do not describe the handoff as tamper-proof or cryptographically bound. The external MCP
+`ask_deal_agent` and `talk_to_deal` tools do not currently accept the normal
+endpoint's `approved_plan` field; do not call them for the planned execution, and
 do not treat quoted plan prose or a conversational "yes" as a substitute for
 that binding. If the current client cannot send `approved_plan` through the
 normal session endpoint, stop and report that governed execution is

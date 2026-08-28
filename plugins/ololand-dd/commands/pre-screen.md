@@ -84,6 +84,8 @@ If `as-of` was provided, verify each annual filing's `filing_date` is before the
 
 Under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Report mean / median EV ($M), P5 / P25 / P75 / P95 EV ($M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6). If it fails, report Monte Carlo unavailable; do not retry automatically.
 
+If the call fails or returns no simulation identity, use this explicit gap in the public brief and audit log: **"[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted."** Do not fill the gap with an earlier run, a DCF, a PCS signal, or an inferred range.
+
 UNLIKE `/ic-memo-skeptical`, MC numerics belong in the BODY of the public brief, not the appendix. Pre-NDA, the MC distribution **is** the value-add — caveat defaulted assumptions inline; don't suppress the numbers.
 
 ### Step 6-Public — Pull deal indicators
@@ -96,7 +98,7 @@ Do NOT call `generate_forensic_screen_pdf`. In the brief: "The Pre-LOI Forensic 
 
 ### Step 8-Public — Compose the public brief
 
-Output the public template (see below in **Public brief template**).
+Output the public template (see below in **Public brief template**). If the one authorized Monte Carlo call failed or returned no simulation identity, use the conditional failure branch in that template: replace the MC headline sentence and entire Monte Carlo valuation table with the exact `[gap] Monte Carlo unavailable...` statement, and do not emit placeholder percentile, EV, equity, VaR, CVaR, or coverage values.
 
 ### Step 9-Public — Audit log
 
@@ -188,7 +190,7 @@ Identical structure to the public branch. The signal counts + reliability scores
 **Run:** {ISO timestamp}
 
 ## Headline
-{One sentence stating the MC finding in terms the user asked about.}
+{If the authorized Monte Carlo call succeeded with an exact simulation identity: one sentence stating the MC finding in terms the user asked about. If it failed or returned no identity, replace this headline with: "[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted."}
 
 ## Financial spine
 | Metric | Value | Source |
@@ -200,7 +202,7 @@ Identical structure to the public branch. The signal counts + reliability scores
 | Revenue growth (5yr CAGR) | X.X% | historical |
 | CapEx % revenue | X.X% | FMP |
 
-## Monte Carlo valuation (10,000 simulations)
+## Monte Carlo valuation (10,000 simulations — include only when the authorized call succeeded with an exact simulation identity)
 | Percentile | Enterprise Value | Equity Value |
 |---|---|---|
 | P5 | $XXX M | $XX M |
@@ -211,6 +213,8 @@ Identical structure to the public branch. The signal counts + reliability scores
 | P95 | $X.XB | $XXX M |
 
 VaR(5%): $XXX M | CVaR(5%): $XXX M | Assumption coverage: XX% (sourced) / XX% (defaulted)
+
+**Failure branch:** If the authorized call failed or returned no simulation identity, omit the table and this VaR/CVaR line entirely. Output only: "[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted." Do not use placeholders or substitute a prior run, DCF, PCS signal, or inferred range.
 
 ## Risk concentration (X categorized risks from canonical annual filing and substantive exhibits only)
 | Severity | Count |

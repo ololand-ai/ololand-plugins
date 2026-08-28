@@ -19,7 +19,7 @@ Run the bounded extraction and risk-analysis pipeline on a deal using OloLand's 
 ## Execution
 
 1. Verify the deal exists using the `get_deal` MCP tool.
-2. **Status-only questions never start a run.** This command uses the legacy Celery extraction rail, not canonical Full Analysis. Require the original `task_id` returned by `run_due_diligence` and call `check_task_status(task_id)` only to report its launch state under the rules below. If the caller does not have that task ID, report that this legacy dispatch's status is unavailable; do not substitute `get_analysis_run_status`, because it reads a different canonical `AnalysisRun` workflow.
+2. **Status-only questions are a terminal read-only path and never start a run.** If the user is asking whether an earlier dispatch finished or what it produced, do not continue to step 3 and do not call `run_due_diligence`. Require the original `task_id` returned by an earlier `run_due_diligence` call and call `check_task_status(task_id)` only to report that task's launch state. If the caller does not have that task ID, report that this legacy dispatch's status is unavailable; do not substitute `get_analysis_run_status`, because it reads a different canonical `AnalysisRun` workflow. Stop after reporting status.
 3. Call `run_due_diligence(deal_id)` exactly once. The backend dispatches `master_data_extraction_task`, whose bounded contract is:
    - Simplified financial statement extraction into the deal snapshot
    - Risk extraction across the five dimensions: HR, Legal, Tech, Commercial, and Financial

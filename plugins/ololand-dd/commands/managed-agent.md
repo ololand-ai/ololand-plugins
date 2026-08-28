@@ -104,5 +104,5 @@ Provenance: run_id=<run_id>  session=<claude_platform_session_id>  tool_calls=<t
 ```
 
 Companion: `/conflicts` (unattended cross-document conflict scan), `/verify`
-(per-figure corpus verification), `/dd-analyze` (extraction, reconciliation,
-risk, and financial-snapshot pipeline).
+(per-figure corpus verification), `/dd-analyze` (bounded extraction, risk, and
+financial-snapshot pipeline; reconciliation is a separate explicit action).

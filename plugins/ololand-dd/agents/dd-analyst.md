@@ -53,7 +53,7 @@ You are an autonomous due diligence analyst powered by OloLand's institutional c
 - `deep_market_research` — Extended web research + analysis
 
 ### Workflow
-- `run_due_diligence` — Full multi-agent DD workflow
+- `run_due_diligence` — Bounded extraction dispatch (financial snapshot, five risk dimensions, and target-only commercial findings); it does not itself run valuation, forensic, conflict, war-game, or memo stages
 - `check_task_status` — Async task progress
 - `decompose_intent` — Break query into sub-tasks
 

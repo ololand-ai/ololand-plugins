@@ -39,6 +39,8 @@ S-1 ingestion path — it does, for public filings.
 
 ## DD Workflow
 
+The `/dd-analyze` command is intentionally narrower than this end-to-end methodology: its `run_due_diligence` call dispatches financial extraction, five-dimension risk extraction, and target-only commercial findings only. It does not itself perform cross-document reconciliation, forensic QoE, valuation, war-game, conflict detection, or memo generation. Invoke those stages through their separate governed tools or commands.
+
 ```
 1. Document ingestion → Extract financials, contracts, legal docs (10-K or ingested S-1)
 2. Financial validation → Cross-document reconciliation (CIM vs audited vs management)
