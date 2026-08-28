@@ -107,7 +107,7 @@ The Project Atlas / GBTG IC memo (2026-05-11, deal4fdd2334a0bd) was generated vi
 
 The root cause is structural: a single high-level template can't be retrofitted with skepticism after the fact. `/ic-memo-skeptical` enforces the orchestration that produces tighter artifacts — at the cost of more tokens per memo, more steps for the user to follow, and no "one command, one PDF" magic.
 
-If the user explicitly asks for the "fast" or "old" path, route them to `/dd-analyze`. Otherwise this is the default.
+There is no fast or old memo path. Do not route a memo request to `/dd-analyze`: that command is extraction-only and does not produce an investment memo. Use this command's complete orchestration for memo generation; explain the distinction if the user asks for a faster or legacy path.
 
 ## URL Conventions (STRICT)
 
