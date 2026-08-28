@@ -6,7 +6,7 @@ description: Compose an IC investment memo with one bounded Monte Carlo run usin
 
 Compose an IC-defensible investment memo using OloLand's lower-level tile + web-fetch pattern. Designed to produce the output style that survives IC scrutiny — every $-figure cited, every engine output framed as `[finding]` or `[gap]`, no boilerplate gating conditions, no overtrusted simulation outputs.
 
-This is the **preferred** memo entry point as of 2026-05-12. The high-level `run_due_diligence` + `generate_investment_memo` chain still works but is less defensive: it bundles auto-included engines (war-game), bypasses the public-facts freshness check, and lets the LLM invent verdict labels. `/ic-memo-skeptical` hard-codes the orchestration that produces tighter artifacts.
+This is the **preferred** memo entry point as of 2026-05-12. `run_due_diligence` is a separate bounded extraction pipeline; it does not run valuation, war-game, forensic QoE, conflict detection, or memo generation. The deprecated `generate_investment_memo` entry point invokes the memo task without the public-facts freshness precondition. `/ic-memo-skeptical` makes each additional read or bounded engine call explicit and hard-codes the orchestration that produces tighter artifacts.
 
 ## Usage
 
