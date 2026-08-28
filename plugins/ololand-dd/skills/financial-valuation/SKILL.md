@@ -24,10 +24,11 @@ OloLand uses validated computation engines for all financial models. Never gener
 - Returns: IRR and MOIC at exit under multiple scenarios
 
 ### Monte Carlo Simulation
-- **Tool**: `run_monte_carlo_simulation(deal_id, num_iterations)`
-- **Execution boundary**: This tool creates a new simulation. Call it only
-  when the user explicitly requests a run or refresh; otherwise report that
-  this workflow has no governed Monte Carlo read endpoint.
+- **Tool**: `run_monte_carlo_simulation(deal_id, n_simulations, seed)`
+- **Execution boundary**: This tool creates and persists a new simulation. Authority must come from exactly one of these contexts:
+  1. A direct `/valuation <deal_id> run monte-carlo`, `/valuation <deal_id> refresh monte-carlo`, `/valuation <deal_id> run all`, or `/valuation <deal_id> refresh all` call.
+  2. The user's explicit invocation of, or unambiguous request to run, a named fixed-purpose workflow whose visible contract declares one Monte Carlo run, currently the **public branch only** of `/pre-screen`, `/ic-memo-skeptical`, or DD Analyst **Full DD mode**. That invocation authorizes only the single call, deal, and parameters declared by that workflow; it does not require a second `/valuation run` phrase. The private `/pre-screen` branch authorizes no valuation engine and must remain signal-only until a dedicated governed private-company tool exists.
+- Auto-loading this skill, routing to an agent, a generic diligence/memo question, a background task, a prior run, or merely recommending Monte Carlo grants no authority. A failed authorized call also grants no automatic retry. When neither context applies, do not call the tool; report that there is no governed Monte Carlo read endpoint.
 - Vectorized stochastic engine (not loop-bound)
 - Distribution support: Normal, LogNormal, Triangular
 - Gaussian copula for correlated variables

@@ -1,5 +1,5 @@
 ---
-description: Compose an IC investment memo using the skeptical tile-stitching pattern — public-facts refresh, individual engine tiles, web fetches, and explicit gap-vs-finding framing. Refuses to render a memo against a stale stored deal record.
+description: Compose an IC investment memo with one bounded Monte Carlo run using the skeptical tile-stitching pattern — public-facts refresh, individual engine tiles, web fetches, and explicit gap-vs-finding framing. Refuses to render against a stale stored deal record.
 ---
 
 # Skeptical IC Memo
@@ -17,6 +17,10 @@ This is the **preferred** memo entry point as of 2026-05-12. The high-level `run
 ## Arguments
 
 - `deal_id` (required) — The deal to memo. Works on both public-target (ticker / CIK) and private deals; the public-facts gate only fires when applicable.
+
+## Bounded Monte Carlo authority
+
+The user's explicit invocation of, or unambiguous request to run, `/ic-memo-skeptical <deal_id>` authorizes exactly one `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` call in Step 4 for that deal. It does not authorize any other valuation engine, war-game, different deal, retry, or later/background run. Automatic routing to this command or a generic request for memo commentary does not grant this authority. If the call fails, record Monte Carlo as a `[gap]` and continue without rerunning it.
 
 ## Orchestration (every step is required; do not skip)
 
@@ -47,9 +51,9 @@ For deals with a ticker:
 
 For private deals, skip this step. The freshness gate doesn't apply.
 
-### Step 4 — Run Monte Carlo and forensic strictly as diligence prompts
+### Step 4 — Run the one authorized Monte Carlo strictly as a diligence prompt
 
-- `run_monte_carlo_simulation(deal_id)` — inspect `assumption_provenance` per parameter. When `default_used` is true on 2+ of revenue_growth / ebitda_margin / wacc / terminal_growth, present the MC output as **sensitivity analysis ONLY** — do not cite mean / median / P5 / P95 / VaR / CVaR numerics in the main memo body. Caveat that the distribution reflects default priors and is not a defended forecast. Appendix-only.
+- Under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once and inspect `assumption_provenance` per parameter. When `default_used` is true on 2+ of revenue_growth / ebitda_margin / wacc / terminal_growth, present the MC output as **sensitivity analysis ONLY** — do not cite mean / median / P5 / P95 / VaR / CVaR numerics in the main memo body. Caveat that the distribution reflects default priors and is not a defended forecast. Appendix-only. If the call fails, record a `[gap]`; do not retry.
 - DO NOT invoke `run_war_game_simulation` from this command. War-game is opt-in; the user has to ask for it explicitly. The robustness score is a composite (35% EV stability + 35% path consistency + 30% tail resilience), not a probability, and pasting "base case is robust at 74%" as IC evidence is the exact failure mode this command exists to prevent.
 
 ### Step 5 — Generate the memo with the freshness gate ON

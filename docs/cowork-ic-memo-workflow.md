@@ -75,10 +75,10 @@ Goal: build defensible valuations grounded in extracted financials.
 | FactSet / LSEG / FMP | Comps, precedent transactions, macro |
 | **ololand-dd: `get_financial_snapshot`** | Cross-doc reconciled financials with source hierarchy |
 | **ololand-dd: `get_dcf_valuation`** | Deterministic DCF with sensitivity tables |
-| **ololand-dd: `run_monte_carlo_simulation`** | Stochastic DCF with **per-parameter `assumption_provenance`** (default_used flagged per input) |
+| **ololand-dd: `run_monte_carlo_simulation`** | Write-like stochastic DCF with **per-parameter `assumption_provenance`**. This generic phase does not authorize a run: use an explicit `/valuation <deal_id> run monte-carlo` or a named workflow whose visible contract grants one bounded call. |
 | **ololand-dd: `analyze_unit_economics`** | LTV/CAC, cohort retention, ARR mechanics |
 
-**Critical rule from `dd-analyst` agent:** Monte Carlo with `default_used=true` on 2+ of {revenue_growth, ebitda_margin, wacc, terminal_growth} is **sensitivity analysis**, not a defended valuation distribution. Don't promote default-heavy MC output into the IC narrative.
+**Critical rules from `dd-analyst` agent:** Tool availability and automatic skill/agent routing are not execution authority. In DD Analyst Full DD mode, the user must explicitly select the displayed workflow that includes one bounded Monte Carlo call; other modes remain read-only. Monte Carlo with `default_used=true` on 2+ of {revenue_growth, ebitda_margin, wacc, terminal_growth} is **sensitivity analysis**, not a defended valuation distribution. Don't promote default-heavy MC output into the IC narrative.
 
 ### Phase 4 — Forensic QoE + risk
 
@@ -116,7 +116,7 @@ Then generate:
 |---|---|
 | **ololand-dd: `/assumption-controls <deal_id>`** | Interactive ledger review + status transitions |
 | **ololand-dd: `/ic-approve-readiness <deal_id>`** | Two-tier blocker pre-flight + warnings + snapshot summary |
-| **ololand-dd: `/dd-analyze <deal_id>`** | Full DD synthesis |
+| **ololand-dd: `/dd-analyze <deal_id>`** | Deal extraction, reconciliation, risk analysis, and financial-snapshot pipeline; fresh model runs require a separate explicit action |
 | Notion | Collaborative memo drafting + circulation |
 | Docusign | IC sign-off (optional) |
 

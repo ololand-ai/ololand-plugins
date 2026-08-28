@@ -1,10 +1,10 @@
 ---
-description: Run full due diligence analysis on a deal — financial extraction, risk assessment, valuation, and memo generation.
+description: Run the deal's due-diligence extraction pipeline — financial extraction, reconciliation, risk assessment, and summary tiles. Fresh valuation models are separate explicit actions.
 ---
 
 # Due Diligence Analysis
 
-Run a comprehensive due diligence analysis on a deal using OloLand's institutional control system.
+Run the due-diligence extraction and risk-analysis pipeline on a deal using OloLand's institutional control system. This command does not directly run DCF/LBO/Monte Carlo engines or generate a memo.
 
 ## Usage
 
@@ -36,7 +36,7 @@ Report:
 - Top 5 risks with evidence citations
 - Financial snapshot (revenue, EBITDA, margins)
 - Any data reconciliation discrepancies
-- Suggested next steps: `/valuation` for financial modeling, `/risk-report` for deep risk analysis
+- Suggested next steps: `/valuation <deal_id> read all` to inspect governed models and source-backed market evidence, or `/valuation <deal_id> run all` only when the user explicitly asks to create fresh model candidates; `/risk-report <deal_id>` for deep risk analysis
 
 ## Output URL Conventions (STRICT)
 

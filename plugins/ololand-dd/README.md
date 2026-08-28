@@ -24,11 +24,11 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 
 | Command | What it does |
 |---------|--------------|
-| `/pre-screen` | Pre-NDA public-company screen — creates the deal, ingests filings only (no web, no news, no merger filings), extracts risks, runs Monte Carlo, outputs a 1-page brief with Pass / Pursue-to-NDA / More-Data recommendation |
-| `/dd-analyze` | Full due diligence pipeline — extract → reconcile → risk → DCF / LBO / MC / real options → forensic QoE → investment memo |
-| `/ic-memo-skeptical` | Stage-2 IC memo composed via skeptical tile-stitching with public-facts freshness gate, citation audit, and explicit gap-vs-finding framing — preferred memo entry point as of 2026-05-12 |
+| `/pre-screen` | Pre-NDA public/private screen — public targets receive one bounded Monte Carlo run; private targets receive a signal-only PCS brief with valuation withheld until a dedicated governed private-company tool exists |
+| `/dd-analyze` | Run the deal extraction, reconciliation, risk, and financial-snapshot pipeline; it does not itself authorize a fresh Monte Carlo run |
+| `/ic-memo-skeptical` | Stage-2 IC memo with one bounded Monte Carlo run, skeptical tile-stitching, public-facts freshness gate, citation audit, and explicit gap-vs-finding framing |
 | `/risk-report` | Risk matrix across 67 diligence categories (311 tracked risk factors) with evidence links, dollar quantification, and industry overlays |
-| `/valuation` | Deterministic DCF, multi-tranche LBO, 10,000-path Monte Carlo, comparable transactions, real options |
+| `/valuation` | Read governed DCF/LBO and source-backed Comps by default; create a DCF/LBO/Monte Carlo candidate only with explicit `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>` syntax; bare and legacy method-only calls are read-only |
 | `/qoe-analysis` | Deal-scoped QoE workbench: latest cached result or fresh revenue quality, EBITDA bridge, and working-capital analysis |
 | `/compliance-analysis` | OFAC, HSR, and CFIUS analysis using the deal's context-aware compliance workbench |
 | `/scenario-analysis` | Stress testing, market simulation, and real-options valuation from the scenario workbench |

@@ -56,6 +56,7 @@ Don't call `create_deal` first when the query could match multiple companies —
 
 Suggested next steps to offer the user:
 - `/dd-analyze <deal_id>` — run full due diligence once the annual filing (10-K, 20-F, or 40-F; or ingested S-1) finishes processing.
-- `/valuation <deal_id>` — DCF / LBO / Monte Carlo.
+- `/valuation <deal_id> read all` — inspect governed DCF/LBO and source-backed Comps without starting a model run.
+- `/valuation <deal_id> run all` — explicitly create fresh DCF/LBO/Monte Carlo candidates when the user asks to execute new models.
 - `/risk-report <deal_id>` — risk taxonomy breakdown (67 categories / 311 risk factors).
 - `/talk-to-deal <deal_id> "<question>"` — voice-optimized Q&A on the deal.

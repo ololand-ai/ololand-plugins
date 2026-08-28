@@ -180,11 +180,11 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 
 | Command | What it does |
 |---|---|
-| `/dd-analyze <deal_id>` | Full DD: financial extraction → risk assessment → valuation → forensic flags → IC-grade synthesis |
+| `/dd-analyze <deal_id>` | Run the deal extraction and risk-analysis pipeline; valuation reads or fresh model candidates are separate explicit `/valuation` actions |
 | `/new-deal <ticker_or_name>` | Create a new deal from a ticker (auto-fetches 10-K) or company name |
 | `/risk-matrix <deal_id>` | Render the risk taxonomy (67 categories / 311 risk factors) as an interactive tile |
 | `/risk-report <deal_id>` | Structured risk report — severity × likelihood × velocity, with $-impact |
-| `/valuation <deal_id> [method]` | Run DCF / LBO / Monte Carlo / Comps with strict unit enforcement |
+| `/valuation <deal_id> read [method]` | Read governed DCF / LBO and source-backed Comps. To create a fresh model candidate, explicitly use `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>`; bare and legacy method-only calls are read-only. |
 | `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench; optional cross-document conflict scan |
 | `/verify <deal_id>` | Defend every number: verify an OloLand artifact against source docs + engine runs, or grade an externally-drafted memo (e.g. from Claude Cowork) per-claim against the deal corpus |
 | `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis |
