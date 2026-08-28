@@ -54,28 +54,28 @@ This is not scenario planning. Scenario planning gives you three numbers. The wa
 
 4. **Poll and fetch** — poll the returned launch `task_id` with `check_task_status`. On completion, require the returned exact `simulation_id` or `batch_id`, then call `get_war_game_results` with that identity. A task status is not a simulation result; if the launch fails, completes without an identity, or the authoritative result is unavailable/incomplete, stop and report that gap. Do not fall back to an older or merely latest run.
 
-5. **Synthesize the strategy comparison** — Only from completed scenarios returned by `get_war_game_results`, using a single matrix:
+5. **Synthesize the strategy comparison** — Establish the authoritative returned scenario set from `get_war_game_results`, then render only those completed scenarios in a single matrix. Never add a row, result, or comparison for a requested scenario that is absent from the authoritative response:
 
    | Scenario | Optimal Q1-Q4 path | Mean EV | P5 EV | P95 EV | Robustness | Top competitor response |
    |---|---|---|---|---|---|---|
 
-   Plus the critical decision points: which 3 strategic moves move EV most across scenarios, and when (Q3? Q7? Q11?) is the inflection.
+   Plus up to 3 critical decision points supported by the returned scenario set: which strategic moves change EV most, and when (Q3? Q7? Q11?) is the inflection. With a single returned scenario, describe within-scenario decision points only; do not claim cross-scenario robustness.
 
 6. **Narrate the thesis stress test** — In plain English, answer:
    - Does the deal thesis depend on a competitor *not* responding? If so, the war game tells you when they'll respond.
-   - Is there a strategy that's robust across all 4 scenarios? If yes, name it.
-   - If only the base case works, the thesis is fragile and pricing should reflect it.
-   - If macro stress kills the deal at any reasonable strategy path, surface the specific quarter where it breaks.
+   - Ask whether a strategy is robust across all 4 scenarios only when all four completed scenarios are in the authoritative returned set. Otherwise state exactly which scenarios were evaluated and that all-four robustness was not tested.
+   - Say that only the base case works only when `base_case` and at least one completed comparison scenario are both in the returned set and support that conclusion.
+   - Discuss a macro-stress break only when `macro_stress` is in the returned set; then surface the specific supported quarter where it breaks.
 
-7. **Compare to deterministic DCF** — Pull `get_dcf_valuation` and overlay the war-game EV distribution on the DCF point estimate. If the DCF NPV sits at the P25 of the war-game distribution, the deterministic case is conservative. If it sits at P75, it's aggressive — and the bidder is paying for an outcome that holds in only 25% of competitor-response paths.
+7. **Compare to deterministic DCF** — Pull `get_dcf_valuation`, but treat its point estimate as usable only when the same successful response contains non-empty `dcf_run_id`, `snapshot_id`, `publication_id`, `analysis_run_id`, and `eligibility_receipt_id`. If any identity is absent, mark the DCF overlay as a `[gap]` and omit every conservative/aggressive comparison. When identity is complete, overlay the returned-scenario war-game EV distribution on that exact governed DCF point estimate. If the DCF NPV sits at the P25 of the returned distribution, the deterministic case is conservative. If it sits at P75, it's aggressive — and the bidder is paying for an outcome that holds in only 25% of the evaluated competitor-response paths.
 
 ## Output structure
 
 The agent's deliverable is a 1-page strategy memo:
 
-- **Headline thesis stress test** (one sentence: "Robust across all 4 scenarios" / "Fragile to macro stress" / "Depends on competitor X not responding for ≥4 quarters")
+- **Headline thesis stress test** (one sentence scoped to the authoritative returned set: use "Robust across all 4 scenarios" only when all four completed; use "Fragile to macro stress" only when `macro_stress` completed; otherwise name the scenario or subset actually evaluated)
 - **Optimal Q1-Q4 strategy path**, with confidence
-- **EV distribution** vs. deterministic DCF point estimate
+- **EV distribution** vs. an identity-complete deterministic DCF point estimate, or an explicit `[gap]` when governed DCF identity is incomplete
 - **Critical decision points** (3 max)
 - **Top competitor response patterns**
 - **Recommended bid adjustment** if robustness score < threshold
