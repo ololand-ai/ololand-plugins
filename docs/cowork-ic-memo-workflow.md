@@ -7,7 +7,7 @@ Canonical recommendation for running an end-to-end investment committee memo wor
 From the OloLand marketplace (`ololand-ai/ololand-plugins`):
 
 - **`ololand-dd`** v1.6.1 — core diligence + middle-office assumption controls + IC approval gate
-- **`ololand-forensic-qoe`** v0.2.0 — Pre-LOI Forensic Screen wedge
+- **`ololand-forensic-qoe`** v0.2.0 — Pre-LOI Forensic Screen and Full QoE
 - **`ololand-compliance-hooks`** v0.2.0 — MNPI guard, citation enforcer, audit log, tier-capacity warning, evidence-quality warning (drops into Anthropic's empty `hooks/` scaffold)
 
 Optional shells: Anthropic's `private-equity`, `investment-banking`, `financial-analysis` natives for template scaffolding.
@@ -86,7 +86,7 @@ Goal: catch earnings-quality red flags and surface the risk register (67 categor
 
 | Tool | Role |
 |---|---|
-| **ololand-forensic-qoe** | Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and `/legal-risk` for sourced covenant, cross-default, and MAC/MAE clause analysis. **The Pre-LOI Forensic Screen wedge** — $99 / 72-hour SLA, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks |
+| **ololand-forensic-qoe** | Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and `/legal-risk` for sourced covenant, cross-default, and MAC/MAE clause analysis. **The Pre-LOI Forensic Screen** — 72-hour SLA — and Full QoE are included in OloLand Pro and above, vs Big-4 QoE at $150-500K / 4-8 weeks |
 | **ololand-dd: `get_deal_risks`** | risk taxonomy (67 categories / 311 risk factors) with `probability_source` / `probability_confidence` / `probability_rendering` (qualitative vs numeric) |
 | **ololand-dd: `get_evidence_links`** | Risk → source document mapping |
 | **ololand-dd: `analyze_forensic_qoe`** | Aggregated forensic findings tile |

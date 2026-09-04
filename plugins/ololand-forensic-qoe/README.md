@@ -1,8 +1,8 @@
 # ololand-forensic-qoe
 
-> Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen wedge.
+> Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen and Full QoE, included in OloLand Pro and above.
 
-This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone plugin on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen for $99 with a 72-hour SLA. Full QoE is $999.
+This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone plugin on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen and Full QoE, both included in OloLand Pro and above (subscription-only since 2026-08-26, no per-deal price).
 
 ## Commands
 
@@ -38,7 +38,7 @@ The forensic engine auto-detects which primitives have sufficient input and skip
 
 ## Why this exists
 
-Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We sell it standalone, pre-LOI, with full methodology disclosure, and offer a $999 Full QoE workflow when the buyer wants a deeper package.
+Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We deliver it standalone, pre-LOI, with full methodology disclosure, and offer a Full QoE workflow when the buyer wants a deeper package — both included in OloLand Pro and above, with no per-deal price.
 
 For the broader OloLand DD plugin (deterministic DCF/LBO, 311-factor risk taxonomy, cross-deal memory), install [`ololand-dd`](../ololand-dd) from the same marketplace.
 

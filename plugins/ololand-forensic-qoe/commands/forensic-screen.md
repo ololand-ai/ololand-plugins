@@ -1,10 +1,10 @@
 ---
-description: Run a Pre-LOI Forensic Screen — full battery of Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and working-capital deep dive on a deal. The $99 / 72-hour SLA wedge product against Big-4 QoE.
+description: Run a Pre-LOI Forensic Screen — full battery of Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, and working-capital deep dive on a deal. Included in OloLand Pro and above, positioned against Big-4 QoE.
 ---
 
 # Pre-LOI Forensic Screen
 
-Runs the full forensic-QoE battery on a deal and produces an IC-defensible exclusion schedule with severity-scored findings, dollar impact, and source citations. This is OloLand's wedge product — the deterministic statistical layer of QoE that Big-4 also runs (then layers fieldwork on top of) for 20-50x the price.
+Runs the full forensic-QoE battery on a deal and produces an IC-defensible exclusion schedule with severity-scored findings, dollar impact, and source citations. This is the deterministic statistical layer of QoE that Big-4 also runs (then layers fieldwork on top of) for 20-50x the price.
 
 ## Usage
 
