@@ -14,7 +14,7 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 | Plugin | Status | What it does |
 |---|---|---|
 | [`ololand-dd`](./plugins/ololand-dd) | v1.24.2 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.3 | Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — $99 / 72-hour SLA, IC-defensible, with Full QoE at $999, vs Big-4 QoE at $150-500K / 4-8 weeks. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.4 | Forensic Quality-of-Earnings primitives as a standalone plugin: Beneish, Benford, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive. The Pre-LOI Forensic Screen — IC-defensible, 72-hour SLA — and Full QoE are included in OloLand Pro and above, vs Big-4 QoE at $150-500K / 4-8 weeks. |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.3 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.1.0 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
@@ -256,7 +256,7 @@ For thesis stress-test:
 
 ## Usage — `ololand-forensic-qoe`
 
-The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth without the full DD plugin.
+The standalone Pre-LOI Forensic Screen plugin. Use when you want forensic depth without the full DD plugin.
 
 ### Commands
 
