@@ -85,7 +85,10 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 
 ## Benchmark
 
-**Gauntlet v4 T5 (institutional due diligence):** OloLand 90.5%, Claude alone 88.5%. Dual-judge scoring (Gemini 3.1 Pro + Claude Opus 4.6). Gap widens on forensic, reconciliation, and visual-decision tasks.
+We publish two evaluations with their methodology and cohort selection:
+[Restatement Recall](https://ololand.ai/benchmarks/restatement-recall) and
+[Vals Finance Agent](https://ololand.ai/benchmarks/vals-finance-agent). Read the
+limitations sections — the cohorts are small and the intervals are wide.
 
 ## MCP Tools (100+)
 
