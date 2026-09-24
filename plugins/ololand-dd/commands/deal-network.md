@@ -27,11 +27,11 @@ Use this command when the user asks for a fractional CFO, adviser, lender or rev
 2. **list** — confirm each teaser band with the user, then call `mcp__ololand__create_network_listing(deal_id, teaser)`. Tell the user the listing is a draft and must be activated in-app with a source authorization.
 3. **intro** — confirm the message (at most 2000 characters), then call `mcp__ololand__request_network_intro(match_id, message)`. Tell the user the introduction is held for an OloLand admin's release unless the counterparty has consented to direct contact, in which case it is delivered to them immediately.
 4. For an engagement after an introduction is accepted, point the user to `/advisory <deal_id> list` — engagements are started in-app by the buyer on the accepted introduction, not by this command.
-5. If a call returns `error_code` `FEATURE_LOCKED`, say the Deal Network needs the Professional tier or above and stop.
+5. If a call returns `error_code` `FEATURE_LOCKED`, say the Deal Network needs the Pro tier or above (use the tier named in the error's `message` if the backend supplies one) and stop.
 
 ## Guardrails
 
-- Never quote a price for an introduction, an engagement, or a deal.
+- Never quote or invent a price for an introduction, an engagement, or a deal. The only pricing this command handles is the asking BAND the user confirms for their own draft listing; never an exact figure.
 - Never imply a lender fee or a financing commitment; lender introductions are courtesy intros.
 - Never describe the Deal Network as generally available; it is an early capability.
 - Do not paste contact details from an intro into other tools; they are shown in-app only, after both parties consent.
