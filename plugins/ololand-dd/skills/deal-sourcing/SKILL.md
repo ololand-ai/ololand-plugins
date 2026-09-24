@@ -1,6 +1,6 @@
 ---
 name: deal-sourcing
-description: Use when sourcing M&A or PE deals — discovering target companies from criteria, persisting a tenant-owned candidate ledger, capturing supported contacts, and preparing reviewable outreach copy.
+description: Use when mapping private-company markets or sourcing M&A targets — persist an evidence-backed candidate ledger, distinguish research-only work from contact capture, and prepare reviewable sourcing outputs.
 ---
 
 # Deal Sourcing
@@ -13,6 +13,36 @@ reviewable outreach copy → deal conversion. Persistence happens before contact
 so a missing connector never loses the analyst's market map.
 
 ## Pipeline
+
+### Research-only workflow
+
+When the user asks for a market map, private-company database, ecosystem
+landscape, or research-only shortlist, run discovery and tenant-ledger
+persistence only. List existing watchlists before creating a materially
+identical mandate. Skip contact capture and outreach copy entirely, even if a
+discovery result contains contact details. An ecosystem company can be useful
+for research without being available for acquisition.
+
+For ecommerce, classify by the capability supplied: seller operations,
+live/social commerce, payments/trust/authentication, shipping/returns,
+inventory sourcing, discovery/personalization, or category-specific tools.
+These are research categories, not a pre-approved buyer mandate. Use the
+user's actual priorities and exclusions, and do not require EBITDA from
+seed-stage businesses. Missing revenue, stage, ownership, and sale interest
+remain unknown. Preserve source links and observation dates, and label
+strategic fit as a hypothesis independently of evidence completeness.
+
+Do not encode unsupported stage/financial constraints as if the background
+watchlist matcher enforces them. Record the research criteria and report the
+matching limitations returned by the tools. Save only actual discovery result
+objects unchanged; external research belongs in a labeled research artifact
+unless a supported ingestion tool returns persisted source identities.
+
+For source-access inspection or an on-demand watchlist brief, follow the
+`connections` or `brief` workflow in `../../commands/source.md` instead of this
+discovery/write pipeline. In brief mode use existing records read-only,
+preserve pass reasons, and distinguish initial snapshots from dated changes.
+Never treat a prepared brief as an activated recurring delivery.
 
 ### Thesis routing
 

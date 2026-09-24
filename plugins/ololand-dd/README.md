@@ -53,7 +53,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/deal-search` | Hybrid vector + keyword + reranked search across the full data room |
 | `/war-game` | RL-powered competitive strategy simulation (MaskablePPO, 1,000-episode rollouts, 16 quarters) |
 | `/talk-to-deal` | Voice-optimized Q&A over the deal's full system of record, with rounded numbers and recommendations |
-| `/source` | Find deals matching your firm's investment criteria across sourcing signals; create standing sourcing-thesis mandates that drive the Search Monitor |
+| `/source` | Map and persist a private-company research universe (`map`), prepare a read-only watchlist brief (`brief`), inspect source access (`connections`), or run sourcing and standing-thesis workflows |
 | `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals and market context, with outcome labels and SEC filing citations |
 | `/firm-calibration` | How accurate this firm's own predictions have been — accuracy by prediction type, systematic biases, risk-category precision, and the fields analysts keep overriding (firm-wide; `/calibrate-vs-history` is the per-deal counterpart) |
 | `/deal-canvas` | Create or update charts, KPI rows, tables, and infographics on the deal canvas — every value engine-bound or cited, never invented |
