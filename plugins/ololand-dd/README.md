@@ -41,6 +41,7 @@ That's it. The plugin authenticates on first invocation, seeds a sample deal if 
 | `/company-discovery` | Search company discovery from natural-language or structured criteria |
 | `/watchlist` | Create and inspect continuous monitoring watchlists |
 | `/advisory` | Request or inspect buyer-side advisory engagements |
+| `/deal-network` | Find Deal Network providers, draft a seller listing, and request an introduction on a match — intros are admin-released unless the counterparty has consented to direct contact |
 | `/financing` | Acquisition-financing prep — deterministic analysis, provider-sourcing prep, lender pre-read packages, rule-governed capital-programme eligibility signals |
 | `/managed-context-agent` | Launch a configured managed context agent when enabled |
 | `/managed-agent` | Run a cloud-hosted deal specialist (risk, forensic QoE, pre-LOI screen, financing prep, IC memo, or the parallel IC coordinator) asynchronously with full run provenance |
@@ -109,6 +110,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Cross-Deal Learning** | `find_similar_deals`, `compare_deals_by_attribute`, `get_firm_calibration` |
 | **Reports + Exports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier`, `export_deal_okf_bundle` |
 | **Advisory + Managed Agents** | `list_deal_advisory_engagements`, `request_advisory_engagement`, `launch_managed_context_agent` |
+| **Deal Network** | `list_network_participants`, `create_network_listing`, `request_network_intro` |
 | **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals`, `search_precedent_deals` |
 | **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
 | **Sourcing** | `batch_triage_companies`, `save_sourcing_candidates`, `update_sourcing_candidate`, `log_sourced_lead` |
