@@ -35,6 +35,10 @@ or `map` completes, stop; never fall through to the default sourcing pipeline
 or its contact/outreach steps. Only a separate user request can start another
 branch.
 
+If a request combines mapping with creating/updating a standing thesis and
+does not choose which to do first, resolve that order before any write. Do not
+silently discard one intent or chain the two write workflows.
+
 ### Connections — establish what can actually be read
 
 Inventory only tools available in this session. The plugin declares OloLand's
@@ -74,6 +78,9 @@ identical mandate. Pass actual discovery results unchanged to persistence;
 never fabricate discovery IDs or disguise hand-researched rows as returned
 objects. If OloLand access is unavailable, provide a clearly labeled local
 research artifact and state that it has not been saved to the tenant ledger.
+The preserved discovery snapshot can include contact fields already returned
+by discovery; research-only means no separate contact-graph import or outreach,
+not a guarantee that the snapshot contains no contact data.
 
 Include capability/category, stage and ownership evidence (or unknown),
 source/date, fit hypothesis, uncertainty, actual saved stage, and next research

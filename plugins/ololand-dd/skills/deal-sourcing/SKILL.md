@@ -52,6 +52,8 @@ mandate must go directly to the corresponding thesis MCP operation; do not
 run discovery, create a watchlist, persist candidates, import contacts, or
 draft outreach first. A thesis is a long-lived sourcing mandate, not a SWOT
 or strategy framework.
+For combined mapping and thesis-management intent, follow the command's
+branch-selection rule and resolve the order before any write.
 
 ### 1. Discovery
 - Use `mcp__ololand__search_company_discovery` with `mode: "discover"`,
