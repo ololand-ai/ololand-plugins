@@ -2,7 +2,7 @@
 
 The underwriting layer inside Claude. Every hour of your diligence survives into the deal record.
 
-Anthropic's native `private-equity` plugin ships DD checklists, memo drafts, and unit-economics prompts — the scaffold. OloLand ships the institutional layer on top: deterministic financial engines, a risk taxonomy of 311 risk factors across 67 diligence categories, forensic quality of earnings, cross-document reconciliation with source hierarchy, and a model fine-tuned on your firm's own deal history.
+Anthropic's native `private-equity` plugin ships DD checklists, memo drafts, and unit-economics prompts — the scaffold. OloLand ships the institutional layer on top: deterministic financial engines, a risk taxonomy of 311 risk factors across 67 diligence categories, forensic quality of earnings, and cross-document reconciliation with source hierarchy.
 
 ## Install
 
