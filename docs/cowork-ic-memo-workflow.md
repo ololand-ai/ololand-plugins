@@ -54,9 +54,9 @@ Goal: turn a raw VDR — sometimes thousands of documents — into structured, s
 
 **Capabilities competing tools lack:**
 
-- **Smart-chunking with post-chunk table classification** — financial-statement tables aren't naively split mid-cell
+- **Table-aware chunking** — financial-statement tables aren't naively split mid-cell
 - **Source-backed evidence and risk provenance** attached to extraction outputs. Cross-document reconciliation is a separate explicit tool/workflow; the bounded dispatch does not claim to complete it.
-- **Fine-tuned Qwen 3 4B risk extractor** on Vertex AI (model-first, Claude fallback) → feeds the risk taxonomy (67 categories / 311 risk factors)
+- **Structured risk extraction** against the risk taxonomy (67 categories / 311 risk factors), with each finding tied to its source
 - **Per-extraction provenance attached:** `evidence_strength`, `source_excerpt`, `file_name`, page references — populates the evidence pack the IC approval gate later reads
 
 **Source connectors that FEED OloLand's pipeline (these are inputs, not the pipeline):**
