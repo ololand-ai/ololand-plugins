@@ -1,12 +1,12 @@
 ---
-description: Run a pre-LOI screen on a public or private target. Public targets receive one bounded Monte Carlo run against pre-cutoff filings and FMP; private targets receive a signal-only PCS brief with valuation withheld until a dedicated governed private-company tool exists.
+description: Run a pre-LOI screen on a public or private target. Public targets receive one bounded Monte Carlo run against pre-cutoff filings and backend-reported fundamentals source and coverage (SEC when enabled); private targets receive a signal-only PCS brief with valuation withheld until a dedicated governed private-company tool exists.
 ---
 
 # Pre-Announcement Screen — public or private target
 
 Run an end-to-end **stage-1** screen of a target company. This command auto-detects whether the target is public or private and routes accordingly:
 
-- **Public target** (resolver returns `classification == "public"`): constrain evidence to the latest canonical annual filing (10-K, 20-F, or 40-F) plus substantive exhibits and FMP financial snapshot. Web search is **off** so the artifact reflects only what was knowable from pre-cutoff filings.
+- **Public target** (resolver returns `classification == "public"`): constrain evidence to the latest canonical annual filing (10-K, 20-F, or 40-F) plus substantive exhibits and the backend-reported fundamentals result (SEC when enabled), with its source, coverage status, and gaps carried into the brief. Web search is **off** so the artifact reflects only what was knowable from pre-cutoff filings.
 - **Private target** (resolver returns `classification == "private"`): use the PrivateCompanySnapshot (PCS) seeded from the four primary-source signal adapters (SEC N-PORT marks, counter-party 10-K mentions, USAspending federal contract awards, and the S-1 watcher if the target has filed). Deep-research web search is **on** — there is no 10-K to anchor against, so press / news / Sacra-style commentary IS the public-trace evidence layer for a private target. Honor the `as-of` cutoff if supplied. This branch is signal-only and must not produce an OloLand valuation.
 
 The audit log at the end is what separates this from "an LLM wrote a memo." Always surface it.
@@ -56,11 +56,11 @@ Call `create_deal` with:
 - `hint` — `"public"`
 - `analysis_policy` — `"screen"` (canonical; `deal_mode="screening"` is a compatibility alias)
 
-Watch ingestion with `check_task_status` until `state == "SUCCESS"`. Public-filer ingestion typically completes in 15-30s. Capture the resulting `deal_id`.
+Watch ingestion with `check_task_status` until `state == "SUCCESS"`. Capture the resulting `deal_id`.
 
 ### Step 3-Public — Confirm the document set is pre-cutoff and pristine
 
-Call `list_deal_documents(deal_id)`. Expected output: the canonical annual filing (10-K, 20-F, or 40-F), any substantive exhibits, plus the FMP financial snapshot. Nothing else.
+Call `list_deal_documents(deal_id)`. Expected output: the canonical annual filing (10-K, 20-F, or 40-F) and any substantive exhibits. Separately read the deal's fundamentals context and call `get_financial_snapshot(deal_id)` for the canonical snapshot basis and its backend-reported source and coverage. Nothing else belongs in the pre-cutoff document set.
 
 If you see ANY additional uploaded PDFs (proxy statements, merger communications, 8-K announcement decks, transaction press releases, news articles), halt and tell the user: this deal was pre-seeded with announcement-era materials and is not a clean pre-screen target. Recommend creating a fresh deal via `/new-deal` and retrying.
 
@@ -76,7 +76,7 @@ If `as-of` was provided, verify each annual filing's `filing_date` is before the
 
 **Use instead:**
 
-- `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Source: FMP snapshot. Inspect the `as_of` date.
+- `get_financial_snapshot(deal_id)` — base revenue, EBITDA, net debt, cash, CapEx, growth, margins. Inspect the snapshot's backend-reported source, coverage, and `as_of` date; carry missing fundamentals through as explicit gaps rather than treating them as zero.
 - `get_deal_risks(deal_id, limit=150)` — annual-filing-extracted risks. Every `source_excerpt` must reference the canonical annual-filing filename. Any risk whose `file_name` is outside the annual filing or substantive exhibits is a contamination signal — surface as `[gap]` and exclude.
 - `search_deal_documents(deal_id, query)` — for specific quotes or numbers.
 
@@ -185,7 +185,7 @@ Identical structure to the public branch. The signal counts + reliability scores
 # Pre-Announcement Public Screen — {Company Name} ({Ticker})
 
 **As-of:** {cutoff date or "today"}
-**Sources:** {annual_filing_type} dated {filing_date} (period: {period_of_report}) plus substantive exhibits + FMP financial snapshot. No web search, no news, no transaction filings.
+**Sources:** {annual_filing_type} dated {filing_date} (period: {period_of_report}) plus substantive exhibits + backend fundamentals result with its source and coverage status. No web search, no news, no transaction filings.
 **Deal ID:** {deal_id}
 **Run:** {ISO timestamp}
 
@@ -195,12 +195,14 @@ Identical structure to the public branch. The signal counts + reliability scores
 ## Financial spine
 | Metric | Value | Source |
 |---|---|---|
-| Revenue (LTM) | $X.XB | FMP / {annual_filing_type} |
-| EBITDA (LTM) | $XM | FMP / {annual_filing_type} |
+| Revenue (reported period) | $X.XB | backend fundamentals ({source}) / {annual_filing_type} |
+| EBITDA (reported period) | $XM | backend fundamentals ({source}) / {annual_filing_type} |
 | EBITDA margin | X.X% | derived |
 | Net debt | $X.XB | balance sheet |
 | Revenue growth (5yr CAGR) | X.X% | historical |
-| CapEx % revenue | X.X% | FMP |
+| CapEx % revenue | X.X% | backend fundamentals ({source}) |
+
+Use an LTM label only when the fundamentals receipt explicitly identifies a TTM/LTM period; otherwise label values with the reported annual or quarterly period.
 
 ## Monte Carlo valuation (10,000 simulations — include only when the authorized call succeeded with an exact simulation identity)
 | Percentile | Enterprise Value | Equity Value |
@@ -311,7 +313,7 @@ Deal summary: https://app.ololand.ai/deals/{deal_id}/summary
 
 After presenting the brief, output:
 
-- **Source set verified:** list of documents (public: 10-K/20-F/40-F plus substantive exhibits + FMP; private: S-1 if any + PCS provenance + web sources cited)
+- **Source set verified:** list of documents (public: 10-K/20-F/40-F plus substantive exhibits) plus backend fundamentals source and coverage; private: S-1 if any + PCS provenance + web sources cited
 - **Contamination check:** any document outside the expected set, with reasoning
 - **Valuation execution:** public branch — returned simulation identity plus sourced/defaulted assumption coverage; private branch — "withheld; no valuation engine called"
 - **Private signal coverage:** signal count by source when the private branch runs
