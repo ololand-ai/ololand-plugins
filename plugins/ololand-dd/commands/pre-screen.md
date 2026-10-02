@@ -58,6 +58,14 @@ Call `create_deal` with:
 
 Watch ingestion with `check_task_status` until `state == "SUCCESS"`. Capture the resulting `deal_id`.
 
+### Public ingestion readiness gate (required before any Monte Carlo call)
+
+Task success alone does not authorize the public-branch valuation call. After each task-status read, use `resources/read` on `ololand://deals/{deal_id}` and inspect `deal_resource.research_seed_metadata` and the current phase-one task identity. Continue only when the current attempt is the matching `public_ingest` phase-one task (`phase1_task_id` matches both the task just observed and `data_collection_phase1_task_id` on the resource) **and** the fundamentals result is terminal. For the current backend fundamentals rail, terminal statuses are `available`, `partial`, `unsupported`, `unavailable`, `no_coverage`, `not_found`, `rate_limited`, and `auth_or_plan`. For a legacy FMP result, accept only terminal `ingested` or `unavailable`.
+
+An absent, pending, queued, or mismatched fundamentals result is still in flight or belongs to another attempt; do not turn it into a `[gap]` and do not run Monte Carlo. Re-read the deal resource and task status at a bounded cadence for approximately 120 seconds. If the matching fundamentals result is still not terminal, report fundamentals as pending and withhold the public-branch valuation call.
+
+Once the fundamentals result is terminal, call `get_financial_snapshot(deal_id)` and require a canonical usable snapshot with source/coverage metadata and real reported values. Do not run Monte Carlo from an empty snapshot, defaulted values, or a manufactured financial spine. When this gate withholds valuation, omit the Monte Carlo headline, table, percentiles, EV/equity, VaR/CVaR and coverage values. Report `[gap] Monte Carlo withheld: {pending fundamentals or no eligible canonical basis}` in the brief and audit; no simulation was called. This gate permits at most one authorized public-branch Monte Carlo call.
+
 ### Step 3-Public — Confirm the document set is pre-cutoff and pristine
 
 Call `list_deal_documents(deal_id)`. Expected output: the canonical annual filing (10-K, 20-F, or 40-F) and any substantive exhibits. Separately read the deal's fundamentals context and call `get_financial_snapshot(deal_id)` for the canonical snapshot basis and its backend-reported source and coverage. Nothing else belongs in the pre-cutoff document set.
@@ -82,7 +90,7 @@ If `as-of` was provided, verify each annual filing's `filing_date` is before the
 
 ### Step 5-Public — Run Monte Carlo
 
-Under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Report mean / median EV ($M), P5 / P25 / P75 / P95 EV ($M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6). If it fails, report Monte Carlo unavailable; do not retry automatically.
+Only after the public ingestion readiness gate passes, under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Report mean / median EV ($M), P5 / P25 / P75 / P95 EV ($M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6). If it fails, report Monte Carlo unavailable; do not retry automatically.
 
 If the call fails or returns no simulation identity, use this explicit gap in the public brief and audit log: **"[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted."** Do not fill the gap with an earlier run, a DCF, a PCS signal, or an inferred range.
 
