@@ -59,7 +59,39 @@ correct tool schemas, tool safety annotations, or tested financial behavior.
 
 ## Review case status
 
-All cases are **Not run / blocked on authenticated development access**.
+The packaged 0.6.4 review cases remain **Not run**. An authenticated backend
+smoke attempt of P1 was made on 2026-10-03 through the existing **OloLand Smoke
+Test 1.0.0** installation; it is **Blocked**, not a pass for the upload package.
+
+ChatGPT showed a connected OloLand account. The resulting test chat reported
+`list_deals({"limit": 100})` succeeded and found Paragon Flight School, followed
+by `analyze_forensic_qoe({"deal_id": "deal65fb3e5152a6"})` returning:
+
+```json
+{
+  "code": 403,
+  "error_code": "tool_not_allowed",
+  "message": "Tool 'analyze_forensic_qoe' is not in this key's allowed_tools list"
+}
+```
+
+This evidence is the rendered execution report in the test chat, not an
+independently captured raw MCP trace. It establishes a concrete access blocker;
+it does not establish that a completed QoE analysis exists or validate 0.6.4's
+skills. Test chat: https://chatgpt.com/c/6ac04b52-5a64-83e8-91a1-b422e1c56621
+
+The Smoke Test credential's reported allowlist contains nine deal/summary/risk
+read tools and excludes the forensic retrieval tool. The backend owner must
+provide a dedicated review/development credential scoped to synthetic/sample
+data with the tools needed by P1-P5. Do not widen an unrelated production or
+global key. Confirm entitlements and metering before running computation tools;
+do not initiate purchasing or paid report generation as part of these cases.
+Use the actual Forensic QoE 0.6.4 development package before final acceptance.
+The server's advertised catalog contains the forensic tools, but catalog
+visibility alone does not establish credential authorization or correct safety
+annotations. No credential, token, or personal Google sign-in is a suitable
+reviewer access material for this repository.
+
 The ZIP carries exactly five positive and three negative draft cases. Tool names
 and argument expectations are grounded in this repository's commands, not a
 live tools/list response. Confirm them against the connected server before
@@ -109,7 +141,9 @@ not satisfy this item.
 ## Remaining setup before submission
 
 1. Confirm the intended verified OpenAI organization/project/developer identity.
-2. Connect the development installation and run the cases; verify live tool
+2. Resolve the Smoke Test key's `tool_not_allowed` restriction with a dedicated,
+   sample-scoped development/reviewer credential. Install or update the intended
+   Forensic QoE 0.6.4 development package, then run the cases; verify live tool
    schemas and boolean readOnlyHint, openWorldHint, and destructiveHint values.
 3. Record and host the real demo, then put its verified URL in the package.
 4. Provide dedicated reviewer credentials securely in the portal. The reviewer
