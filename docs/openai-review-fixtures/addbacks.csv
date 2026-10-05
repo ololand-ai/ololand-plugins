@@ -1,0 +1,6 @@
+fixture_type,period,adjustment,amount,management_classification,evidence_note
+synthetic,2023,Legal fees,200000,one-time,Annual contract counsel cost
+synthetic,2024,Legal fees,200000,one-time,Annual contract counsel cost
+synthetic,2025,Legal fees,200000,one-time,Annual contract counsel cost
+synthetic,2025,Owner compensation normalization,250000,normalization,Proposed replacement salary documented separately; amount needs verification
+synthetic,2025,ERP migration,180000,one-time,No supporting invoice supplied

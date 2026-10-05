@@ -1,6 +1,6 @@
 {
   "name": "ololand-forensic-qoe",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Forensic Quality-of-Earnings primitives as a standalone Claude plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and sourced covenant, cross-default, and MAC/MAE clause analysis. Wraps OloLand's deterministic forensic engines as the Pre-LOI Forensic Screen and Full QoE reports — included in OloLand Pro and above. Positioned against Big-4 QoE ($150-500K, 4-8 weeks).",
   "author": {
     "name": "OloLand",
