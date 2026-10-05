@@ -126,6 +126,12 @@ def codex_manifest(root: Path, plugin: dict[str, Any]) -> dict[str, Any]:
         manifest["interface"]["composerIcon"] = interface["composerIcon"]
     if interface.get("logo"):
         manifest["interface"]["logo"] = interface["logo"]
+    for key in ("supportURL", "logoDark", "composerIconDark", "brandColorDark"):
+        if interface.get(key):
+            manifest["interface"][key] = interface[key]
+    openai = plugin.get("openai", {})
+    if openai:
+        manifest["extensions"] = {"com.openai": openai}
 
     return manifest
 
