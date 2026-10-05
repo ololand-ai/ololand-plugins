@@ -67,8 +67,11 @@
               "expected_behavior": "Resolve the exact sample deal through list_deals, then call analyze_forensic_qoe with its returned deal_id and no primitives argument. Render quantitative results only where the response confirms computation. Preserve source references and label every insufficient_data, insufficient_sample, not_reliable, unavailable, or not_computed procedure as a gap with the needed input."
             },
             {
-              "description": "Explicit transaction input variation. Setup: use the synthetic GL fixture from review-fixtures/general-ledger.csv; provide its contents with the prompt. Confirm live transaction schema before the run. Pass if reported statistics reconcile to the tool response.",
+              "description": "Explicit transaction input variation. Setup: use the synthetic GL fixture attached by file_attachment_urls (also packaged as review-fixtures/general-ledger.csv). Confirm live transaction schema before the run. Pass if reported statistics reconcile to the tool response.",
               "prompt": "Check the attached synthetic general ledger for first-digit anomalies and explain the limits of the result.",
+              "file_attachment_urls": [
+                "https://raw.githubusercontent.com/ololand-ai/ololand-plugins/e4607e9acad3a311e9598a99edc71b1a62c0fb6c/docs/openai-review-fixtures/general-ledger.csv"
+              ],
               "tools_triggered": "run_benford",
               "expected_behavior": "Parse the supplied fixture into transactions using the live schema and call run_benford with transactions. Use the returned statistics, population counts, account flags, and reliability status. Never invent a p-value, claim a clean result when the sample is unreliable, or treat non-conformity as proof of fraud."
             },

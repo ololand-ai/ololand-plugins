@@ -25,11 +25,14 @@ python3 scripts/export-openai-plugin.py ololand-forensic-qoe \
 ```
 
 The exporter creates portable `plugin.json` and `mcp.json`, copies packaged skills,
-icons, license, and synthetic fixtures, and omits Claude commands, agents, hooks,
+icons, license, and synthetic fixtures, and omits Claude commands, Claude agents, hooks,
 and marketplace metadata. Skill directories match their declared names. The
-upload copy uses provider-neutral wording, removes obsolete pricing/latency
+upload copy declares each skill's MCP dependency in `agents/openai.yaml`, uses
+provider-neutral wording and current MCP tool names, removes obsolete pricing/latency
 claims, and distinguishes standalone forensic tools from the self-serve PDF
-report. Original Claude implementation files remain intact.
+report. Metered PDF generation requires verified cost/entitlement disclosure and
+explicit user confirmation before execution; it is not a review test step.
+Original Claude implementation files remain intact.
 
 Presentation metadata is under `extensions.com.openai.interface` in the portable
 export. Review and publication metadata come from the canonical YAML `openai`
@@ -63,30 +66,22 @@ The packaged 0.6.4 review cases remain **Not run**. An authenticated backend
 smoke attempt of P1 was made on 2026-10-03 through the existing **OloLand Smoke
 Test 1.0.0** installation; it is **Blocked**, not a pass for the upload package.
 
-ChatGPT showed a connected OloLand account. The resulting test chat reported
-`list_deals({"limit": 100})` succeeded and found Paragon Flight School, followed
-by `analyze_forensic_qoe({"deal_id": "deal65fb3e5152a6"})` returning:
-
-```json
-{
-  "code": 403,
-  "error_code": "tool_not_allowed",
-  "message": "Tool 'analyze_forensic_qoe' is not in this key's allowed_tools list"
-}
-```
-
-This evidence is the rendered execution report in the test chat, not an
-independently captured raw MCP trace. It establishes a concrete access blocker;
-it does not establish that a completed QoE analysis exists or validate 0.6.4's
-skills. Test chat: https://chatgpt.com/c/6ac04b52-5a64-83e8-91a1-b422e1c56621
+The prior smoke attempt's rendered report indicated that deal listing succeeded
+but the cached forensic call was rejected by the ChatGPT tool allowlist.
+This was not an independently captured raw MCP trace or a pass for 0.6.4's
+skills. Private test-conversation links and account/deal identifiers are
+intentionally omitted from public reviewer materials.
 
 Backend source inspection confirmed that ChatGPT OAuth clients receive a
 hardcoded nine-tool read allowlist, rather than the general developer key's
 permissions. Issuing an ordinary replacement key alone does not repair this
 restriction. Backend PR https://github.com/ololand-ai/olo5/pull/5975 adds only
 the cached `analyze_forensic_qoe` read, with a minimized structured response
-and no ChatGPT credit/trial consumption. It has been rebased and fresh CI
-started on 2026-10-05; deployment and live acceptance remain unverified.
+and no ChatGPT credit/trial consumption. It merged on 2026-10-05 as
+`cbbe1d2cb242c454eff96e2789b5057b68bd19cb`; exact-head CI passed
+(39,151 unit tests and 536 integration tests). Staging API deployment succeeded;
+authenticated live acceptance remains unverified. Production promotion is held
+by the existing release PR #5986 pending the unrelated P1 repair #6004.
 
 This narrow fix does not enable P2, P3, or P5: the standalone computation tools
 remain outside the ChatGPT policy, and document retrieval needs requester ACL
@@ -110,7 +105,7 @@ running. Do not label the cases passed based on package validation.
 | Case | Purpose | Setup dependency |
 | --- | --- | --- |
 | P1 | Core forensic screen; findings versus gaps | Dedicated reviewer account with sample deal |
-| P2 | Benford with explicit transaction input | Packaged synthetic GL; live transaction schema |
+| P2 | Benford with explicit transaction input | Immutable public GL attachment; live transaction schema |
 | P3 | EBITDA adjustment review | Ingest and reconcile synthetic financials/add-backs |
 | P4 | Missing AR/cash data remains a lapping gap | Synthetic review deal without AR/cash receipts |
 | P5 | Source-grounded covenant and MAC/MAE clauses | Ingest both synthetic agreement fixtures |
@@ -122,8 +117,11 @@ running. Do not label the cases passed based on package validation.
 not an expected product result. Map CSV fields through the supported ingestion
 workflow and confirm snapshots before running P3. Missing fixture ingestion is
 a blocker, not a passing result.
-The exporter deterministically generates the 1,500-row synthetic GL fixture
-using seed 20261002; the remaining small fixtures are maintained in this repo.
+The 1,500-row synthetic GL was generated using seed 20261002 and is maintained
+in this repo. The exporter copies the same bytes into the ZIP. P2's
+`file_attachment_urls` points to its immutable GitHub commit so the review
+conversation receives the CSV independently of the ZIP contents. Confirm the
+portal imports the attachment before executing P2.
 
 ## Record a real demo
 

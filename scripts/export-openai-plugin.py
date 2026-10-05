@@ -2,12 +2,10 @@
 """Export a separate portable OpenAI upload without changing Claude source."""
 
 import argparse
-import csv
 import importlib.util
 import json
 from pathlib import Path
 import re
-import random
 import shutil
 import sys
 import tempfile
@@ -24,7 +22,8 @@ def neutral_text(text: str) -> str:
     text = text.replace("Project Atlas Claude memo", "Project Atlas memo")
     text = text.replace("Claude Cowork", "your assistant")
     text = text.replace("Cowork", "your assistant")
-    return text.replace("Claude", "the assistant")
+    text = text.replace("Claude", "the assistant")
+    return re.sub(r"\bmcp__ololand__([a-zA-Z0-9_]+)\b", r"\1", text)
 
 
 def export(name: str, output: Path) -> None:
@@ -50,6 +49,18 @@ def export(name: str, output: Path) -> None:
     manifest["description"] = interface["longDescription"]
     manifest["$schema"] = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
     manifest["extensions"] = {"com.openai": extension}
+    mcp = json.loads((source / ".mcp.json").read_text())
+    mcp["$schema"] = "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
+    dependencies = []
+    for server_name, server in mcp["mcpServers"].items():
+        if not server["url"].startswith("https://"):
+            raise ValueError("Public MCP endpoint must use HTTPS")
+        server["type"] = "streamable-http"
+        dependencies.append({
+            "type": "mcp", "value": server_name,
+            "description": f"Connected {metadata['displayName']} tools",
+            "transport": "streamable_http", "url": server["url"],
+        })
     skills = []
     references = {}
     for skill in sorted((source / "skills").iterdir()):
@@ -95,14 +106,28 @@ def export(name: str, output: Path) -> None:
             if re.search(r"/cmd-[a-z0-9-]+", body + fields["description"]):
                 raise ValueError(f"Unpackaged command reference in {skill.name}")
             if skill.name == "cmd-forensic-screen":
-                start = body.find("The PDF includes 7 sections:")
+                start = body.find("## When the user wants the PDF deliverable")
                 end = body.find("\n## When the user wants human verification", start)
-                if start >= 0 and end >= 0:
-                    body = body[:start] + (
-                        "Report only the sections and download URL actually returned by the service. "
-                        "Do not promise a fixed set of report sections or a completion time. "
-                        "Account access and quotas are determined by the service.\n"
-                    ) + body[end:]
+                if start < 0 or end < 0:
+                    raise ValueError("PDF workflow boundary missing")
+                body = body[:start] + (
+                    "## When the user wants the PDF deliverable\n\n"
+                    "PDF generation is a separate metered action. The service's published MCP "
+                    "pricing identifies `generate_forensic_screen_pdf` as **50 service credits**. "
+                    "Confirm the current cost, available quota, and account entitlement in OloLand "
+                    "before execution; if they cannot be verified, stop and request that verification.\n\n"
+                    "1. Check whether `generate_forensic_screen_pdf` is actually available to the "
+                    "connected account. If unavailable, explain the access limitation.\n"
+                    "2. Disclose the verified cost and obtain the user's explicit confirmation "
+                    "to generate the report and consume those service credits. A request for a "
+                    "PDF alone does not confirm an undisclosed charge. Do not initiate a purchase "
+                    "or payment to obtain credits.\n"
+                    "3. Only after that confirmation, invoke the tool using its current schema "
+                    "and the resolved deal ID. Use a status tool only if the connected server "
+                    "actually exposes it and the result supplies the required job identifier.\n"
+                    "4. Report only the status, sections, and download URL returned by the service. "
+                    "Do not promise fixed report sections or completion timing.\n"
+                ) + body[end:]
             # Drop obsolete pricing and latency promises from the upload copy.
             fields["description"] = re.sub(r" The \$99 / 72-hour SLA.*$", "", fields["description"])
             body = re.sub(r"Returns the full screen in 60-90 seconds[^\n]*", "Report only the completion status and findings actually returned by the service.", body)
@@ -124,30 +149,20 @@ def export(name: str, output: Path) -> None:
             (destination / "SKILL.md").write_text(
                 "---\n" + yaml.safe_dump(fields, sort_keys=False).rstrip() + "\n---\n" + body
             )
+            agents = destination / "agents"
+            agents.mkdir(exist_ok=True)
+            (agents / "openai.yaml").write_text(yaml.safe_dump({
+                "interface": {
+                    "display_name": fields["name"].removeprefix(name + "-").replace("-", " ").title(),
+                    "short_description": fields["description"][:200],
+                },
+                "dependencies": {"tools": dependencies},
+            }, sort_keys=False))
         if (source / "assets").exists():
             shutil.copytree(source / "assets", package / "assets")
         fixtures = ROOT / "docs" / "openai-review-fixtures"
         if fixtures.is_dir():
             shutil.copytree(fixtures, package / "review-fixtures")
-            rng = random.Random(20261002)
-            with (package / "review-fixtures/general-ledger.csv").open("w", newline="") as handle:
-                writer = csv.writer(handle)
-                writer.writerow(["fixture_type", "transaction_id", "date", "account", "amount", "currency", "posting_user"])
-                for index in range(1500):
-                    amount = round(10 ** rng.uniform(1, 5), 2)
-                    if index % 25 == 0:
-                        amount = 10000.0
-                    writer.writerow([
-                        "synthetic", f"JE-{index + 1:05d}",
-                        f"2025-{index % 12 + 1:02d}-{index % 28 + 1:02d}",
-                        "4000" if index % 2 == 0 else "5000", amount, "USD", "review_fixture",
-                    ])
-        mcp = json.loads((source / ".mcp.json").read_text())
-        mcp["$schema"] = "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
-        for server in mcp["mcpServers"].values():
-            if not server["url"].startswith("https://"):
-                raise ValueError("Public MCP endpoint must use HTTPS")
-            server["type"] = "streamable-http"
         (package / "mcp.json").write_text(json.dumps(mcp, indent=2) + "\n")
         (package / "plugin.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
         shutil.copy2(ROOT / "LICENSE", package / "LICENSE")
