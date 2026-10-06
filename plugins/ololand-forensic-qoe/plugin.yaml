@@ -37,7 +37,7 @@ longDescription: >-
   subscription, workspace permissions, and available deal data. Subscriptions
   are purchased separately on OloLand's website; this plugin does not purchase
   services or initiate payments.
-developerName: OloLand
+developerName: Ololand.ai Inc
 homepage: https://ololand.ai/qoe
 repository: https://github.com/ololand-ai/ololand-plugins
 license: Apache-2.0

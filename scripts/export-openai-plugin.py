@@ -319,6 +319,7 @@ def export(name: str, output: Path) -> None:
                  if key not in ("interface", "portable")}
     extension["interface"] = interface
     manifest = generator.base_manifest(metadata)
+    manifest["author"] = {**manifest["author"], "name": interface["developerName"]}
     manifest["homepage"] = interface["websiteURL"]
     manifest["keywords"] = [tag for tag in manifest["keywords"] if tag not in {"claude-cowork", "anthropic-augment"}]
     manifest["description"] = neutral_text(interface["longDescription"])
