@@ -14,7 +14,7 @@ Each of these is available as an MCP tool / `/`-command in this plugin:
 | Procedure | When required | Tool / command |
 |---|---|---|
 | **Beneish M-Score** | Every target. Earnings-manipulation probability. | `/cmd-beneish` |
-| **Benford distribution review** | Whenever transaction-level GL data is available. Flags fabricated entries. | `/cmd-benford` |
+| **Benford distribution review** | When suitable transaction-level GL data is available. Reviews digit conformity; deviations require investigation. | `/cmd-benford` |
 | **EBITDA bridge and adjustment quality** | Every target. Walks from reported EBITDA to QoE-adjusted EBITDA with explicit adjustment categories. | `/cmd-ebitda-bridge` |
 | **Revenue quality deep dive** | Whenever invoice-level or revenue-by-customer detail is available. | manual + tool stack |
 | **Working capital anomaly review** | Every target. DSO/DIO/DPO trends + seasonality. | manual + tool stack |
@@ -31,6 +31,13 @@ State the limitation explicitly. Do not fabricate a conclusion from incomplete d
 A QoE that skips a procedure because the data is missing is not a QoE failure — but the IC memo must surface the gap as a diligence condition.
 
 ## Output format
+
+For Benford, preserve signed transaction amounts: the standalone tool evaluates
+negative amounts by absolute magnitude and ignores zero/unusable values. Use
+only returned sample size, status, distributions, χ², MAD, and conformity;
+the current standalone response does not supply a p-value or account/transaction
+rankings. Do not infer fraud, a clean bill of health, or computed results from
+an insufficient-sample response.
 
 For each procedure that ran:
 - **Result** — Pass / Yellow / Red

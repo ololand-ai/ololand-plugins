@@ -13,10 +13,10 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.26.1 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.4 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
-| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.3 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
-| [`cim-generator`](./plugins/cim-generator) | v1.1.0 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.26.2 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.5 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
+| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.4 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
+| [`cim-generator`](./plugins/cim-generator) | v1.1.1 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
 The plugins compose additively with each other and with Anthropic's first-party finance plugins.
 
