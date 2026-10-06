@@ -190,6 +190,51 @@ class PortableExports(unittest.TestCase):
         self.assertIn("ololand-forensic-qoe-forensic-screen", body)
         self.assertIn("request that separate plugin", body)
 
+    def test_exported_canonical_deal_urls_keep_their_path_segments(self):
+        files = self.archives["ololand-dd"]
+        paths = {
+            "ololand-dd-ic-approve-readiness": ["https://app.ololand.ai/deals/{deal_id}/ic-package"],
+            "ololand-dd-qoe-analysis": ["https://app.ololand.ai/deals/{deal_id}/valuation/qoe"],
+            "ololand-dd-scenario-analysis": [
+                "https://app.ololand.ai/deals/{deal_id}/valuation/scenarios",
+                "https://app.ololand.ai/deals/{deal_id}/valuation/real-options",
+            ],
+            "ololand-dd-role-dd-analyst": [
+                "https://app.ololand.ai/deals/{deal_id}/ic-package",
+                "https://app.ololand.ai/deals/{deal_id}/valuations",
+            ],
+        }
+        for skill_name, urls in paths.items():
+            text = files[f"ololand-dd/skills/{skill_name}/SKILL.md"].decode()
+            for url in urls:
+                with self.subTest(skill=skill_name, url=url):
+                    self.assertIn(url, text)
+            self.assertNotIn("{deal_id}ololand-dd-", text)
+
+    def test_command_translation_preserves_absolute_and_relative_links_in_export(self):
+        with self.isolated_source("ololand-dd") as (root, source):
+            skill = source / "skills/link-reference-test"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\nname: link-reference-test\ndescription: Use /ic-package while preserving https://app.ololand.ai/deals/{deal_id}/ic-package links.\n---\n"
+                "Run `/ic-package`, `/ololand-dd:qoe-analysis`, and /valuation when requested.\n"
+                "[IC package](https://app.ololand.ai/deals/{deal_id}/ic-package)\n"
+                "[IC relative](/ic-package) [QoE relative](/valuation/qoe)\n"
+                "`https://app.ololand.ai/deals/{deal_id}/valuation/qoe`\n"
+                "Relative path `/valuation/qoe` is a path.\n"
+            )
+            output = root / "public.zip"
+            exporter.export("ololand-dd", output)
+            with ZipFile(output) as archive:
+                text = archive.read("ololand-dd/skills/link-reference-test/SKILL.md").decode()
+            self.assertIn("Run `ololand-dd-ic-package`, `ololand-dd-qoe-analysis`, and ololand-dd-valuation", text)
+            self.assertIn("[IC package](https://app.ololand.ai/deals/{deal_id}/ic-package)", text)
+            self.assertIn("[IC relative](/ic-package) [QoE relative](/valuation/qoe)", text)
+            self.assertIn("`https://app.ololand.ai/deals/{deal_id}/valuation/qoe`", text)
+            self.assertIn("Relative path `/valuation/qoe`", text)
+            fields = yaml.safe_load(text.split("---\n", 2)[1])
+            self.assertEqual(fields["description"], "Use ololand-dd-ic-package while preserving https://app.ololand.ai/deals/{deal_id}/ic-package links.")
+
     def test_hook_adapters_disclose_limits_and_preserve_human_gates(self):
         for name in ("ololand-dd", "ololand-compliance-hooks"):
             text = self.archives[name][f"{name}/PORTABILITY.md"].decode()

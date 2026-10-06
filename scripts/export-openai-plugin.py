@@ -289,9 +289,12 @@ def export(name: str, output: Path) -> None:
     if required_adapter_skill and required_adapter_skill not in {skill.name for skill, _, _ in skills}:
         raise ValueError("Portable hooks adapter is missing its explicit setup/review skill")
     command_pattern = (
-        re.compile(r"(?<![\w/])(?:" + "|".join(
+        # Command syntax starts a token in prose/code, not a URL segment
+        # after a placeholder or a Markdown link destination. A following
+        # slash also identifies a path rather than a complete command.
+        re.compile(r"(?<![^\s`])(?:" + "|".join(
             re.escape(key) for key in sorted(references, key=len, reverse=True)
-        ) + r")(?![\w-])")
+        ) + r")(?![\w/-])")
         if references else None
     )
     with tempfile.TemporaryDirectory(prefix="ololand-openai-") as temp:
