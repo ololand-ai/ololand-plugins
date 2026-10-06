@@ -117,12 +117,23 @@ python3 scripts/export-openai-plugin.py cim-generator --output ../artifacts/cim-
 python3 -m unittest discover -s scripts -p 'test_export_openai_plugin.py' -v
 ```
 
-Each upload includes a workflow skill for **every** `commands/*.md`, even when
+Each upload includes a workflow skill for every compatible `commands/*.md`, even when
 `codex.generateCommandSkills` is false. Commands are rendered from canonical
 Markdown directly into the temporary export; generated local wrappers are not
 required. References to local commands are translated to packaged workflow
 names. Forensic review fixtures and existing draft cases remain scoped to the
 Forensic package, along with its PDF cost-confirmation and coverage limits.
+
+Incompatible workflows are disclosed in the exported
+`unsupported-workflows.json` with canonical workflow ID, omitted skill ID,
+status, reason, and permitted next action. The OpenAI DD upload excludes
+`ololand-dd/commands/dd-correct.md` (`ololand-dd-dd-correct`): its current
+`submit_agent_claim_correction` handler always records `surface=cowork`, so an
+OpenAI invocation would have incorrect provenance. The canonical command and
+any local wrappers remain unchanged. Exported cross-references explain the
+unsupported workflow, and DD skills explicitly prohibit invoking that handler
+from OpenAI or claiming a correction was submitted. This upload contains 52 of
+the 53 DD command workflows; the exclusion is not a completed or portable write.
 
 Every local `agents/*.md` role also requires an explicit entry in
 `openai.portable.agentRoles`, with `adapter: explicit-role-workflow-v1` and the
@@ -159,8 +170,8 @@ workflows are not equivalent to automatic hook enforcement. Server-side MCP
 rail auditing remains authoritative for calls handled by that server; evidence
 blockers and human-only approval gates remain in OloLand.
 
-The offline tests inspect the actual archives, confirm complete command
-coverage and portable MCP dependencies, verify binding/credential exclusion,
+The offline tests inspect the actual archives, account for every command as
+packaged or explicitly unsupported, confirm portable MCP dependencies, verify binding/credential exclusion,
 exercise fail-closed adapters, check source preservation, and validate each
 listing's five positive and three negative draft cases and required string
 fields. DD's cases cover baseline reads, an explicit model candidate, the Full

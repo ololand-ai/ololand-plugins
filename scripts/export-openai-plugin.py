@@ -18,6 +18,22 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.dont_write_bytecode = True
 
+# These canonical workflows remain available to their original host. An
+# OpenAI upload must not relabel a write with another host's provenance.
+UNSUPPORTED_COMMANDS = {
+    "ololand-dd": {
+        "dd-correct": {
+            "workflow_id": "ololand-dd/commands/dd-correct.md",
+            "skill_id": "ololand-dd-dd-correct",
+            "status": "unsupported",
+            "reason_code": "cowork_provenance_only",
+            "reason": "submit_agent_claim_correction always stamps surface=cowork; an OpenAI correction would have incorrect provenance.",
+            "action": "Do not invoke submit_agent_claim_correction from OpenAI. Explain the limitation and retain proposed correction text for human review without claiming it was submitted.",
+        },
+    },
+}
+UNSUPPORTED_CORRECTION_NOTICE = "unsupported OpenAI claim-correction workflow (see unsupported-workflows.json)"
+
 
 def neutral_text(text: str) -> str:
     """Normalize complete provider phrases before their component words."""
@@ -233,6 +249,8 @@ def export(name: str, output: Path) -> None:
         })
     skills = []
     references = {}
+    unsupported = UNSUPPORTED_COMMANDS.get(name, {})
+    exclusions = []
     for skill in sorted((source / "skills").iterdir()):
         if not skill.is_dir() or not (skill / "SKILL.md").exists():
             continue
@@ -248,6 +266,11 @@ def export(name: str, output: Path) -> None:
             references[f"/{skill.name}"] = fields["name"]
             references[f"/{skill.name.removeprefix('cmd-')}"] = fields["name"]
     for command in sorted((source / "commands").glob("*.md")):
+        if command.stem in unsupported:
+            exclusions.append(unsupported[command.stem])
+            for reference in (f"/cmd-{command.stem}", f"/{command.stem}", f"/{name}:{command.stem}", f"../../commands/{command.name}"):
+                references[reference] = UNSUPPORTED_CORRECTION_NOTICE
+            continue
         text = generator.command_skill_text(metadata, command)
         front, body = text.split("---\n", 2)[1:]
         fields = yaml.safe_load(front)
@@ -275,6 +298,8 @@ def export(name: str, output: Path) -> None:
         package = Path(temp) / name
         package.mkdir()
         for skill, fields, body in skills:
+            if fields["name"] in {item["skill_id"] for item in exclusions}:
+                continue
             if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", fields["name"]):
                 raise ValueError("Portable skill names must be safe kebab-case paths")
             destination = package / "skills" / fields["name"]
@@ -298,6 +323,11 @@ def export(name: str, output: Path) -> None:
             body = body.replace("or the equivalent workflow in Codex", "or the equivalent workflow")
             body = neutral_text(body)
             fields["description"] = neutral_text(fields["description"])
+            if exclusions:
+                # Informational tool links in memory/audit skills must not route
+                # back to the excluded write through a different workflow.
+                body = body.replace("submit_agent_claim_correction", UNSUPPORTED_CORRECTION_NOTICE)
+                fields["description"] = fields["description"].replace("submit_agent_claim_correction", UNSUPPORTED_CORRECTION_NOTICE)
             if name == "ololand-dd" and skill.name == "welcome":
                 fields["description"] = "Orient the user to available OloLand tools when requested after connection."
                 body = body.replace("44 tools for institutional-grade due diligence", "available tools for due diligence")
@@ -366,6 +396,10 @@ def export(name: str, output: Path) -> None:
             if adapter:
                 body += ("\nOpenAI cannot execute local lifecycle hooks. Use the packaged explicit setup/review workflow when requested. "
                          "Server-side MCP auditing remains authoritative; preserve evidence blockers and human-only approval gates.\n")
+            if exclusions:
+                body += ("\nClaim-correction submission is unsupported in this OpenAI upload because the current handler records surface=cowork. "
+                         "Do not invoke submit_agent_claim_correction from OpenAI. Explain the limitation and retain proposed correction text "
+                         "for human review without claiming submission. See unsupported-workflows.json for the excluded canonical workflow.\n")
             (destination / "SKILL.md").write_text(
                 "---\n" + yaml.safe_dump(fields, sort_keys=False).rstrip() + "\n---\n" + body
             )
@@ -391,6 +425,10 @@ def export(name: str, output: Path) -> None:
                 "setup/review workflows, not equivalent automatic enforcement or local audit ledgers. "
                 "Server-side MCP rail auditing remains authoritative; human approval gates remain in OloLand.\n"
             )
+        if exclusions:
+            (package / "unsupported-workflows.json").write_text(json.dumps({
+                "format_version": 1, "workflows": exclusions,
+            }, indent=2) + "\n")
         (package / "mcp.json").write_text(json.dumps(mcp, indent=2) + "\n")
         (package / "plugin.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
         shutil.copy2(ROOT / "LICENSE", package / "LICENSE")

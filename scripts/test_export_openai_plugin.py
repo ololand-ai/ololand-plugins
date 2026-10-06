@@ -47,15 +47,48 @@ class PortableExports(unittest.TestCase):
     def test_source_is_preserved(self):
         self.assertEqual(self.source_before, self.source_hashes())
 
-    def test_every_command_has_portable_skill_even_when_codex_opted_out(self):
+    def test_every_command_is_packaged_or_explicitly_disclosed_even_when_codex_opted_out(self):
         dd = yaml.safe_load((ROOT / "plugins/ololand-dd/plugin.yaml").read_text())
         self.assertFalse(dd["codex"]["generateCommandSkills"])
         for name, files in self.archives.items():
+            exclusion_path = f"{name}/unsupported-workflows.json"
+            excluded = (json.loads(files[exclusion_path])["workflows"] if exclusion_path in files else [])
+            excluded_ids = {item["workflow_id"] for item in excluded}
             for command in (ROOT / "plugins" / name / "commands").glob("*.md"):
                 with self.subTest(plugin=name, command=command.stem):
                     key = f"{name}/skills/{name}-{command.stem}/SKILL.md"
-                    self.assertIn(key, files)
-                    self.assertIn("## OpenAI execution requirements", files[key].decode())
+                    if f"{name}/commands/{command.name}" in excluded_ids:
+                        self.assertNotIn(key, files)
+                    else:
+                        self.assertIn(key, files)
+                        self.assertIn("## OpenAI execution requirements", files[key].decode())
+
+    def test_correction_write_is_excluded_and_cross_references_do_not_route_to_it(self):
+        files = self.archives["ololand-dd"]
+        self.assertFalse(any("/skills/ololand-dd-dd-correct/" in path for path in files))
+        record = json.loads(files["ololand-dd/unsupported-workflows.json"])
+        self.assertEqual(record["format_version"], 1)
+        self.assertEqual(len(record["workflows"]), 1)
+        exclusion = record["workflows"][0]
+        self.assertEqual(exclusion["workflow_id"], "ololand-dd/commands/dd-correct.md")
+        self.assertEqual(exclusion["skill_id"], "ololand-dd-dd-correct")
+        self.assertEqual(exclusion["status"], "unsupported")
+        self.assertEqual(exclusion["reason_code"], "cowork_provenance_only")
+        self.assertIn("surface=cowork", exclusion["reason"])
+        self.assertIn("Do not invoke submit_agent_claim_correction", exclusion["action"])
+        for path, content in files.items():
+            if path.endswith("SKILL.md"):
+                text = content.decode()
+                self.assertNotRegex(text, r"/dd-correct\b|ololand-dd-dd-correct")
+                self.assertEqual(text.count("submit_agent_claim_correction"), 1, path)
+                self.assertIn("Do not invoke submit_agent_claim_correction from OpenAI", text)
+        for name in ("ololand-dd-pre-screen", "ololand-dd-replay-run", "ololand-dd-plan",
+                     "ololand-dd-recall", "ololand-dd-remember", "observability-audit-trail", "deal-session-memory"):
+            text = files[f"ololand-dd/skills/{name}/SKILL.md"].decode()
+            self.assertIn("unsupported OpenAI claim-correction workflow", text)
+        canonical = (ROOT / "plugins/ololand-dd/commands/dd-correct.md").read_text()
+        self.assertIn("surface=cowork", canonical)
+        self.assertIn("Call the OloLand MCP tool `submit_agent_claim_correction`", canonical)
 
     def test_all_agent_roles_have_portable_skills_with_sequential_fallback(self):
         for name, files in self.archives.items():
@@ -264,6 +297,27 @@ class PortableExports(unittest.TestCase):
             with ZipFile(output) as archive:
                 self.assertFalse(any(".app.json" in path for path in archive.namelist()))
                 self.assertFalse(any(b"internal-install-id" in archive.read(path) for path in archive.namelist()))
+
+    def test_generated_correction_wrapper_cannot_restore_excluded_openai_workflow(self):
+        with self.isolated_source("ololand-dd") as (root, source):
+            metadata = yaml.safe_load((source / "plugin.yaml").read_text())
+            metadata["codex"]["generateCommandSkills"] = True
+            (source / "plugin.yaml").write_text(yaml.safe_dump(metadata))
+            spec = importlib.util.spec_from_file_location("local_generator", root / "scripts/generate-plugin-artifacts.py")
+            generator = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(generator)
+            generator.write_or_check_command_skills(source, metadata, False, [])
+            wrapper = source / "skills/cmd-dd-correct/SKILL.md"
+            self.assertTrue(wrapper.is_file())
+            source_before = (source / "commands/dd-correct.md").read_bytes()
+            wrapper_before = wrapper.read_bytes()
+            output = root / "public.zip"
+            exporter.export("ololand-dd", output)
+            self.assertEqual((source / "commands/dd-correct.md").read_bytes(), source_before)
+            self.assertEqual(wrapper.read_bytes(), wrapper_before)
+            with ZipFile(output) as archive:
+                self.assertFalse(any("/skills/ololand-dd-dd-correct/" in path for path in archive.namelist()))
+                self.assertIn("ololand-dd/unsupported-workflows.json", archive.namelist())
 
     def test_credentials_in_connection_fail_closed(self):
         with self.isolated_source("ololand-forensic-qoe") as (root, source):
