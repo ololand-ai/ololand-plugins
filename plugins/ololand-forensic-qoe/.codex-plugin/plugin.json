@@ -1,6 +1,6 @@
 {
   "name": "ololand-forensic-qoe",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "Forensic Quality-of-Earnings primitives as a standalone Claude plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and sourced covenant, cross-default, and MAC/MAE clause analysis. Wraps OloLand's deterministic forensic engines as the Pre-LOI Forensic Screen and Full QoE reports — included in OloLand Pro and above. Positioned against Big-4 QoE ($150-500K, 4-8 weeks).",
   "author": {
     "name": "OloLand",
@@ -112,7 +112,17 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "0.6.4 prepares a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
+        "release_notes": "0.6.5 expands portable packaging while preserving the existing forensic submission preparation; it prepares a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
+      },
+      "interface": {
+        "shortDescription": "Forensic earnings analysis",
+        "longDescription": "Forensic quality-of-earnings workflows for private-equity and M&A analysts. Connect your OloLand account to run available deterministic forensic tools, inspect data gaps, review management EBITDA adjustments, verify draft figures against ingested deal documents, and examine sourced covenant and MAC/MAE clauses. Supported individual tool workflows include Beneish, Benford, EBITDA bridge, journal-entry testing, and lapping detection when the current MCP server and required inputs support them. Preserve each tool's evidence, methodology, returned status, and limitations; statistical flags require investigation. The self-serve Full QoE PDF report has narrower coverage: eligible Benford, lapping, and journal-entry tests. It does not currently include Beneish, EBITDA bridge, full cross-document reconciliation, working-capital normalization, or revenue-quality deep dives. This plugin does not issue a signed CPA opinion or complete professional diligence. Access depends on your OloLand account, subscription, workspace permissions, and available deal data. Subscriptions are purchased separately on OloLand's website; this plugin does not purchase services or initiate payments.",
+        "websiteURL": "https://ololand.ai/qoe",
+        "supportURL": "https://github.com/ololand-ai/ololand-plugins/issues",
+        "privacyPolicyURL": "https://ololand.ai/privacy",
+        "termsOfServiceURL": "https://ololand.ai/terms",
+        "logo": "./assets/ololand-icon.png",
+        "composerIcon": "./assets/ololand-icon.png"
       }
     }
   }

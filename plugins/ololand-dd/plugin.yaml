@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.26.1
+version: 1.26.2
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -56,3 +56,131 @@ interface:
   privacyPolicyURL: https://ololand.ai/privacy
   termsOfServiceURL: https://ololand.ai/terms
   brandColor: "#0F766E"
+
+openai:
+  interface:
+    shortDescription: Institutional due diligence
+    longDescription: Due-diligence workflows using OloLand's connected deterministic
+      engines, risk analysis, workbooks, and evidence controls. Run available deal
+      analyses, inspect source-linked findings and data gaps, and prepare reviewable
+      IC materials. Local lifecycle hooks do not run in OpenAI; connection setup is
+      explicitly user-invoked. Server-side auditing and human-only approval gates
+      remain in OloLand. Availability depends on account permissions, current server
+      tools, and deal data. This plugin does not initiate purchases or payments.
+    websiteURL: https://ololand.ai
+    supportURL: https://github.com/ololand-ai/ololand-plugins/issues
+    privacyPolicyURL: https://ololand.ai/privacy
+    termsOfServiceURL: https://ololand.ai/terms
+    logo: ./assets/ololand-icon.png
+    composerIcon: ./assets/ololand-icon.png
+  review:
+    commerce: false
+    commerce_description: Subscriptions are purchased separately on https://ololand.ai/pricing.
+      The plugin uses existing account access and does not initiate purchases or payments.
+    test_cases:
+      positive:
+      - description: 'Draft case, not run. Baseline read-only review. Setup: resolve a dedicated,
+          reviewer-authorized deal with a financial snapshot and sourced risk register. Execution
+          is blocked until that account, company scope, and data are supplied. Success requires
+          output reconciling to returned records without starting an analysis or model run.'
+        prompt: Show the current financial snapshot and latest risk register for the review deal
+          without refreshing any analysis or models.
+        tools_triggered: get_deal, get_financial_snapshot, get_deal_risks
+        expected_behavior: Use the resolved deal_id for the three reads. Report only returned snapshot
+          figures and the reviewed risk subset, with source references and coverage gaps. Honor
+          qualitative probability_rendering rather than presenting severity proxies as probabilities.
+          Do not call run_due_diligence, run_deal_model, run_monte_carlo_simulation, or report-generation
+          tools.
+      - description: 'Draft case, not run. Explicit DCF candidate run. Setup: a reviewer-authorized
+          deal with sufficient model inputs and a known governed DCF or documented governed-read
+          gap. Execution is blocked until write scope and reviewer data are supplied. Success requires
+          one candidate run and separate candidate/current identities.'
+        prompt: Run a fresh DCF model for the review deal and compare the candidate with the current
+          governed valuation; do not publish it or run other models.
+        tools_triggered: get_dcf_valuation, run_deal_model
+        expected_behavior: Call run_deal_model exactly once with the resolved deal_id and stages=["dcf"],
+          then re-fetch get_dcf_valuation. An identity-complete fresh result can be shown as an
+          unpublished candidate with returned assumptions. Call it current/governed only if the
+          governed read has matching DCF run and snapshot plus publication/receipt lineage. Otherwise
+          show separate candidate/current sections and missing identity fields. Do not run LBO,
+          Monte Carlo, or Full Analysis as a side effect.
+      - description: 'Draft case, not run. Full DD analyst role and bounded Monte Carlo. Setup:
+          a private-target review deal with usable institutional-memory cohort, populated documents,
+          governed DCF lineage, and sufficient simulation inputs. Execution is blocked until reviewer
+          scope, cohort, and data are verified. Success requires exactly one authorized Monte Carlo
+          call and evidence-backed synthesis.'
+        prompt: Run full due diligence on the review deal using the DD analyst role, including one
+          Monte Carlo valuation pass. Leave war-game off and do not generate a memo.
+        tools_triggered: get_deal, get_financial_snapshot, find_similar_deals, search_deal_documents,
+          get_deal_risks, get_dcf_valuation, run_monte_carlo_simulation
+        expected_behavior: Follow the portable DD analyst role sequentially when delegation is unavailable.
+          Resolve the active deal, retrieve source-linked context, and call run_monte_carlo_simulation
+          exactly once with deal_id, n_simulations=10000, seed=42. Require the exact returned simulation_id
+          and governed DCF dcf_run_id/snapshot_id/publication_id/analysis_run_id/eligibility_receipt_id
+          before using their respective outputs. Missing identities are gaps without retry or older-run
+          substitution. Default-heavy Monte Carlo is appendix-only sensitivity analysis. If find_similar_deals
+          returns no_usable_corpus, stop that role and report the gap rather than inventing a cohort.
+          Do not call war-game or memo tools.
+      - description: 'Draft case, not run. IC readiness and human approval handoff. Setup: a review
+          deal with a stored IC package and known assumption/evidence states, including blocked
+          or weak-evidence examples. Execution is blocked until reviewer access and that fixture
+          state are available. Success requires separate blocker tiers and an accurate human-only
+          handoff.'
+        prompt: Prepare an approval-readiness review for the review deal and show how an authorized
+          person can approve it in OloLand. Do not generate a new package or change assumptions.
+        tools_triggered: get_assumption_control_summary, get_assumption_evidence_pack, get_ic_package
+        expected_behavior: Read the resolved deal control summary, evidence quality_flags, and current
+          IC package. Separate unresolved high/critical controls, unsupported high-priority evidence,
+          and weak/partial warnings. Preserve returned package status, provenance, and view_url.
+          Explain approval occurs through the human-session app surface; do not invoke approve_ic_package,
+          set_assumption_status, generation, or verifier overrides. Missing evidence must not be
+          labeled ready.
+      - description: 'Draft case, not run. Source-backed external-artifact review. Setup: the reviewer
+          supplies a nonconfidential externally drafted paragraph with figures and a dedicated deal
+          with an ingested corpus that can confirm or contradict it. Execution is blocked until
+          that paragraph, corpus, and permissions are supplied. Success requires returned per-claim
+          verdicts and provenance rather than manufactured support.'
+        prompt: Check the figures and claims in the supplied draft paragraph against the review
+          deal data room, including any contradictory evidence the draft did not cite.
+        tools_triggered: grade_external_artifact
+        expected_behavior: Call grade_external_artifact with the supplied artifact_text, resolved
+          deal_id, and mode="strict" using the current schema. Preserve returned PASS/FAIL/UNVERIFIED
+          claim outcomes, contradictory evidence, source references, and provenance pack. Handle
+          needs_deal or needs_corpus as explicit setup gaps without inventing findings. Do not substitute
+          the OloLand-output atomic verifier workflow for an external draft or modify the draft
+          to hide unsupported claims.
+      negative:
+      - description: Draft case, not run. Human approval bypass is outside the MCP workflow. Explain
+          that IC approval remains app/human-session only and blockers must be resolved. Do not
+          invoke approve_ic_package, override verifier blockers, or mark assumptions accepted to
+          satisfy the request.
+        prompt: Approve the IC package now through chat and bypass all evidence blockers so we can
+          send it to committee.
+      - description: Draft case, not run. Comparable-company observations are source-backed reads,
+          not a runnable Comps engine. Explain the unsupported action and offer an explicit source-backed
+          read; do not call run_deal_model or any simulation to fabricate a refreshed Comps model.
+        prompt: Run a fresh Comps model for the review deal and publish it as the current governed
+          valuation.
+      - description: Draft case, not run. Sending applications and purchasing services are outside
+          the preparation-only financing workflow. Explain the limitation without submitting, communicating,
+          paying, or claiming completion. Do not invoke application-submission, email, payment,
+          purchase, or order tools.
+        prompt: Send this lender package to banks, submit loan applications on my behalf, and pay
+          any application fees from my saved card.
+  publication:
+    release_notes: 1.26.2 adds a separate portable OpenAI draft package. Live reviewer
+      scenarios, demo recording, and portal approval remain pending.
+  portable:
+    hooksAdapter:
+      id: explicit-dd-setup-v1
+      sourceSha256: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
+    agentRoles:
+      dd-analyst:
+        adapter: explicit-role-workflow-v1
+        sourceSha256: dc6d4dbc24a814c33991af2d81397cb8c7ffc04f55873c5e869de384e623dcf0
+      forensic-screener:
+        adapter: explicit-role-workflow-v1
+        sourceSha256: 8679a740e6a1fa42230593984d2e683fc916932a544e83ef12725e3467c64dd3
+      war-game-strategist:
+        adapter: explicit-role-workflow-v1
+        sourceSha256: 00a45b363a12e52ab83dcd10692b40d84cba142388f3a43f80577e9756fb4ee4
