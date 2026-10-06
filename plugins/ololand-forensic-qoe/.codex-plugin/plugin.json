@@ -73,7 +73,7 @@
                 "https://raw.githubusercontent.com/ololand-ai/ololand-plugins/e4607e9acad3a311e9598a99edc71b1a62c0fb6c/docs/openai-review-fixtures/general-ledger.csv"
               ],
               "tools_triggered": "run_benford",
-              "expected_behavior": "Parse the supplied fixture into transactions using the live schema and call run_benford with transactions. Use the returned statistics, population counts, account flags, and reliability status. Never invent a p-value, claim a clean result when the sample is unreliable, or treat non-conformity as proof of fraud."
+              "expected_behavior": "Parse the supplied fixture into transactions using the live schema and call run_benford with transactions, preserving signed amounts: negatives use absolute magnitude; zero and unusable values are ignored. Report returned status, sample_size, and minimum_required. For computed results use returned digit_counts, observed_distribution, expected_distribution, chi_square, mad, conformity, and most_deviant_digit. For insufficient_sample, report the gap rather than treating placeholder distributions as measured results. Do not invent account-level flags or a p-value, claim that conformity rules out fraud, or treat non-conformity as proof of fraud."
             },
             {
               "description": "EBITDA adjustment review. Setup: ingest the synthetic financials and add-back schedule in review-fixtures/ into a dedicated deal named OloLand QoE Review (Synthetic), then verify its reconciled financial snapshots. Pass requires actual computed bridge output; an ingestion failure blocks this case rather than passing it.",

@@ -1,6 +1,6 @@
 # OpenAI submission preparation: OloLand Forensic QoE
 
-Status: preparation draft, not submitted or published. Package version: 0.6.4.
+Status: preparation draft, not submitted or published. Package version: 0.6.5.
 
 ## Confirmed publication choices
 
@@ -21,7 +21,7 @@ python3 scripts/generate-plugin-artifacts.py
 ./scripts/check-plugin-artifacts.sh
 ./scripts/check-version-sync.sh
 python3 scripts/export-openai-plugin.py ololand-forensic-qoe \
-  --output /tmp/ololand-forensic-qoe-0.6.4-openai-draft.zip
+  --output /tmp/ololand-forensic-qoe-0.6.5-openai-draft.zip
 ```
 
 The exporter creates portable `plugin.json` and `mcp.json`, copies packaged skills,
@@ -38,7 +38,7 @@ Presentation metadata is under `extensions.com.openai.interface` in the portable
 export. Review and publication metadata come from the canonical YAML `openai`
 section. The Codex compatibility manifest retains its root `interface`.
 
-## Endpoint and listing evidence
+## Earlier endpoint and listing evidence
 
 - `https://api.ololand.ai/mcp`: unauthenticated request returned HTTP 401 and a
   Bearer challenge advertising the protected-resource discovery URL below.
@@ -62,36 +62,46 @@ correct tool schemas, tool safety annotations, or tested financial behavior.
 
 ## Review case status
 
-The packaged 0.6.4 review cases remain **Not run**. An authenticated backend
+The packaged 0.6.5 review cases remain **Not run**. An authenticated backend
 smoke attempt of P1 was made on 2026-10-03 through the existing **OloLand Smoke
 Test 1.0.0** installation; it is **Blocked**, not a pass for the upload package.
 
 The prior smoke attempt's rendered report indicated that deal listing succeeded
 but the cached forensic call was rejected by the ChatGPT tool allowlist.
-This was not an independently captured raw MCP trace or a pass for 0.6.4's
+This was not an independently captured raw MCP trace or a pass for 0.6.5's
 skills. Private test-conversation links and account/deal identifiers are
 intentionally omitted from public reviewer materials.
 
-Backend source inspection confirmed that ChatGPT OAuth clients receive a
-hardcoded nine-tool read allowlist, rather than the general developer key's
-permissions. Issuing an ordinary replacement key alone does not repair this
-restriction. Backend PR https://github.com/ololand-ai/olo5/pull/5975 adds only
-the cached `analyze_forensic_qoe` read, with a minimized structured response
-and no ChatGPT credit/trial consumption. It merged on 2026-10-05 as
-`cbbe1d2cb242c454eff96e2789b5057b68bd19cb`; exact-head CI passed
-(39,151 unit tests and 536 integration tests). Staging API deployment succeeded;
-authenticated live acceptance remains unverified. Production promotion is held
-by the existing release PR #5986 pending the unrelated P1 repair #6004.
+The current connected OpenAI permission probe on 2026-10-06 confirms ten
+reviewed read tools, including cached `analyze_forensic_qoe`. Deal listing
+succeeds; a supplied synthetic Benford request returns HTTP 403
+`tool_not_allowed`. The October 3 cached-reader rejection above is historical.
+Issuing an ordinary replacement key does not resolve the public OAuth policy.
 
-This narrow fix does not enable P2, P3, or P5: the standalone computation tools
-remain outside the ChatGPT policy, and document retrieval needs requester ACL
-work before exposure. The full plugin cannot be called submission-ready until
+Backend PR #5975's narrow cached-reader policy was merged, and release #5986
+has since merged. Its production deployment receipt was verified against
+`7065f07e0ced868c202fb57a1fd4d13ae84f9621`; main has advanced since then,
+and that receipt does not prove every API/worker workflow. The earlier
+unmerged-release blocker is resolved.
+
+Broader source contracts are prepared in backend PR #6072: optional
+`app:compute` for three supplied-input calculators and `app:documents` for
+eight requester-scoped document readers. Its repaired head `4e5c44be5d`
+passed full backend CI; no activation or credential expansion was performed.
+Public activation still requires safe regex search (#6079), calculation size
+budgets (#6080), deployment-bound acceptance evidence (#6081), and the CI
+trigger follow-up #6083. Additional forensic tools need their own reviewed
+admission/output contracts. Package preparation and CI do not establish live
+workflow acceptance.
+
+The current live policy still blocks the broader P2, P3 and P5 workflows.
+The new calculation/document source contracts and ACL fixes remain unactivated. The full plugin cannot be called submission-ready until
 its intended workflows are supported and tested. The backend owner must also
 provide dedicated review/development access scoped to synthetic/sample data.
 Do not widen an unrelated production or global key. Confirm entitlements and
 metering before running computation tools; do not initiate purchasing, paid
 credit consumption, or paid report generation as part of these cases.
-Use the actual Forensic QoE 0.6.4 development package before final acceptance.
+Use the actual Forensic QoE 0.6.5 development package before final acceptance.
 The server's advertised catalog contains the forensic tools, but catalog
 visibility alone does not establish credential authorization or correct safety
 annotations. No credential, token, or personal Google sign-in is a suitable
@@ -148,11 +158,14 @@ not satisfy this item.
 
 ## Remaining setup before submission
 
-1. Confirm the intended verified OpenAI organization/project/developer identity.
+1. Reuse the intended organization `ololand` and Business publisher Ololand.ai Inc.
+   Earlier Mac Google Chrome Work inspection showed Verified and made that
+   publisher selectable; current private portal state has not been rechecked.
+   No upload, submission or publication has been verified.
 2. Deploy and live-verify the backend policy fix, then resolve the remaining
    tool-policy, metering, and requester-ACL gaps for the full P1-P5 workflows.
    Provide dedicated sample-scoped development/reviewer access. Install or
-   update the intended Forensic QoE 0.6.4 development package, then run the
+   update the intended Forensic QoE 0.6.5 development package, then run the
    cases; verify live tool schemas and boolean readOnlyHint, openWorldHint,
    and destructiveHint values. A new credential alone is insufficient.
 3. Record and host the real demo, then put its verified URL in the package.

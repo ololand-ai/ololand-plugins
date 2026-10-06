@@ -192,6 +192,57 @@ class PortableExports(unittest.TestCase):
         self.assertIn("ololand-forensic-qoe-forensic-screen", body)
         self.assertIn("request that separate plugin", body)
 
+    def test_native_skill_aliases_resolve_to_existing_packaged_skill_names(self):
+        files = self.archives["ololand-dd"]
+        self.assertIn("ololand-dd/skills/ololand-dd-partner-signoff/SKILL.md", files)
+        for native in ("firm-playbook", "healthcare-diligence"):
+            fields = yaml.safe_load((ROOT / "plugins/ololand-dd/skills" / native / "SKILL.md").read_text().split("---\n", 2)[1])
+            text = files[f"ololand-dd/skills/{fields['name']}/SKILL.md"].decode()
+            self.assertIn("`ololand-dd-partner-signoff`", text)
+            self.assertNotIn("`/partner-signoff`", text)
+        with self.isolated_source("ololand-dd") as (root, source):
+            skill = source / "skills/native-reference-test"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\nname: native-reference-test\ndescription: Use /partner-signoff before finalization.\n---\n"
+                "Follow `/partner-signoff`, `/ololand-dd:partner-signoff`, and `/ololand-dd-partner-signoff`.\n"
+                "Keep [policy](/partner-signoff) and https://app.ololand.ai/policies/partner-signoff unchanged.\n"
+            )
+            output = root / "public.zip"
+            exporter.export("ololand-dd", output)
+            with ZipFile(output) as archive:
+                text = archive.read("ololand-dd/skills/native-reference-test/SKILL.md").decode()
+            self.assertIn("Follow `ololand-dd-partner-signoff`, `ololand-dd-partner-signoff`, and `ololand-dd-partner-signoff`.", text)
+            self.assertIn("[policy](/partner-signoff)", text)
+            self.assertIn("https://app.ololand.ai/policies/partner-signoff", text)
+            fields = yaml.safe_load(text.split("---\n", 2)[1])
+            self.assertEqual(fields["description"], "Use ololand-dd-partner-signoff before finalization.")
+
+    def test_managed_agent_export_preserves_literal_response_key_and_neutral_prose(self):
+        text = self.archives["ololand-dd"]["ololand-dd/skills/ololand-dd-managed-agent/SKILL.md"].decode()
+        self.assertIn("`claude_platform_session_id`", text)
+        self.assertIn("session=<claude_platform_session_id>", text)
+        self.assertNotIn("hosted-session identifier returned by the tool", text)
+        self.assertNotIn("Claude", text)
+        self.assertIn("OloLand's hosted agent service", text)
+
+    def test_benford_review_case_uses_real_return_fields_and_submission_guide_matches_version(self):
+        files = self.archives["ololand-forensic-qoe"]
+        manifest = json.loads(files["ololand-forensic-qoe/plugin.json"])
+        cases = manifest["extensions"]["com.openai"]["review"]["test_cases"]["positive"]
+        case = next(item for item in cases if item["tools_triggered"] == "run_benford")
+        expected = case["expected_behavior"]
+        for field in ("status", "sample_size", "minimum_required", "digit_counts", "observed_distribution",
+                      "expected_distribution", "chi_square", "mad", "conformity", "most_deviant_digit"):
+            self.assertIn(field, expected)
+        self.assertIn("Do not invent account-level flags or a p-value", expected)
+        self.assertIn("insufficient_sample", expected)
+        self.assertNotIn("population counts, account flags, and reliability status", expected)
+        guide = (ROOT / "docs/openai-plugin-submission.md").read_text()
+        self.assertIn("Package version: " + manifest["version"], guide)
+        self.assertIn("ololand-forensic-qoe-" + manifest["version"] + "-openai-draft.zip", guide)
+        self.assertNotIn("0.6.4", guide)
+
     def test_exported_canonical_deal_urls_keep_their_path_segments(self):
         files = self.archives["ololand-dd"]
         paths = {

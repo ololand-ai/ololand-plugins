@@ -46,7 +46,8 @@ def neutral_text(text: str) -> str:
     text = text.replace("Claude\nPlatform", "OloLand's hosted agent service")
     text = text.replace("Claude Dispatch", "supported voice interfaces")
     text = text.replace("Claude Channels", "supported messaging interfaces")
-    text = text.replace("claude_platform_session_id", "hosted-session identifier returned by the tool")
+    # Provider wording can change; literal response keys such as
+    # claude_platform_session_id must retain their server-defined spelling.
     text = text.replace("Cowork", "your assistant")
     text = text.replace("Claude", "the assistant")
     return re.sub(r"\bmcp__ololand__([a-zA-Z0-9_]+)\b", r"\1", text)
@@ -362,6 +363,13 @@ def export(name: str, output: Path) -> None:
         if skill.name.startswith("cmd-"):
             references[f"/{skill.name}"] = fields["name"]
             references[f"/{skill.name.removeprefix('cmd-')}"] = fields["name"]
+        else:
+            # Native skills can have a short folder name and a namespaced
+            # declared name. Resolve either ordinary slash form to the
+            # packaged skill; command definitions below take precedence.
+            for alias in {skill.name, fields["name"], fields["name"].removeprefix(name + "-")}:
+                references[f"/{alias}"] = fields["name"]
+                references[f"/{name}:{alias}"] = fields["name"]
     for command in commands:
         if command.stem in unsupported:
             exclusions.append(unsupported[command.stem])
