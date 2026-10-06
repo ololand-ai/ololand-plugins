@@ -19,7 +19,7 @@ description: >-
   war-game-strategist) plus a flywheel that retrains from analyst corrections.
   Counter-positions Anthropic's native private-equity plugin.
 shortDescription: Institutional due diligence for M&A and private equity.
-developerName: OloLand
+developerName: Ololand.ai Inc
 homepage: https://ololand.ai
 repository: https://github.com/ololand-ai/ololand-plugins
 license: Apache-2.0

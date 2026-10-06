@@ -4,8 +4,10 @@ Status: preparation draft, not submitted or published. Package version: 0.6.5.
 
 ## Confirmed publication choices
 
-- Publisher: OloLand business identity. Actual business verification and the
-  selected portal developer name still need to be checked.
+- Publisher: `Ololand.ai Inc`, verified on 2026-10-06 in Mac Google Chrome.
+  Portal organization `ololand` shows Business Approved, and the upload dialog
+  defaults to `Business — Ololand.ai Inc`. No upload, submission, or publication
+  has been performed; live package review cases remain pending.
 - Availability: all directory-supported countries (`publication.countries: []`).
 - No purchasing or payment initiation through the plugin. Subscriptions are
   purchased separately on OloLand's website.
@@ -158,10 +160,11 @@ not satisfy this item.
 
 ## Remaining setup before submission
 
-1. Reuse the intended organization `ololand` and Business publisher Ololand.ai Inc.
-   Earlier Mac Google Chrome Work inspection showed Verified and made that
-   publisher selectable; current private portal state has not been rechecked.
-   No upload, submission or publication has been verified.
+1. Reuse organization `ololand` and the verified Business publisher `Ololand.ai Inc`.
+   The 2026-10-06 Mac Google Chrome inspection confirmed Business Approved and
+   the upload dialog identity `Business — Ololand.ai Inc`. Portable listing
+   developer and root author names use this verified business name. Upload,
+   submission, and publication remain pending.
 2. Deploy and live-verify the backend policy fix, then resolve the remaining
    tool-policy, metering, and requester-ACL gaps for the full P1-P5 workflows.
    Provide dedicated sample-scoped development/reviewer access. Install or

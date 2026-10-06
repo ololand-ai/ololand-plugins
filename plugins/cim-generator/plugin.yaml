@@ -17,7 +17,7 @@ marketplaceDescription: >-
   research), not LLM prose. View, edit, and export the finished CIM (PDF,
   DOCX, PPTX) from the deal workspace.
 shortDescription: 14-section CIM generator, built from your reconciled deal data.
-developerName: OloLand
+developerName: Ololand.ai Inc
 homepage: https://ololand.ai
 repository: https://github.com/ololand-ai/ololand-plugins
 license: Apache-2.0
