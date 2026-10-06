@@ -168,12 +168,17 @@ openai:
         prompt: Send this lender package to banks, submit loan applications on my behalf, and pay
           any application fees from my saved card.
   publication:
+    countries: []
     release_notes: 1.26.2 adds a separate portable OpenAI draft package. Live reviewer
       scenarios, demo recording, and portal approval remain pending.
   portable:
     hooksAdapter:
       id: explicit-dd-setup-v1
       sourceSha256: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
+      sourceFilesSha256:
+        hooks/hooks.json: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
+        scripts/setup_gate.sh: 924361968d9ee0dc0c30550b570f88ed8d56fa68763e5c6e3595297b1fb1dff0
+        scripts/setup_headless.sh: 4a5b10cf0a4e0864afcfc1dff862fe667fd1db78bd0f44725444b3244a7073a9
     agentRoles:
       dd-analyst:
         adapter: explicit-role-workflow-v1

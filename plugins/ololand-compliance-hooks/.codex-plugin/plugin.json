@@ -49,6 +49,11 @@
       "interface": {
         "displayName": "OloLand Compliance Review",
         "shortDescription": "Finance compliance review",
+        "defaultPrompt": [
+          "Review citations and missing evidence in this supplied finance paragraph.",
+          "Help me connect OloLand for an explicit compliance review.",
+          "Review the deal's assumption evidence and remaining human decisions without changing status."
+        ],
         "longDescription": "Explicit user-invoked compliance review and setup for OloLand finance workflows. Review citations, evidence gaps, MNPI authorization, provenance, and human approval blockers using supplied documents and available connected tools. OpenAI cannot execute local lifecycle hooks: this plugin does not automatically block tool calls, enforce citations, write local audit ledgers, or monitor sessions. This workflow is not equivalent to the local hooks. Server-side MCP rail auditing remains authoritative, and human-only approval gates stay in OloLand. This plugin does not certify compliance or initiate purchases or payments.",
         "websiteURL": "https://ololand.ai",
         "supportURL": "https://github.com/ololand-ai/ololand-plugins/issues",
@@ -110,12 +115,23 @@
         }
       },
       "publication": {
+        "countries": [],
         "release_notes": "0.2.4 adds a separate portable OpenAI draft package. Live reviewer scenarios, demo recording, and portal approval remain pending."
       },
       "portable": {
         "hooksAdapter": {
           "id": "explicit-compliance-review-v1",
-          "sourceSha256": "9609b32f8e343537a054d72157ef19cb3c223b1ec2b2b0d5543f31fda70d63db"
+          "sourceSha256": "9609b32f8e343537a054d72157ef19cb3c223b1ec2b2b0d5543f31fda70d63db",
+          "sourceFilesSha256": {
+            "hooks/hooks.json": "9609b32f8e343537a054d72157ef19cb3c223b1ec2b2b0d5543f31fda70d63db",
+            "scripts/audit_log.sh": "271dde8d0ba0b0a54b2c4882cb186cb6479832ede33da3f35c34d3ba3d86ce0c",
+            "scripts/citation_enforcer.sh": "9309b9f278b2f7ae16dcf7184eae4b06e4d26ae41193f2a3bd19ca8acb8bc549",
+            "scripts/evidence_quality_warning.sh": "cf3fdf19d1be9da4a0042f3e2112d5d84953e183eff3a16c52f3f5361e899ee1",
+            "scripts/mnpi_guard.sh": "af83a7b5fad353531697d894a54520bf179e8848b53ca4f51d2f5f2cc65103b4",
+            "scripts/provenance_writeback.sh": "a805d18cebc8137073079be7634ce222e3d689f9b5a2f98c88111aed7829afea",
+            "scripts/session_banner.sh": "70fb1d6beac0dced5d97b6ff71e5e8423812468c380ec2d0a7ecab2de5d63b5c",
+            "scripts/tier_capacity_warning.sh": "028126522ba76b2cc2e22669ef503f81e97472111eb539ba51cddf95f7b7a047"
+          }
         },
         "mcpServers": {
           "ololand": {

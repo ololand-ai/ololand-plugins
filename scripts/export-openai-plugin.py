@@ -7,6 +7,7 @@ import importlib.util
 import json
 from pathlib import Path
 import re
+import shlex
 import shutil
 import sys
 import tempfile
@@ -45,7 +46,8 @@ def neutral_text(text: str) -> str:
     text = text.replace("Claude\nPlatform", "OloLand's hosted agent service")
     text = text.replace("Claude Dispatch", "supported voice interfaces")
     text = text.replace("Claude Channels", "supported messaging interfaces")
-    text = text.replace("claude_platform_session_id", "hosted-session identifier returned by the tool")
+    # Provider wording can change; literal response keys such as
+    # claude_platform_session_id must retain their server-defined spelling.
     text = text.replace("Cowork", "your assistant")
     text = text.replace("Claude", "the assistant")
     return re.sub(r"\bmcp__ololand__([a-zA-Z0-9_]+)\b", r"\1", text)
@@ -122,20 +124,115 @@ not install scripts, write local audit ledgers, or monitor future tool calls.
 """
 
 
+def checked_source_file(source: Path, path: Path) -> Path:
+    """Reject redirected/non-regular local inputs before reading their bytes."""
+    try:
+        relative = path.relative_to(source)
+    except ValueError as exc:
+        raise ValueError("Reviewed source file must stay inside its plugin") from exc
+    if source.is_symlink() or any((source / Path(*relative.parts[:index])).is_symlink()
+                                 for index in range(1, len(relative.parts) + 1)):
+        raise ValueError("Symlinks are not allowed in reviewed source inputs")
+    if not path.resolve().is_relative_to(source.resolve()) or not path.is_file():
+        raise ValueError("Reviewed source input must be a regular file inside its plugin")
+    return path
+
+
+def reviewed_hook_sources(source: Path) -> dict[str, str]:
+    """Fingerprint the hook manifest and complete local implementation tree.
+
+    No shell command is executed. The supported hook invocation forms are
+    intentionally narrow; implementation dependencies must be local scripts.
+    Hashing the entire scripts tree also covers indirectly referenced helpers.
+    """
+    hook = checked_source_file(source, source / "hooks/hooks.json")
+    scripts = source / "scripts"
+    if scripts.is_symlink() or not scripts.is_dir():
+        raise ValueError("Hook implementations require a local scripts directory without symlinks")
+    inputs = {"hooks/hooks.json": hook}
+    for path in sorted(scripts.rglob("*")):
+        if path.is_symlink():
+            raise ValueError("Symlinks are not allowed in hook implementations")
+        if path.is_dir():
+            continue
+        inputs[path.relative_to(source).as_posix()] = checked_source_file(source, path)
+    document = json.loads(hook.read_text())
+    events = document.get("hooks")
+    if not isinstance(events, dict) or not events:
+        raise ValueError("Unsupported local hook manifest")
+    for event, groups in events.items():
+        if event not in {"SessionStart", "PreToolUse", "PostToolUse"} or not isinstance(groups, list):
+            raise ValueError("Unsupported local hook event")
+        for group in groups:
+            if not isinstance(group, dict) or not isinstance(group.get("hooks"), list):
+                raise ValueError("Unsupported local hook group")
+            for entry in group["hooks"]:
+                if not isinstance(entry, dict) or entry.get("type") != "command" or not isinstance(entry.get("command"), str):
+                    raise ValueError("Unsupported local hook invocation")
+                lexer = shlex.shlex(entry["command"], posix=True, punctuation_chars=True)
+                lexer.whitespace_split = True
+                lexer.commenters = ""
+                tokens = list(lexer)
+                diagnostic = {
+                    "ololand-dd": "[ololand-dd] CLAUDE_PLUGIN_ROOT unset; setup gate skipped",
+                    "ololand-compliance-hooks": "[ololand-compliance-hooks] CLAUDE_PLUGIN_ROOT unset; session banner skipped",
+                }.get(source.name)
+                if len(tokens) >= 2 and tokens[0] == "bash":
+                    invocation = tokens
+                elif (len(tokens) == 10 and tokens[:6] == ["[", "-n", "${CLAUDE_PLUGIN_ROOT}", "]", "&&", "bash"]
+                      and tokens[7:9] == ["||", "echo"] and tokens[9] == diagnostic):
+                    invocation = tokens[5:7]
+                else:
+                    raise ValueError("Unsupported local hook invocation shape")
+                if len(invocation) not in {2, 3} or (len(invocation) == 3 and invocation[2] not in {"pre", "post"}):
+                    raise ValueError("Unsupported local hook arguments")
+                prefix = "${CLAUDE_PLUGIN_ROOT}/"
+                target = invocation[1]
+                if not target.startswith(prefix):
+                    raise ValueError("Hook implementation must stay inside its plugin")
+                relative = target.removeprefix(prefix)
+                if (not re.fullmatch(r"scripts/[A-Za-z0-9_./-]+", relative) or
+                        any(part in {"", ".", ".."} for part in relative.split("/"))):
+                    raise ValueError("Unsupported or outside hook implementation path")
+                if relative not in inputs:
+                    raise ValueError("Hook implementation is missing from the reviewed scripts tree")
+    return {relative: hashlib.sha256(path.read_bytes()).hexdigest() for relative, path in sorted(inputs.items())}
+
+
+def checked_commands(source: Path) -> list[Path]:
+    commands = source / "commands"
+    if commands.is_symlink():
+        raise ValueError("Symlinked command directories are not allowed")
+    paths = sorted(commands.glob("*.md"))
+    for path in paths:
+        checked_source_file(source, path)
+    return paths
+
+
 def portable_adapter(source: Path, metadata: dict) -> str | None:
     """Require a reviewed adapter for the exact local hook source."""
-    if not (source / "hooks").exists():
+    portable = metadata.get("openai", {}).get("portable", {})
+    hook_directory = source / "hooks"
+    if hook_directory.is_symlink():
+        raise ValueError("Symlinks are not allowed for hook source directories")
+    if not hook_directory.exists():
+        if "hooksAdapter" in portable:
+            raise ValueError("Portable hooks adapter requires its source hook directory")
         return None
-    adapter = metadata.get("openai", {}).get("portable", {}).get("hooksAdapter", {})
+    if not hook_directory.is_dir():
+        raise ValueError("Portable hooks adapter requires a source hook directory")
+    adapter = portable.get("hooksAdapter", {})
     allowed = {
         "ololand-dd": "explicit-dd-setup-v1",
         "ololand-compliance-hooks": "explicit-compliance-review-v1",
     }
     if not adapter.get("id") or adapter.get("id") != allowed.get(metadata["name"]):
         raise ValueError("Local hooks require a recognized explicit portable hooks adapter")
-    hook = source / "hooks" / "hooks.json"
-    if not hook.is_file() or hashlib.sha256(hook.read_bytes()).hexdigest() != adapter.get("sourceSha256"):
+    fingerprints = reviewed_hook_sources(source)
+    if fingerprints["hooks/hooks.json"] != adapter.get("sourceSha256"):
         raise ValueError("Portable hooks adapter must be reviewed against the current hooks source")
+    if fingerprints != adapter.get("sourceFilesSha256"):
+        raise ValueError("Portable hooks adapter must be reviewed against every current hook implementation file")
     return adapter["id"]
 
 
@@ -208,6 +305,7 @@ def export(name: str, output: Path) -> None:
     if metadata["name"] != name:
         raise ValueError("Plugin identity must match its directory")
     adapter = portable_adapter(source, metadata)
+    commands = checked_commands(source)
     codex = generator.codex_manifest(source, metadata)
     interface = dict(codex["interface"])
     interface.update(metadata.get("openai", {}).get("interface", {}))
@@ -265,7 +363,14 @@ def export(name: str, output: Path) -> None:
         if skill.name.startswith("cmd-"):
             references[f"/{skill.name}"] = fields["name"]
             references[f"/{skill.name.removeprefix('cmd-')}"] = fields["name"]
-    for command in sorted((source / "commands").glob("*.md")):
+        else:
+            # Native skills can have a short folder name and a namespaced
+            # declared name. Resolve either ordinary slash form to the
+            # packaged skill; command definitions below take precedence.
+            for alias in {skill.name, fields["name"], fields["name"].removeprefix(name + "-")}:
+                references[f"/{alias}"] = fields["name"]
+                references[f"/{name}:{alias}"] = fields["name"]
+    for command in commands:
         if command.stem in unsupported:
             exclusions.append(unsupported[command.stem])
             for reference in (f"/cmd-{command.stem}", f"/{command.stem}", f"/{name}:{command.stem}", f"../../commands/{command.name}"):
