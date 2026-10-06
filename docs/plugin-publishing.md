@@ -151,14 +151,30 @@ OpenAI listing overrides belong in `openai.interface` in canonical YAML. Supply
 paths for `logo` and `composerIcon`. All four packages reuse the existing
 OloLand icon. Metadata under `openai.portable` describes export adapters and
 is not published as an OpenAI manifest extension.
+Override `defaultPrompt` here when the original host's starter actions are
+unavailable in OpenAI. Compliance starters request explicit review, connection
+setup, and read-only evidence review; the original local-hook starters remain
+unchanged in canonical host metadata.
 
 A source with `hooks/` must declare a recognized
 `openai.portable.hooksAdapter` with its adapter `id` and the SHA-256
-`sourceSha256` of `hooks/hooks.json`. DD uses `explicit-dd-setup-v1`;
+`sourceSha256` of `hooks/hooks.json`, plus `sourceFilesSha256`, a complete map of
+plugin-relative paths to hashes for that manifest and every file in the local
+`scripts/` tree. This covers direct implementations and local helper scripts:
+DD includes both `setup_gate.sh` and its referenced `setup_headless.sh`;
+Compliance includes all seven implementation scripts. DD uses `explicit-dd-setup-v1`;
 Compliance uses `explicit-compliance-review-v1`. Missing/unknown adapters or a
-changed hook source fail closed. Review the changed source and its portable
+changed manifest, changed/added implementation, incomplete map, or missing hook
+tree fails closed. Symlinked manifests, scripts, directories, and command
+sources are rejected before their redirected contents are read. The hook
+manifest parser accepts only reviewed local bash invocations and the exact
+existing guarded banner/setup forms; outside/traversal/dynamic paths, injected
+shell commands, and unknown invocation forms are rejected without execution.
+Review the changed source and its portable
 limitations before updating that declaration; do not simply refresh the hash
-to bypass the check. A source without `.mcp.json` can declare its public HTTPS
+to bypass the check. The hashes verify reviewed bytes, not the security or
+behavioral equivalence of arbitrary shell code. Security review remains
+necessary when implementation or dependencies change. A source without `.mcp.json` can declare its public HTTPS
 connection under `openai.portable.mcpServers`; Compliance does so explicitly.
 
 OpenAI cannot execute local lifecycle hooks. The DD adapter provides explicit
@@ -189,3 +205,8 @@ Omit publication country selections until the actual authorized choices are
 known. Preserve previously settled selections: Forensic retains its existing
 `countries: []` declaration for all supported countries. DD, CIM, and Compliance
 omit the field because their publication selections have not been provided.
+
+`check-plugin-artifacts.sh` runs the exporter unittest suite after checking
+generated metadata. Both pull-request artifact CI and tagged release CI use
+that shared script, so an exporter regression blocks either path. The suite
+also checks that its failure propagates through the script.
