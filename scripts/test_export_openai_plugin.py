@@ -116,17 +116,13 @@ class PortableExports(unittest.TestCase):
         self.assertIn("not execution authority", strategist)
         self.assertIn("exact `simulation_id` or `batch_id`", strategist)
 
-    def test_unknown_publication_countries_are_omitted(self):
+    def test_confirmed_all_country_publication_selection_is_packaged(self):
         for name, files in self.archives.items():
             source = yaml.safe_load((ROOT / "plugins" / name / "plugin.yaml").read_text())
             manifest = json.loads(files[f"{name}/plugin.json"])
-            if name == "ololand-forensic-qoe":
-                # Preserve the existing settled all-supported-country selection.
-                self.assertEqual(source["openai"]["publication"]["countries"], [])
-                self.assertEqual(manifest["extensions"]["com.openai"]["publication"]["countries"], [])
-            else:
-                self.assertNotIn("countries", source["openai"]["publication"])
-                self.assertNotIn("countries", manifest["extensions"]["com.openai"]["publication"])
+            # The publisher explicitly selected all supported countries for all four.
+            self.assertEqual(source["openai"]["publication"]["countries"], [])
+            self.assertEqual(manifest["extensions"]["com.openai"]["publication"]["countries"], [])
 
     def test_public_listing_icons_and_dependencies(self):
         for name, files in self.archives.items():

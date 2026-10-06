@@ -115,6 +115,7 @@
         }
       },
       "publication": {
+        "countries": [],
         "release_notes": "0.2.4 adds a separate portable OpenAI draft package. Live reviewer scenarios, demo recording, and portal approval remain pending."
       },
       "portable": {

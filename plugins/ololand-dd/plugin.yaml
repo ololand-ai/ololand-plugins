@@ -168,6 +168,7 @@ openai:
         prompt: Send this lender package to banks, submit loan applications on my behalf, and pay
           any application fees from my saved card.
   publication:
+    countries: []
     release_notes: 1.26.2 adds a separate portable OpenAI draft package. Live reviewer
       scenarios, demo recording, and portal approval remain pending.
   portable:

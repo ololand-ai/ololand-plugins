@@ -202,9 +202,10 @@ as drafts until authorized live review, reviewer access, authentic demo
 recordings, and submission prerequisites are completed. Do not invent demo
 URLs or mark unrun review cases as passed.
 Omit publication country selections until the actual authorized choices are
-known. Preserve previously settled selections: Forensic retains its existing
-`countries: []` declaration for all supported countries. DD, CIM, and Compliance
-omit the field because their publication selections have not been provided.
+known. The publisher has explicitly selected all supported countries for all
+four portable packages, represented by `countries: []`. This preserves
+Forensic's previously settled selection and records the confirmed choices for
+DD, CIM, and Compliance.
 
 `check-plugin-artifacts.sh` runs the exporter unittest suite after checking
 generated metadata. Both pull-request artifact CI and tagged release CI use
