@@ -46,7 +46,7 @@ Runs the full forensic-QoE battery on a deal and produces an IC-defensible exclu
 For each primitive:
 - **Classification** — `[finding]` (engine ran, result computed) or `[gap]` (engine returned insufficient_data / not_reliable / unavailable)
 - **Result** — pass / warning / fail (for findings) OR data-pull ask (for gaps)
-- **Numeric finding** — e.g. M-Score = -1.42 (low manipulation likelihood) or Benford χ² = 47.3 (significant deviation, p<0.001). Gaps have no numeric finding; state the missing input class instead.
+- **Numeric finding** — use only computed values and classifications actually returned, such as a Beneish M-Score or Benford `chi_square`, `mad`, and `conformity`. The current standalone Benford tool does not return a p-value; do not invent one. Gaps have no numeric finding; state the missing input class instead.
 - **Adjustments** — line-by-line additions/subtractions to reported EBITDA with $ amounts. Gaps contribute zero adjustments; they contribute open questions.
 - **Evidence** — citations to source pages (findings) OR a list of the document classes that would unblock the primitive (gaps)
 - **Recommendation** — proceed / proceed with caveats / kill (findings) OR request-data-then-rerun (gaps)

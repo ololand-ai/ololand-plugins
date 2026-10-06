@@ -32,7 +32,7 @@ Architecture (monolith vs microservices), technical debt, security posture, scal
 When evaluating financial risks, apply these deterministic tests:
 
 1. **Beneish M-Score** (8-variable model): DSRI, GMI, AQI, SGI, DEPI, SGAI, TATA, LVGI. Score below -1.78 = likely manipulation.
-2. **Benford's Law**: First-digit distribution test on transaction data. Chi-square goodness-of-fit. Deviations signal potential fraud.
+2. **Benford's Law**: First-digit conformity review on suitable transaction data. Preserve signed amounts: the standalone tool uses absolute magnitude for negatives and ignores zero/unusable values. Report only returned sample size, status, distributions, chi-square, MAD, and conformity; the current standalone response supplies no p-value or account/transaction rankings. An insufficient sample is a gap. Deviations prompt investigation, not proof of fraud; conformity does not rule fraud out.
 3. **EBITDA Bridge**: Verify every add-back. Non-recurring items must be truly non-recurring.
 4. **Revenue Quality Deep Dive**: Recognition timing, bill-and-hold, channel stuffing indicators.
 

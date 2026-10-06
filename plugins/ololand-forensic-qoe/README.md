@@ -10,7 +10,7 @@ This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone p
 |---|---|---|
 | `/forensic-screen` | `analyze_forensic_qoe` (full battery) | Runs every primitive whose required inputs are present; returns an IC-defensible exclusion schedule. |
 | `/beneish` | Beneish M-Score primitive | 8-variable earnings-manipulation probability, private-company adjusted. |
-| `/benford` | Benford's Law primitive | First-digit testing on GL transactions; detects fabricated / selectively-entered postings. |
+| `/benford` | Benford's Law primitive | First-digit conformity review on suitable GL transactions; deviations require investigation and do not establish fraud. |
 | `/ebitda-bridge` | EBITDA bridge + adjustment classifier | Walks reported EBITDA to normalized EBITDA, classifying every add-back as one-time / pro-forma / recurring / questionable. |
 | `/journal-test` | Journal-entry tester | Period-end concentration, round-number frequency, weekend postings, reversing-entry anomalies. |
 | `/lapping-check` | Lapping detector | Detects AR-lapping fraud cycles by tracing customer-to-cash application. |

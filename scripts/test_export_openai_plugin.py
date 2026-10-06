@@ -186,6 +186,27 @@ class PortableExports(unittest.TestCase):
                     self.assertNotIn("self-serve Full QoE", execution)
                     self.assertNotIn("Statistical flags", execution)
 
+    def test_benford_prompts_preserve_signed_inputs_and_only_returned_statistics(self):
+        forensic = self.archives["ololand-forensic-qoe"]
+        benford = forensic["ololand-forensic-qoe/skills/ololand-forensic-qoe-benford/SKILL.md"].decode()
+        self.assertIn("Negative amounts are evaluated by absolute magnitude", benford)
+        self.assertIn("zero and unusable values are ignored", benford)
+        self.assertIn("`run_benford(transactions)`", benford)
+        self.assertIn("does not return `p_value`", benford)
+        self.assertIn("placeholder zero distributions", benford)
+        self.assertNotIn("χ² statistic and p-value", benford)
+        self.assertNotIn("at least 1,000 line items", benford)
+        self.assertNotIn("The engine pulls all GL transactions", benford)
+        self.assertNotRegex(benford, r"p\s*[<>]=?\s*0\.")
+        screen = forensic["ololand-forensic-qoe/skills/ololand-forensic-qoe-forensic-screen/SKILL.md"].decode()
+        self.assertNotRegex(screen, r"p\s*[<>]=?\s*0\.")
+        self.assertIn("does not return a p-value", screen)
+        for path in ("ololand-forensic-qoe/skills/forensic-qoe/SKILL.md",):
+            self.assertIn("absolute magnitude", forensic[path].decode())
+        risk = self.archives["ololand-dd"]["ololand-dd/skills/risk-analysis/SKILL.md"].decode()
+        self.assertIn("absolute magnitude for negatives", risk)
+        self.assertIn("supplies no p-value", risk)
+
     @contextlib.contextmanager
     def isolated_source(self, name):
         with tempfile.TemporaryDirectory() as temp:
