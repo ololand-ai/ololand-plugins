@@ -97,6 +97,39 @@ for name, mp_version in versions.items():
   fi
 fi
 
+cursor_marketplace="$repo_root/.cursor-plugin/marketplace.json"
+if [ -f "$cursor_marketplace" ]; then
+  cursor_drift="$(python3 -c '
+import json, os, sys
+
+claude_path, cursor_path, repo_root = sys.argv[1], sys.argv[2], sys.argv[3]
+claude = json.load(open(claude_path))
+cursor = json.load(open(cursor_path))
+claude_names = [p["name"] for p in claude["plugins"]]
+cursor_names = [p["name"] for p in cursor["plugins"]]
+if claude_names != cursor_names:
+    print(f"plugin list drift: claude={claude_names} cursor={cursor_names}")
+for entry in cursor["plugins"]:
+    source = os.path.normpath(os.path.join(repo_root, entry["source"]))
+    cursor_plugin = os.path.join(source, ".cursor-plugin", "plugin.json")
+    claude_plugin = os.path.join(source, ".claude-plugin", "plugin.json")
+    if not os.path.isfile(cursor_plugin):
+        print(f"missing Cursor manifest: {entry['name']} {cursor_plugin}")
+        continue
+    cursor_manifest = json.load(open(cursor_plugin))
+    if cursor_manifest.get("name") != entry["name"]:
+        print(f"name drift: marketplace {entry['name']} cursor plugin.json={cursor_manifest.get('name')}")
+    if os.path.isfile(claude_plugin):
+        claude_version = json.load(open(claude_plugin))["version"]
+        if cursor_manifest.get("version") != claude_version:
+            print(f"version drift: {entry['name']} cursor={cursor_manifest.get('version')} claude={claude_version}")
+' "$marketplace_json" "$cursor_marketplace" "$repo_root")"
+  if [ -n "$cursor_drift" ]; then
+    echo "$cursor_drift" >&2
+    drift=1
+  fi
+fi
+
 if [ "$drift" -ne 0 ]; then
   echo "update marketplace.json, each plugin's plugin.json, and the root README's plugin table to agree before committing." >&2
   exit 1

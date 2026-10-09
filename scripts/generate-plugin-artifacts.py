@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate Claude and Codex plugin artifacts from canonical YAML metadata."""
+"""Generate Claude, Codex, and Cursor plugin artifacts from canonical YAML metadata."""
 
 from __future__ import annotations
 
@@ -141,6 +141,132 @@ def claude_manifest(plugin: dict[str, Any]) -> dict[str, Any]:
     extra = plugin.get("claude", {}).get("extraManifestFields", {})
     manifest.update(extra)
     return manifest
+
+
+def cursor_author(plugin: dict[str, Any]) -> dict[str, str]:
+    raw = plugin.get(
+        "author",
+        {
+            "name": "OloLand",
+            "email": "support@ololand.ai",
+        },
+    )
+    author = {"name": str(raw.get("name") or "OloLand")}
+    if raw.get("email"):
+        author["email"] = str(raw["email"])
+    return author
+
+
+def cursor_session_start_hooks(root: Path) -> dict[str, Any] | None:
+    """Translate Claude SessionStart hooks to Cursor format; suppress the rest.
+
+    Cursor auto-discovers hooks/hooks.json when the manifest omits `hooks`.
+    Claude's nested PreToolUse/PostToolUse shape is not a Cursor hook file, so
+    plugins that ship Claude hooks always get an explicit Cursor hooks path.
+    Only SessionStart is mapped — Claude matchers and tool-use hooks stay on
+    the Claude/Codex manifests.
+    """
+    hooks_path = root / "hooks" / "hooks.json"
+    if not hooks_path.is_file():
+        return None
+
+    data = json.loads(hooks_path.read_text(encoding="utf-8"))
+    claude_hooks = data.get("hooks", {}) if isinstance(data, dict) else {}
+    session = claude_hooks.get("SessionStart") or claude_hooks.get("sessionStart") or []
+    commands: list[dict[str, str]] = []
+    if isinstance(session, list):
+        for entry in session:
+            if not isinstance(entry, dict):
+                continue
+            inner = entry.get("hooks")
+            candidates = inner if isinstance(inner, list) else [entry]
+            for hook in candidates:
+                if not isinstance(hook, dict):
+                    continue
+                command = hook.get("command")
+                if not isinstance(command, str) or not command.strip():
+                    continue
+                commands.append(
+                    {
+                        "command": command.replace(
+                            "${CLAUDE_PLUGIN_ROOT}", "${CURSOR_PLUGIN_ROOT}"
+                        ).replace(
+                            "CLAUDE_PLUGIN_ROOT unset",
+                            "CURSOR_PLUGIN_ROOT unset",
+                        )
+                    }
+                )
+    return {"hooks": {"sessionStart": commands} if commands else {}}
+
+
+def cursor_components(root: Path, plugin: dict[str, Any]) -> dict[str, Any]:
+    configured = plugin.get("components", {}).get("cursor", {})
+    components: dict[str, Any] = {}
+
+    if (root / "skills").is_dir() and list((root / "skills").glob("*/SKILL.md")):
+        components["skills"] = "./skills/"
+    if (root / "commands").is_dir() and list((root / "commands").glob("*.md")):
+        components["commands"] = "./commands/"
+    if (root / "agents").is_dir() and list((root / "agents").glob("*.md")):
+        components["agents"] = "./agents/"
+    if (root / ".mcp.json").is_file():
+        components["mcpServers"] = "./.mcp.json"
+    if (root / "assets" / "ololand-icon.png").is_file():
+        components["logo"] = "assets/ololand-icon.png"
+    if cursor_session_start_hooks(root) is not None:
+        components["hooks"] = "./.cursor-plugin/hooks.json"
+
+    for key in ("skills", "commands", "agents", "mcpServers", "logo", "hooks", "rules"):
+        if configured.get(key):
+            components[key] = configured[key]
+
+    return components
+
+
+def cursor_manifest(root: Path, plugin: dict[str, Any]) -> dict[str, Any]:
+    manifest: dict[str, Any] = {
+        "name": plugin["name"],
+        "displayName": plugin.get("displayName", plugin["name"]),
+        "description": plugin["description"],
+        "version": str(plugin["version"]),
+        "author": cursor_author(plugin),
+        "homepage": plugin["homepage"],
+        "repository": plugin["repository"],
+        "license": plugin["license"],
+        "category": claude_category(plugin["category"]),
+        "keywords": plugin.get("keywords", []),
+    }
+    manifest.update(cursor_components(root, plugin))
+    return manifest
+
+
+def cursor_marketplace_owner(marketplace: dict[str, Any]) -> dict[str, str]:
+    raw = marketplace.get("owner", {})
+    owner = {"name": str(raw.get("name") or "OloLand")}
+    email = raw.get("email") or "support@ololand.ai"
+    owner["email"] = str(email)
+    return owner
+
+
+def build_cursor_marketplace(
+    marketplace: dict[str, Any], plugins: list[dict[str, Any]]
+) -> dict[str, Any]:
+    return {
+        "name": marketplace["name"],
+        "owner": cursor_marketplace_owner(marketplace),
+        "metadata": {
+            "description": marketplace["description"],
+        },
+        "plugins": [
+            {
+                "name": plugin["name"],
+                "source": plugin_source(plugin["name"]),
+                "description": plugin.get("marketplaceDescription", plugin["description"]),
+            }
+            for plugin in plugins
+            if plugin.get("targets", {}).get("cursor", True)
+        ],
+    }
 
 
 def build_claude_marketplace(
@@ -377,6 +503,21 @@ def main() -> int:
                 args.check,
                 drift,
             )
+        if plugin.get("targets", {}).get("cursor", True):
+            cursor_hooks = cursor_session_start_hooks(root)
+            if cursor_hooks is not None:
+                write_or_check(
+                    root / ".cursor-plugin" / "hooks.json",
+                    json_text(cursor_hooks),
+                    args.check,
+                    drift,
+                )
+            write_or_check(
+                root / ".cursor-plugin" / "plugin.json",
+                json_text(cursor_manifest(root, plugin)),
+                args.check,
+                drift,
+            )
         validate_skill_names(root, plugin["name"])
 
     write_or_check(
@@ -388,6 +529,12 @@ def main() -> int:
     write_or_check(
         REPO_ROOT / ".agents" / "plugins" / "marketplace.json",
         json_text(build_codex_marketplace(marketplace, plugins)),
+        args.check,
+        drift,
+    )
+    write_or_check(
+        REPO_ROOT / ".cursor-plugin" / "marketplace.json",
+        json_text(build_cursor_marketplace(marketplace, plugins)),
         args.check,
         drift,
     )

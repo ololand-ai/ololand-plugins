@@ -1,8 +1,8 @@
 # Plugin Publishing
 
-This repository is a dual-target plugin marketplace. Maintainers edit canonical
-YAML metadata and plugin implementation files, then generate Claude and Codex
-artifacts from the same source of truth.
+This repository is a multi-target plugin marketplace. Maintainers edit canonical
+YAML metadata and plugin implementation files, then generate Claude, Codex, and
+Cursor / Grok Bot artifacts from the same source of truth.
 
 ## Source Of Truth
 
@@ -20,8 +20,11 @@ Do not hand-edit generated artifacts:
 
 - `.claude-plugin/marketplace.json`
 - `.agents/plugins/marketplace.json`
+- `.cursor-plugin/marketplace.json`
 - `plugins/*/.claude-plugin/plugin.json`
 - `plugins/*/.codex-plugin/plugin.json`
+- `plugins/*/.cursor-plugin/plugin.json`
+- `plugins/*/.cursor-plugin/hooks.json`
 - `plugins/*/skills/cmd-<command-name>/SKILL.md` files whose body says they were
   generated from Claude slash commands
 
@@ -102,6 +105,31 @@ out.
 Claude sub-agent definitions remain in their existing folders. If Codex needs
 equivalent behavior, add native Codex skills under `skills/` and regenerate
 artifacts.
+
+## Cursor / Grok Bot Compatibility
+
+The generator writes Cursor-format manifests at
+`plugins/*/.cursor-plugin/plugin.json` and a Cursor marketplace at
+`.cursor-plugin/marketplace.json`. Grok Bot installs that format.
+
+Cursor manifests reuse the same on-disk components as Claude and Codex:
+
+- `skills` → `./skills/`
+- `commands` → `./commands/`
+- `agents` → `./agents/` when present
+- `mcpServers` → `./.mcp.json` when present
+- `logo` → `assets/ololand-icon.png` when present
+
+Claude `hooks/hooks.json` files are not pointed at directly. Cursor auto-discovers
+`hooks/hooks.json` unless the manifest sets `hooks`, and the Claude PreToolUse /
+PostToolUse shape is not a Cursor hook file. The generator writes a SessionStart-only
+Cursor hooks file at `.cursor-plugin/hooks.json` and points the manifest there.
+Claude matcher-based tool hooks stay unported; use the shared compliance and
+citation skills for explicit review on Cursor / Grok Bot.
+
+`scripts/check-cursor-plugins.py` (run from `check-plugin-artifacts.sh`) verifies
+that every Cursor manifest parses, referenced paths exist, skill frontmatter is
+valid, and MCP configs contain no literal secrets.
 
 ## Portable OpenAI Draft Uploads
 

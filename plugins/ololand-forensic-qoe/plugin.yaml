@@ -67,6 +67,7 @@ defaultPrompt:
 targets:
   claude: true
   codex: true
+  cursor: true
 interface:
   websiteURL: https://ololand.ai/qoe
   supportURL: https://github.com/ololand-ai/ololand-plugins/issues

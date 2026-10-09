@@ -1,8 +1,8 @@
 # OloLand Plugins
 
-> The verifier stack for buy-side underwriting, as Claude plugins.
+> The verifier stack for buy-side underwriting, as installable agent plugins.
 
-This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop) and **Claude Code** (CLI). It hosts the OloLand plugins that augment Anthropic's first-party finance plugin lineup (`private-equity`, `financial-analysis`, `investment-banking`, `equity-research`, `wealth-management`).
+This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop), **Claude Code** (CLI), **Codex**, and **Cursor / Grok Bot**. It hosts the OloLand plugins that augment Anthropic's first-party finance plugin lineup (`private-equity`, `financial-analysis`, `investment-banking`, `equity-research`, `wealth-management`) and expose the same OloLand MCP server on Cursor-format hosts.
 
 > *Anthropic ships breadth. OloLand ships depth.*
 > Same Cowork session. Deterministic computation. Defensible record.
@@ -24,8 +24,9 @@ The plugins compose additively with each other and with Anthropic's first-party 
 
 ## Maintainer workflow
 
-This repository generates Claude and Codex plugin artifacts from canonical YAML
-metadata. Edit `marketplace.yaml` and `plugins/*/plugin.yaml`, then run:
+This repository generates Claude, Codex, and Cursor / Grok Bot plugin artifacts
+from canonical YAML metadata. Edit `marketplace.yaml` and `plugins/*/plugin.yaml`,
+then run:
 
 ```bash
 python3 -m pip install -r scripts/requirements.txt
@@ -60,7 +61,7 @@ You can install the plugins on a free Developer account and explore everything a
 5. OloLand's backend auto-provisions a scoped agent key, bound to your OAuth client. Cowork / Claude Code stores it for you
 6. Subsequent calls use the stored credential. No env var, no manual setup.
 
-That's it. The OAuth flow happens once and the connector is authenticated for that session and future ones.
+That's it. The OAuth flow happens once and the connector is authenticated for that session and future ones. The same connector is what Grok Bot and Cursor authorize after you install a Cursor-format plugin from this marketplace.
 
 ### Power user / headless setup (optional)
 
@@ -71,6 +72,29 @@ If you're running the plugins in a headless environment (CI, server-side automat
 3. Set the env var: `export OLOLAND_AGENT_KEY=olo_agent_sk_...`
 
 The published `.mcp.json` files are OAuth-native and do not send an Authorization header. For headless use, add your own MCP server config with `Authorization: Bearer ${OLOLAND_AGENT_KEY}`. If OAuth and a custom header are both configured by your client, OAuth should be treated as the interactive default.
+
+---
+
+## Install — Grok Bot and Cursor
+
+Grok Bot installs plugins in the Cursor format. This repo ships a multi-plugin marketplace at [`.cursor-plugin/marketplace.json`](./.cursor-plugin/marketplace.json). Each plugin reuses its existing `skills/`, `commands/`, `agents/`, assets, and OAuth-native [`.mcp.json`](./plugins/ololand-dd/.mcp.json) — there is no API key in the repository.
+
+### Grok Bot
+
+1. Open the bot's plugin settings, or ask: `Install the OloLand plugins from ololand-ai/ololand-plugins`
+2. Add the GitHub marketplace `ololand-ai/ololand-plugins`
+3. Install **`ololand-dd`** for the deal, diligence, and valuation MCP tools (`get_deal`, `run_due_diligence`, `run_lbo_model`, `generate_ic_package`, and the rest of the OloLand server). Optionally install `ololand-forensic-qoe`, `cim-generator`, and `ololand-compliance-hooks`
+4. When prompted, authorize the **`ololand`** MCP connector via OAuth. No env var or pasted token is required
+
+### Cursor
+
+1. Settings → Plugins → add a marketplace from GitHub: `ololand-ai/ololand-plugins`
+2. Install the plugins you need from the OloLand marketplace
+3. Authorize the `ololand` connector on first use
+
+After install, a plugin detail view should show the shared skills plus the `ololand` connector. If the connector appears installed but never offers sign-in, remove and re-add the plugin, then authorize again.
+
+Headless Cursor / CI hosts that cannot complete OAuth can add their own MCP config with `Authorization: Bearer ${OLOLAND_AGENT_KEY}`. The published `.mcp.json` files stay OAuth-native and do not embed that header.
 
 ---
 
@@ -407,7 +431,7 @@ For the full positioning, see [the comparison page](https://ololand.ai/compare/v
 
 ## Contributing
 
-Each plugin lives under `plugins/<name>/` with its own `.claude-plugin/plugin.json`, README, and contents. The marketplace catalog at `.claude-plugin/marketplace.json` is the single source of truth for what's published.
+Each plugin lives under `plugins/<name>/` with Claude, Codex, and Cursor manifests that share the same skills, commands, and MCP config. The Claude marketplace catalog at `.claude-plugin/marketplace.json` and the Cursor marketplace at `.cursor-plugin/marketplace.json` are generated from `marketplace.yaml` and must stay in version lockstep with each plugin's `plugin.yaml`.
 
 Branch from `origin/main`, open a PR into `main` (operator ruling 2026-07-14: this repo is **main-only** — it has no staging environment, so unlike `ololand-ai/olo5` there is no staging branch in the flow; the old `staging` branch is retired and stale). The repo allows **merge commits only** (rebase/squash disabled).
 

@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "[ -n \"${CURSOR_PLUGIN_ROOT}\" ] && bash \"${CURSOR_PLUGIN_ROOT}/scripts/setup_gate.sh\" || echo \"[ololand-dd] CURSOR_PLUGIN_ROOT unset; setup gate skipped\""
+      }
+    ]
+  }
+}

@@ -44,6 +44,7 @@ defaultPrompt:
 targets:
   claude: true
   codex: true
+  cursor: true
 codex:
   # Disabled 2026-05-21 to keep ololand-dd under Cowork's per-plugin install
   # cap. With 31 commands + 52 skills, Cowork's marketplace ingest was

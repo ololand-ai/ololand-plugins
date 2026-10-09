@@ -1,6 +1,6 @@
 ---
 name: compliance-hooks-setup
-description: Use when the user asks to enable, configure, or troubleshoot OloLand compliance hooks for Claude Cowork finance plugins. Walks through MNPI guard, citation enforcer, and provenance writeback configuration.
+description: Use when the user asks to enable, configure, or troubleshoot OloLand compliance hooks, or to run an explicit citation / MNPI / evidence review in Cursor or Grok Bot. Walks through MNPI guard, citation enforcer, and provenance writeback configuration, and explains which hosts execute local hooks automatically.
 ---
 
 # OloLand Compliance Hooks — Setup
@@ -37,9 +37,27 @@ Both ledgers live in `~/.ololand/`:
 
 Inspect with `jq -c '.' ~/.ololand/provenance/$(date -u +%Y-%m-%d).ndjson`. The OloLand MCP rail separately records server-side tool-call audit events.
 
+## Cursor / Grok Bot
+
+Cursor and Grok Bot do **not** execute Claude `PreToolUse` / `PostToolUse` matchers.
+Do not claim the MNPI guard, citation enforcer, or local NDJSON ledgers are armed
+on those hosts. A SessionStart banner may still run from the Cursor-format hooks
+file. For Cursor / Grok Bot, treat this skill as an **explicit, user-invoked
+review**:
+
+1. Confirm the user's authorized scope and whether the material may contain MNPI.
+   If authorization is unclear, stop and request an authorized human review. A
+   `# mnpi:cleared` marker does not establish permission.
+2. Review supplied claims, figures, and citations against accessible source
+   documents. Preserve document/page references and label unverified claims.
+   Never invent citations or turn missing evidence into a pass.
+3. Server-side MCP rail auditing remains authoritative for calls the OloLand
+   server actually handled. This review does not write `~/.ololand/audit` or
+   `~/.ololand/provenance` ledgers unless the user asks you to append them.
+
 ## Composing with other plugins
 
-This plugin is designed to run alongside `ololand-dd`, Anthropic's vertical finance plugins, and any custom plugin a firm installs. Hooks compose additively — multiple plugins' `PreToolUse` matchers all run for the same event.
+This plugin is designed to run alongside `ololand-dd`, Anthropic's vertical finance plugins, and any custom plugin a firm installs. On Claude, hooks compose additively — multiple plugins' `PreToolUse` matchers all run for the same event. On Cursor / Grok Bot, compose by installing the plugins and running this explicit review skill.
 
 ## Troubleshooting
 
