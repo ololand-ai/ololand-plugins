@@ -1,0 +1,9 @@
+{
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "[ -n \"${CURSOR_PLUGIN_ROOT}\" ] && bash \"${CURSOR_PLUGIN_ROOT}/scripts/session_banner.sh\" || echo \"[ololand-compliance-hooks] CURSOR_PLUGIN_ROOT unset; session banner skipped\""
+      }
+    ]
+  }
+}

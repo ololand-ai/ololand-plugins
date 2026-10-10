@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Connect your OloLand account to Claude Code. Use when OloLand tools return an authentication error, when the OloLand MCP server won't connect, or when the user mentions "setup", "connect", or "configure".
+description: Connect your OloLand account to Claude Code, Cursor, or Grok Bot. Use when OloLand tools return an authentication error, when the OloLand MCP server won't connect, or when the user mentions "setup", "connect", or "configure".
 ---
 
 # OloLand Setup
@@ -9,11 +9,12 @@ OloLand authenticates via **OAuth (one-click sign-in)** — there is no key to
 copy for normal use. The plugin's MCP server is OAuth-native: connecting it
 opens a sign-in page at **api.ololand.ai**, you approve, and you're done.
 
-## Connect (interactive — Claude Desktop / Cowork / Claude Code)
+## Connect (interactive — Claude Desktop / Cowork / Claude Code / Cursor / Grok Bot)
 
 1. Enable / connect the **ololand** MCP server in your client's connectors or
-   plugin settings.
-2. Claude opens the OloLand sign-in page at **https://api.ololand.ai** — sign
+   plugin settings. On Cursor and Grok Bot this is the connector bundled by
+   the Cursor-format plugin (`.mcp.json` → `https://api.ololand.ai/mcp`).
+2. The host opens the OloLand sign-in page at **https://api.ololand.ai** — sign
    in with email or Google and click **Approve**.
 3. That's it. Try any OloLand command:
    - `/dd-analyze` — Run bounded extraction, risk, and financial-snapshot processing for a deal; cross-document reconciliation is a separate explicit tool/workflow

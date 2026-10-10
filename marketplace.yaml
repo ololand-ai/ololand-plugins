@@ -2,11 +2,13 @@ name: ololand-plugins
 displayName: OloLand Plugins
 owner:
   name: OloLand
+  email: support@ololand.ai
   url: https://ololand.ai
 description: >-
-  OloLand's plugin marketplace for Claude Code and Claude Cowork. Institutional
-  buy-side underwriting depth on top of Anthropic's finance plugin lineup:
-  deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), forensic QoE
+  OloLand's plugin marketplace for Claude Code, Claude Cowork, Codex, and
+  Cursor / Grok Bot. Institutional buy-side underwriting depth on top of
+  Anthropic's finance plugin lineup: deterministic financial engines,
+  311-factor risk taxonomy (67 diligence categories), forensic QoE
   primitives, cross-deal learning, and the compliance hooks Anthropic's vertical
   plugins ship empty.
 codex:

@@ -40,6 +40,7 @@ defaultPrompt:
 targets:
   claude: true
   codex: true
+  cursor: true
 interface:
   websiteURL: https://ololand.ai
   privacyPolicyURL: https://ololand.ai/privacy
