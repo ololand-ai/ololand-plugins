@@ -1,6 +1,6 @@
 # OpenAI submission preparation: OloLand Forensic QoE
 
-Status: preparation draft, not submitted or published. Package version: 0.6.5.
+Status: preparation draft, not submitted or published. Package version: 0.6.6.
 
 ## Confirmed publication choices
 
@@ -23,7 +23,7 @@ python3 scripts/generate-plugin-artifacts.py
 ./scripts/check-plugin-artifacts.sh
 ./scripts/check-version-sync.sh
 python3 scripts/export-openai-plugin.py ololand-forensic-qoe \
-  --output /tmp/ololand-forensic-qoe-0.6.5-openai-draft.zip
+  --output /tmp/ololand-forensic-qoe-0.6.6-openai-draft.zip
 ```
 
 The exporter creates portable `plugin.json` and `mcp.json`, copies packaged skills,
@@ -64,19 +64,19 @@ correct tool schemas, tool safety annotations, or tested financial behavior.
 
 ## Review case status
 
-The packaged 0.6.5 review cases remain **Not run**. An authenticated backend
+The packaged 0.6.6 review cases remain **Not run**. An authenticated backend
 smoke attempt of P1 was made on 2026-10-03 through the existing **OloLand Smoke
 Test 1.0.0** installation; it is **Blocked**, not a pass for the upload package.
 
 The prior smoke attempt's rendered report indicated that deal listing succeeded
 but the cached forensic call was rejected by the ChatGPT tool allowlist.
-This was not an independently captured raw MCP trace or a pass for 0.6.5's
+This was not an independently captured raw MCP trace or a pass for 0.6.6's
 skills. Private test-conversation links and account/deal identifiers are
 intentionally omitted from public reviewer materials.
 
-The current connected OpenAI permission probe on 2026-10-06 confirms ten
+The historical connected OpenAI permission probe on 2026-10-06 confirmed ten
 reviewed read tools, including cached `analyze_forensic_qoe`. Deal listing
-succeeds; a supplied synthetic Benford request returns HTTP 403
+succeeded; a supplied synthetic Benford request returned HTTP 403
 `tool_not_allowed`. The October 3 cached-reader rejection above is historical.
 Issuing an ordinary replacement key does not resolve the public OAuth policy.
 
@@ -86,24 +86,40 @@ has since merged. Its production deployment receipt was verified against
 and that receipt does not prove every API/worker workflow. The earlier
 unmerged-release blocker is resolved.
 
-Broader source contracts are prepared in backend PR #6072: optional
+At the 2026-10-06 checkpoint, broader source contracts were prepared in backend PR #6072: optional
 `app:compute` for three supplied-input calculators and `app:documents` for
 eight requester-scoped document readers. Its repaired head `4e5c44be5d`
 passed full backend CI; no activation or credential expansion was performed.
-Public activation still requires safe regex search (#6079), calculation size
+That checkpoint still required safe regex search (#6079), calculation size
 budgets (#6080), deployment-bound acceptance evidence (#6081), and the CI
 trigger follow-up #6083. Additional forensic tools need their own reviewed
 admission/output contracts. Package preparation and CI do not establish live
 workflow acceptance.
 
-The current live policy still blocks the broader P2, P3 and P5 workflows.
-The new calculation/document source contracts and ACL fixes remain unactivated. The full plugin cannot be called submission-ready until
-its intended workflows are supported and tested. The backend owner must also
-provide dedicated review/development access scoped to synthetic/sample data.
+The following are the 2026-10-11 development observations reported by the
+maintainer, not production or installed-package acceptance:
+
+- A private synthetic development connection exposed 23 tools. An actual
+  Benford probe using the exact 1,500-row GL fixture packaged in the ZIP
+  matched the fixture's statistics. This was a tool probe, not an installed
+  P2 case pass or proof that production exposes 23 tools.
+- Backend semantic/CSV fixes #6191 and #6192 passed their staging rollout.
+- The supplied-input EBITDA bridge contract in backend PR #6214, head
+  `ac95cd`, was pending CI and merge at this checkpoint. It supports an
+  unverified supplied scenario, not source-backed normalized earnings.
+- Backend summary PR #6216 was merged at `02ec`; its normal staging rollout
+  was in progress at this checkpoint.
+
+All four public ZIPs still target `https://api.ololand.ai/mcp`; that current
+production endpoint has not been verified against these package workflows.
+The 32 installed-package cases, dedicated reviewer access, authentic demo
+URLs, submission, and publication remain unverified. The full plugin cannot
+be called submission-ready from the development probes. The backend owner
+must provide dedicated reviewer access scoped to synthetic/sample data.
 Do not widen an unrelated production or global key. Confirm entitlements and
 metering before running computation tools; do not initiate purchasing, paid
 credit consumption, or paid report generation as part of these cases.
-Use the actual Forensic QoE 0.6.5 development package before final acceptance.
+Use the actual Forensic QoE 0.6.6 development package before final acceptance.
 The server's advertised catalog contains the forensic tools, but catalog
 visibility alone does not establish credential authorization or correct safety
 annotations. No credential, token, or personal Google sign-in is a suitable
@@ -118,7 +134,7 @@ running. Do not label the cases passed based on package validation.
 | --- | --- | --- |
 | P1 | Core forensic screen; findings versus gaps | Dedicated reviewer account with sample deal |
 | P2 | Benford with explicit transaction input | Immutable public GL attachment; live transaction schema |
-| P3 | EBITDA adjustment review | Ingest and reconcile synthetic financials/add-backs |
+| P3 | EBITDA adjustment review; full source-backed acceptance remains blocked | Explicit supplied 2025 base/add-backs; live schema/access; independent source verification and human review |
 | P4 | Missing AR/cash data remains a lapping gap | Synthetic review deal without AR/cash receipts |
 | P5 | Source-grounded covenant and MAC/MAE clauses | Ingest both synthetic agreement fixtures |
 | N1 | No fabricated CPA assurance | No tool execution expected |
@@ -126,9 +142,18 @@ running. Do not label the cases passed based on package validation.
 | N3 | No concealed or fabricated passing results | No misleading report write/export expected |
 
 `review-fixtures/` in the ZIP contains the synthetic inputs. They are test data,
-not an expected product result. Map CSV fields through the supported ingestion
-workflow and confirm snapshots before running P3. Missing fixture ingestion is
-a blocker, not a passing result.
+not an expected product result. For the P3 scenario check, map the explicit
+2025 base and add-back values into `financial_data` using the current live
+bridge schema. Do not rely on snapshot ingestion or a deal-only bridge call.
+The OpenAI contract computes a caller-supplied unverified scenario: it returns
+`base_ebitda`, preserves `basis_is_canonical=false` and
+`evidence_verification=not_performed`, and does not retrieve documents or
+verify source claims. Documentation labels and `source_claim` fields are not
+real source citations; heuristic classification does not approve add-backs.
+A scenario check alone cannot pass full P3 source-backed normalized earnings
+acceptance. Independent source verification and authorized human review remain
+unverified blockers. Missing live schema, access, inputs, or evidence must be
+reported as gaps; no case has been marked passed.
 The 1,500-row synthetic GL was generated using seed 20261002 and is maintained
 in this repo. The exporter copies the same bytes into the ZIP. P2's
 `file_attachment_urls` points to its immutable GitHub commit so the review
@@ -146,7 +171,10 @@ Record these interactions with your screen recorder:
 1. Show the installed OloLand Forensic QoE version and connected sample workspace.
 2. Run P1. Keep the prompt, actual tool result, citations, and findings/gaps visible.
 3. Attach the synthetic GL and run P2. Show statistics and reliability limitations.
-4. Run P3 on the reconciled synthetic review deal. Show the actual bridge and sources.
+4. Run the P3 supplied-input scenario on the synthetic review deal only after
+   confirming the live schema and access. Show the actual arithmetic, unverified
+   provenance, heuristic limits, and outstanding source-review blockers. Do not
+   present supplied source claims as citations or this scenario as a full P3 pass.
 5. Run P4. Show the missing AR/cash-receipts gap rather than a clean result.
 6. Run P5. Show retrieved raw clauses, quoted terms, and their source references.
 7. Run N1-N3. Show the scope explanation, no purchasing, and preservation of gaps.
@@ -165,10 +193,10 @@ not satisfy this item.
    the upload dialog identity `Business — Ololand.ai Inc`. Portable listing
    developer and root author names use this verified business name. Upload,
    submission, and publication remain pending.
-2. Deploy and live-verify the backend policy fix, then resolve the remaining
-   tool-policy, metering, and requester-ACL gaps for the full P1-P5 workflows.
+2. Verify the current production endpoint and supported workflow contracts,
+   including policy, metering, and requester-ACL behavior for full P1-P5 acceptance.
    Provide dedicated sample-scoped development/reviewer access. Install or
-   update the intended Forensic QoE 0.6.5 development package, then run the
+   update the intended Forensic QoE 0.6.6 development package, then run the
    cases; verify live tool schemas and boolean readOnlyHint, openWorldHint,
    and destructiveHint values. A new credential alone is insufficient.
 3. Record and host the real demo, then put its verified URL in the package.

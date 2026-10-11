@@ -11,7 +11,7 @@ This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone p
 | `/forensic-screen` | `analyze_forensic_qoe` (full battery) | Runs every primitive whose required inputs are present; returns an IC-defensible exclusion schedule. |
 | `/beneish` | Beneish M-Score primitive | 8-variable earnings-manipulation probability, private-company adjusted. |
 | `/benford` | Benford's Law primitive | First-digit conformity review on suitable GL transactions; deviations require investigation and do not establish fraud. |
-| `/ebitda-bridge` | EBITDA bridge + adjustment classifier | Walks reported EBITDA to normalized EBITDA, classifying every add-back as one-time / pro-forma / recurring / questionable. |
+| `/ebitda-bridge` | EBITDA bridge + adjustment classifier | Reviews explicit supplied EBITDA/add-backs as an unverified scenario on OpenAI; computed totals and heuristic flags do not establish accepted normalized earnings. |
 | `/journal-test` | Journal-entry tester | Period-end concentration, round-number frequency, weekend postings, reversing-entry anomalies. |
 | `/lapping-check` | Lapping detector | Detects AR-lapping fraud cycles by tracing customer-to-cash application. |
 | `/conflicts` | Deal Document Conflict Detector | Finds cross-document discrepancies in figures, dates, entities, ownership, terms, obligations, and representations. |
@@ -35,6 +35,17 @@ Required setup:
 - Source documents uploaded to the deal's data room (CIM, audited financials, tax returns, GL export, AR aging, management bridges)
 
 The forensic engine auto-detects which primitives have sufficient input and skips the rest. `/forensic-screen` reports which primitives ran and which were skipped due to missing inputs.
+
+The separate OpenAI EBITDA bridge requires an accessible `deal_id` and explicit
+`financial_data` with numerical `reported_ebitda` and an `adjustments` list in
+the current live schema. It does not extract stored snapshots or data-room
+documents. The output's `base_ebitda` and computed adjusted total describe a
+caller-supplied unverified scenario. Source/documentation labels and
+`source_claim` fields are claims, not verified citations; heuristic classes
+do not approve add-backs or exclude questionable amounts from totals. Missing
+inputs, source verification, and authorized human review remain gaps for a
+full source-backed normalized earnings review. Native snapshot fallback on
+other clients remains subject to their actual schema and returned basis.
 
 ## Why this exists
 
