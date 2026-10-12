@@ -346,7 +346,9 @@ class PortableExports(unittest.TestCase):
             self.assertIn(boundary, bridge)
         self.assertIn("A caller claim is not an", bridge)
         self.assertIn("verified source quote", bridge)
-        for false_promise in ("build_ebitda_bridge(deal_id)`", "The engine pulls",
+        openai_step = bridge.split("## Execution", 1)[1].split("On other hosts", 1)[0]
+        self.assertNotIn("build_ebitda_bridge(deal_id)`", openai_step)
+        for false_promise in ("The engine pulls",
                               "returns a normalized EBITDA with each adjustment cited",
                               "normalized EBITDA that excludes questionable"):
             self.assertNotIn(false_promise, bridge)

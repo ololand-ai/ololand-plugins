@@ -29,13 +29,14 @@ that a backend contract has been deployed or admitted to the current host.
 
 ## Execution
 
-1. Ask for missing explicit values and the adjustment schedule. On OpenAI,
+1. On OpenAI, ask for missing explicit values and the adjustment schedule;
    call `build_ebitda_bridge(deal_id, financial_data=financial_data)` only after
    the live schema and the user's authorization are confirmed. Never make a
    deal-only call or infer the inputs from a stored financial snapshot, CIM,
-   workbook, or data-room extraction on this path. Other clients may retain
-   native snapshot fallback where their current schema supports it; preserve
-   that response's actual basis and evidence limitations.
+   workbook, or data-room extraction on this path. On other hosts, permit
+   `build_ebitda_bridge(deal_id)` without requiring explicit supplied values
+   when the current live schema supports native snapshot fallback. Preserve
+   the response's actual basis and evidence limitations.
 2. The OpenAI bridge is a pure caller-supplied scenario. It does not retrieve
    source documents, verify supplied source claims, approve adjustments, or
    establish a canonical earnings basis. Any recurrence, categorization,
