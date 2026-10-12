@@ -13,8 +13,8 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.26.2 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.5 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.26.3 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.6 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.4 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.1.1 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
@@ -289,7 +289,7 @@ The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth w
 | `/forensic-screen <deal_id>` | Full battery: Beneish + Benford + EBITDA bridge + journal-entry + lapping + working-capital + revenue-quality. Returns severity-scored exclusion schedule. |
 | `/beneish <deal_id>` | Beneish M-Score (private-company adjusted). 8-variable earnings-manipulation probability. |
 | `/benford <deal_id>` | Benford's Law first-digit testing on GL transactions. χ² + MAD. |
-| `/ebitda-bridge <deal_id>` | EBITDA bridge with adjustment classifier. Tags every add-back as accepted / recurring / questionable. |
+| `/ebitda-bridge <deal_id>` | On OpenAI, explicit supplied-input bridge arithmetic and heuristic flags; source verification and accepted normalized earnings remain separate. |
 | `/journal-test <deal_id>` | Journal-entry anomaly testing. Period-end concentration, round-numbers, posting authority, weekend entries. |
 | `/lapping-check <deal_id>` | AR-lapping fraud detection. Customer-to-cash trace, application gap detection. |
 | `/conflicts <deal_id>` | Cross-document conflict detector for mismatched figures, dates, ownership, terms, and obligations. |
@@ -299,7 +299,7 @@ The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth w
 
 - **Beneish**: 2+ years of income statement + balance sheet data
 - **Benford**: GL export with ≥1,000 line items
-- **EBITDA bridge**: management adjustment schedule + 2-3 years historicals
+- **EBITDA bridge**: on OpenAI, explicit numerical base and adjustment schedule; independent sources and human review are still needed to accept normalized earnings
 - **Journal-entry tests**: GL with timestamps + posting user IDs
 - **Lapping**: AR aging + cash receipts journal with customer-level detail
 - **Full screen**: skip-and-report behavior — runs every primitive whose inputs are present, reports which were skipped and why

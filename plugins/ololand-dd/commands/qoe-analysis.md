@@ -39,10 +39,21 @@ This is the all-in-one equivalent of the standalone `ololand-forensic-qoe` plugi
 Render:
 
 - **QoE verdict** - clean / watch / concern / blocker, based on the returned risk and adjustment profile.
-- **EBITDA bridge** - reported EBITDA -> normalized EBITDA, with adjustment classes and dollar impacts.
+- **EBITDA bridge** - returned base, computed adjustment totals, classes, dollar impacts, and evidence limitations; do not infer accepted normalized earnings from a computed total.
 - **Revenue quality** - concentration, cut-off, recurring/non-recurring indicators, and any source gaps.
 - **Working capital** - DSO/DPO/DIO and normalization flags.
 - **Evidence gaps** - data classes that prevented stronger conclusions.
+
+For a separate `build_ebitda_bridge` invocation on OpenAI, confirm the current
+live schema and require explicit `financial_data` with finite numerical
+`reported_ebitda` and an explicit `adjustments` list alongside `deal_id`.
+Do not transfer this workbench's native snapshot fallback to that tool. Its
+OpenAI result is a caller-supplied unverified scenario with `base_ebitda`,
+`basis_is_canonical=false`, and `evidence_verification=not_performed`;
+source/documentation labels and `source_claim` fields are not verified
+citations. Heuristic classifications do not approve adjustments or establish
+accepted normalized earnings. Missing evidence remains a blocker for a full
+source-backed normalized review.
 
 ## Output URL Conventions
 

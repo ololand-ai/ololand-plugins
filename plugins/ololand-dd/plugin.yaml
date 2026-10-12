@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.26.2
+version: 1.26.3
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -170,7 +170,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.26.2 adds a separate portable OpenAI draft package. Live reviewer
+    release_notes: 1.26.3 clarifies the separate supplied-input EBITDA bridge boundary in the QoE workbench. Live reviewer
       scenarios, demo recording, and portal approval remain pending.
   portable:
     hooksAdapter:

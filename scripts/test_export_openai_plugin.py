@@ -1,6 +1,7 @@
 """Offline regression checks for actual portable upload archives (no live claims)."""
 
 import contextlib
+import csv
 import hashlib
 import importlib.util
 import io
@@ -333,6 +334,42 @@ class PortableExports(unittest.TestCase):
         risk = self.archives["ololand-dd"]["ololand-dd/skills/risk-analysis/SKILL.md"].decode()
         self.assertIn("absolute magnitude for negatives", risk)
         self.assertIn("supplies no p-value", risk)
+
+    def test_ebitda_bridge_archive_and_p3_preserve_supplied_only_evidence_boundary(self):
+        files = self.archives["ololand-forensic-qoe"]
+        bridge = files["ololand-forensic-qoe/skills/ololand-forensic-qoe-ebitda-bridge/SKILL.md"].decode()
+        self.assertIn("build_ebitda_bridge(deal_id, financial_data=financial_data)", bridge)
+        for boundary in ("explicit `adjustments` list", "base_ebitda",
+                         "basis_is_canonical=false", "input_provenance=caller_supplied_unverified",
+                         "evidence_verification=not_performed", "totals_basis=all_supplied_adjustments",
+                         "Zero-base undefined ratios/scores remain"):
+            self.assertIn(boundary, bridge)
+        self.assertIn("A caller claim is not an", bridge)
+        self.assertIn("verified source quote", bridge)
+        openai_step = bridge.split("## Execution", 1)[1].split("On other hosts", 1)[0]
+        self.assertNotIn("build_ebitda_bridge(deal_id)`", openai_step)
+        for false_promise in ("The engine pulls",
+                              "returns a normalized EBITDA with each adjustment cited",
+                              "normalized EBITDA that excludes questionable"):
+            self.assertNotIn(false_promise, bridge)
+        manifest = json.loads(files["ololand-forensic-qoe/plugin.json"])
+        p3 = manifest["extensions"]["com.openai"]["review"]["test_cases"]["positive"][2]
+        self.assertIn("scenario computation alone cannot pass this case", p3["expected_behavior"])
+        self.assertIn("source_claim fields remain caller claims, not verified citations", p3["expected_behavior"])
+        self.assertIn("explicit financial_data", p3["expected_behavior"])
+        self.assertIn("not run", p3["description"])
+        financials = list(csv.DictReader(io.StringIO(files["ololand-forensic-qoe/review-fixtures/financials.csv"].decode())))
+        addbacks = list(csv.DictReader(io.StringIO(files["ololand-forensic-qoe/review-fixtures/addbacks.csv"].decode())))
+        for row in financials:
+            if row["period"] == "2025":
+                self.assertIn(row["reported_ebitda"], p3["prompt"])
+        for row in addbacks:
+            if row["period"] == "2025":
+                self.assertIn(row["amount"], p3["prompt"])
+        dd = self.archives["ololand-dd"]["ololand-dd/skills/ololand-dd-qoe-analysis/SKILL.md"].decode()
+        self.assertIn("Do not transfer this workbench's native snapshot fallback", dd)
+        self.assertIn("source_claim` fields are not verified", dd)
+        self.assertEqual(sum(path.endswith("/SKILL.md") for archive in self.archives.values() for path in archive), 90)
 
     @contextlib.contextmanager
     def isolated_source(self, name):

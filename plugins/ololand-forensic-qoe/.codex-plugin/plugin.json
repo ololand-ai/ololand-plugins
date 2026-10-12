@@ -1,6 +1,6 @@
 {
   "name": "ololand-forensic-qoe",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "Forensic Quality-of-Earnings primitives as a standalone Claude plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and sourced covenant, cross-default, and MAC/MAE clause analysis. Wraps OloLand's deterministic forensic engines as the Pre-LOI Forensic Screen and Full QoE reports — included in OloLand Pro and above. Positioned against Big-4 QoE ($150-500K, 4-8 weeks).",
   "author": {
     "name": "OloLand",
@@ -76,10 +76,10 @@
               "expected_behavior": "Parse the supplied fixture into transactions using the live schema and call run_benford with transactions, preserving signed amounts: negatives use absolute magnitude; zero and unusable values are ignored. Report returned status, sample_size, and minimum_required. For computed results use returned digit_counts, observed_distribution, expected_distribution, chi_square, mad, conformity, and most_deviant_digit. For insufficient_sample, report the gap rather than treating placeholder distributions as measured results. Do not invent account-level flags or a p-value, claim that conformity rules out fraud, or treat non-conformity as proof of fraud."
             },
             {
-              "description": "EBITDA adjustment review. Setup: ingest the synthetic financials and add-back schedule in review-fixtures/ into a dedicated deal named OloLand QoE Review (Synthetic), then verify its reconciled financial snapshots. Pass requires actual computed bridge output; an ingestion failure blocks this case rather than passing it.",
-              "prompt": "Review management's EBITDA add-backs for OloLand QoE Review (Synthetic) and show which adjustments survive scrutiny.",
+              "description": "Draft case, not run. EBITDA adjustment review. Setup: dedicated access to OloLand QoE Review (Synthetic), the current live supplied-input bridge schema, and explicitly supplied financial_data mapped from the 2025 rows of review-fixtures/financials.csv and addbacks.csv. Scenario arithmetic is only a partial check. Full source-backed normalized earnings acceptance remains unverified and blocked until independent source verification and authorized human adjustment review are demonstrated; a scenario is not a pass.",
+              "prompt": "Review management's EBITDA add-backs for OloLand QoE Review (Synthetic). I supply a 2025 base of 3200000 and adjustments of 200000 for legal fees, 250000 for owner compensation normalization, and 180000 for ERP migration. These are unverified supplied values. Show scenario arithmetic and heuristic flags, and explain what evidence is still needed before accepting normalized earnings.",
               "tools_triggered": "list_deals, build_ebitda_bridge",
-              "expected_behavior": "Resolve the review deal, call build_ebitda_bridge with its deal_id, and report the returned reported and adjusted EBITDA, adjustment classifications, documentation gaps, and source references. The returned bridge must reconcile arithmetically. Do not manufacture accepted adjustments or a normalized EBITDA when the tool cannot compute it."
+              "expected_behavior": "Resolve the review deal and confirm the current live schema and access. Call build_ebitda_bridge with deal_id and explicit financial_data containing numerical reported_ebitda and the supplied adjustments list, using only accepted row fields. Do not make a deal-only call or retrieve snapshots or data-room documents through this bridge. Report returned base_ebitda, adjusted scenario totals, heuristic flags, and gaps; reconcile arithmetic without inventing excluded adjustments. Preserve basis_is_canonical=false, input_provenance=caller_supplied_unverified, evidence_verification=not_performed, and totals_basis=all_supplied_adjustments. Source/documentation labels and source_claim fields remain caller claims, not verified citations. Classification cannot establish analyst acceptance or company earnings quality. Full P3 source-backed normalized earnings acceptance remains blocked; scenario computation alone cannot pass this case. Missing schema, access, supplied values, source verification, or human review must remain explicit gaps."
             },
             {
               "description": "Valid missing-input boundary. Setup: use the synthetic review deal with financials and GL fixture but no AR aging or cash receipts. Pass if the absent lapping inputs produce an explicit diligence gap.",
@@ -112,7 +112,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "0.6.5 expands portable packaging while preserving the existing forensic submission preparation; it prepares a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
+        "release_notes": "0.6.6 aligns EBITDA bridge prompts and P3 with an explicit caller-supplied unverified scenario; full source-backed normalized earnings acceptance remains blocked. It preserves a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
       },
       "interface": {
         "shortDescription": "Forensic earnings analysis",
