@@ -371,6 +371,70 @@ class PortableExports(unittest.TestCase):
         self.assertIn("source_claim` fields are not verified", dd)
         self.assertEqual(sum(path.endswith("/SKILL.md") for archive in self.archives.values() for path in archive), 90)
 
+    def test_cim_openai_export_is_portable_and_native_sources_are_unchanged(self):
+        files = self.archives["cim-generator"]
+        native_skill = (ROOT / "plugins/cim-generator/skills/cim-generation/SKILL.md").read_text()
+        native_command = (ROOT / "plugins/cim-generator/commands/cim-generate.md").read_text()
+        self.assertIn("financial snapshots", native_skill)
+        self.assertIn("fresh web research", native_command)
+
+        for portable_path in (
+            "cim-generator/skills/cim-generation/SKILL.md",
+            "cim-generator/skills/cim-generator-cim-generate/SKILL.md",
+        ):
+            portable = files[portable_path].decode()
+            self.assertIn("source-authorized", portable)
+            self.assertIn("UNVERIFIED", portable)
+            self.assertIn("financial snapshot may be used for separate validation", portable)
+            self.assertIn("generation-input fallback", portable)
+            self.assertIn("cannot edit sections", portable)
+            self.assertIn("export a file", portable)
+            self.assertIn("create a video", portable)
+            self.assertNotIn("fresh web research", portable)
+            self.assertNotIn("broad aggregator", portable.split("## Fixed boundaries", 1)[0])
+        self.assertFalse(any(path.endswith("/README.md") for path in files))
+        self.assertFalse(any("/commands/" in path for path in files))
+
+    def test_cim_openai_connection_uses_exact_scoped_dcr_and_preserves_native_mcp(self):
+        source_mcp = json.loads((ROOT / "plugins/cim-generator/.mcp.json").read_text())
+        exported_mcp = json.loads(self.archives["cim-generator"]["cim-generator/mcp.json"])
+        self.assertEqual(source_mcp["mcpServers"]["ololand"]["url"], "https://api.ololand.ai/mcp")
+        server = exported_mcp["mcpServers"]["ololand"]
+        self.assertEqual(server["type"], "streamable-http")
+        auth = server["extensions"]["com.openai"]["auth"]
+        self.assertEqual(auth, {
+            "type": "oauth",
+            "client": {"mode": "dcr"},
+            "baseScopes": ["app:cim", "app:documents", "app:read", "billing:read", "mcp:read"],
+            "defaultScopes": ["app:cim", "app:documents", "app:read", "billing:read", "mcp:read"],
+        })
+        self.assertNotIn("app:compute", auth["baseScopes"])
+        self.assertNotIn("app:dd", auth["baseScopes"])
+
+    def test_cim_review_cases_keep_protected_edit_denial_and_no_unsupported_redirect(self):
+        source = yaml.safe_load((ROOT / "plugins/cim-generator/plugin.yaml").read_text())
+        cases = source["openai"]["review"]["test_cases"]
+        self.assertEqual(len(cases["positive"]), 5)
+        self.assertEqual(len(cases["negative"]), 3)
+        n1 = cases["negative"][0]
+        self.assertIn("protected-draft mutation", n1["description"])
+        self.assertIn("Do not redirect", n1["expected_behavior"])
+        self.assertIn("UNVERIFIED", cases["positive"][0]["expected_behavior"])
+        p5 = cases["positive"][4]["expected_behavior"]
+        self.assertIn("returned task_id", p5)
+        self.assertIn("at most 12 status calls", p5)
+
+        cim_skill = self.archives["cim-generator"][
+            "cim-generator/skills/cim-generation/SKILL.md"
+        ].decode()
+        self.assertIn("financial performance", cim_skill)
+        self.assertIn("canonical keys", cim_skill)
+        self.assertIn("ambiguous or unknown", cim_skill)
+        self.assertIn("report only returned `task_id`, `cim_id`", cim_skill)
+        self.assertIn("two-minute", cim_skill)
+        self.assertRegex(cim_skill, r"at\s+most 12 times")
+        self.assertRegex(cim_skill, r"at least 10 seconds")
+
     @contextlib.contextmanager
     def isolated_source(self, name):
         with tempfile.TemporaryDirectory() as temp:
