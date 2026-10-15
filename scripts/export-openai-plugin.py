@@ -123,6 +123,61 @@ not install scripts, write local audit ledgers, or monitor future tool calls.
    imply this workflow certifies legal or regulatory compliance.
 """
 
+CIM_PORTABLE_BODY = """# Source-bound CIM draft
+
+Use this workflow only for a user-requested Confidential Information Memorandum
+draft through the connected OloLand MCP server. The server owns source admission,
+requester authorization, bounded retrieval, section generation, and provenance.
+The OpenAI upload is a portable client workflow; it does not recreate the native
+generator or broaden its source access.
+
+## Supported actions
+
+1. Resolve the requested `deal_id` from the current authorized workspace. Never
+   guess a deal or use a sample deal.
+2. For a new draft, call `generate_cim` with the resolved `deal_id` and optional
+   `sections`. Omit `sections` for all fourteen sections. Valid section keys are:
+   `executive_summary`, `investment_highlights`, `company_history`,
+   `products_services`, `market_analysis`, `sales_marketing`,
+   `customer_analysis`, `management_employees`, `operations_technology`,
+   `industry_competition`, `growth_opportunities`, `financial_performance`,
+   `financial_projections`, and `risk_factors`.
+3. Preserve the returned `task_id` as the only polling identity when generation
+   returns one. Poll `check_task_status` only with that returned task ID, and
+   stop when the server reports a terminal state or the workflow's bounded
+   polling budget is reached. Do not invent timing, retry a failed task, or
+   start a replacement generation as polling recovery.
+4. For an existing draft, call `get_latest_cim` with the resolved deal and an
+   optional section filter. Treat the returned draft as **UNVERIFIED** generated
+   prose. Validate material claims separately against authorized source-document
+   retrieval when that evidence is available; generated CIM text is never the
+   primary source. A financial snapshot may be used for separate validation, but
+   never as a generation-input fallback. Preserve `source_support_verified=false`
+   unless that exact field is returned by the service; ad hoc validation does
+   not promote the generated draft.
+
+## Fixed boundaries
+
+- Generation is source-authorized and bounded to the server's admitted corpus.
+  Do not add a broad aggregator, adaptive RAG, web search, model fallback, or
+  caller-supplied financial data path.
+- This workflow cannot edit sections, regenerate a section, export a file, or
+  create a video. If a protected source-bound draft rejects an edit, say that
+  the protected draft cannot be edited and stop; do not redirect the request to
+  an unsupported UI workflow or claim the edit was saved.
+- Preserve `not_found`, `not_ready`, `lineage_unavailable`, `failed`, and
+  `UNVERIFIED` states exactly as returned. Missing sections, source support, or
+  completion evidence remain explicit gaps.
+- For generation and polling, report only returned `cim_id`, task state,
+  section counts, word count, view URL, and source/provenance fields. For reads,
+  present only returned section prose and preserve its UNVERIFIED status. Never
+  fabricate sections, citations, source identity, timing, download links, or
+  approval.
+
+The fourteen sections are a generated draft for review. Human approval and all
+edits or exports remain outside this portable read/generate workflow.
+"""
+
 
 def checked_source_file(source: Path, path: Path) -> Path:
     """Reject redirected/non-regular local inputs before reading their bytes."""
@@ -341,6 +396,14 @@ def export(name: str, output: Path) -> None:
         if endpoint.scheme != "https" or not endpoint.netloc or endpoint.username or endpoint.password or endpoint.query or endpoint.fragment:
             raise ValueError("Public MCP endpoint must use HTTPS")
         server["type"] = "streamable-http"
+        if name == "cim-generator" and server_name == "ololand":
+            # This separate public candidate requires source-document access and
+            # the optional CIM capability; native .mcp.json stays unchanged.
+            scopes = ["app:cim", "app:documents", "app:read", "billing:read", "mcp:read"]
+            server["extensions"] = {"com.openai": {"auth": {
+                "type": "oauth", "client": {"mode": "dcr"},
+                "baseScopes": scopes, "defaultScopes": list(scopes),
+            }}}
         dependencies.append({
             "type": "mcp", "value": server_name,
             "description": f"Connected {metadata['displayName']} tools",
@@ -426,6 +489,9 @@ def export(name: str, output: Path) -> None:
             elif adapter == "explicit-compliance-review-v1" and skill.name == "compliance-hooks-setup":
                 body = COMPLIANCE_BODY
                 fields["description"] = "Use when the user requests OloLand compliance review or setup: review citations, provenance, MNPI authorization, and human approval gaps."
+            if name == "cim-generator":
+                body = CIM_PORTABLE_BODY
+                fields["description"] = "Generate or read a source-authorized bounded CIM draft."
             # Keep provider-specific implementation in the original source.
             body = body.replace("<!-- Generated by scripts/generate-plugin-artifacts.py; do not edit. -->\n", "")
             body = body.replace("# Codex wrapper for /", "# Workflow for /")
