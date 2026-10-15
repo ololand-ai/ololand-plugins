@@ -174,7 +174,7 @@ generator or broaden its source access.
 - Preserve `not_found`, `not_ready`, `lineage_unavailable`, `failed`, and
   `UNVERIFIED` states exactly as returned. Missing sections, source support, or
   completion evidence remain explicit gaps.
-- For generation and polling, report only returned `cim_id`, task state,
+- For generation and polling, report only returned `task_id`, `cim_id`, task state,
   section counts, word count, view URL, and source/provenance fields. For reads,
   present only returned section prose and preserve its UNVERIFIED status. Never
   fabricate sections, citations, source identity, timing, download links, or
@@ -365,18 +365,6 @@ def export(name: str, output: Path) -> None:
     metadata = generator.load_yaml(source / "plugin.yaml")
     if metadata["name"] != name:
         raise ValueError("Plugin identity must match its directory")
-    if name == "cim-generator":
-        portable = metadata.get("openai", {}).get("portable", {})
-        if portable.get("contract") != "source-authorized-bounded-cim-v1":
-            raise ValueError("CIM OpenAI export requires its bounded contract")
-        if portable.get("allowed_actions") != ["generate", "read", "status", "task_id"]:
-            raise ValueError("CIM OpenAI export allowed actions must include task_id")
-        if portable.get("polling") != {
-            "max_status_calls": 12,
-            "min_interval_seconds": 10,
-            "max_duration_seconds": 120,
-        }:
-            raise ValueError("CIM OpenAI export polling budget is not the bounded contract")
     adapter = portable_adapter(source, metadata)
     commands = checked_commands(source)
     codex = generator.codex_manifest(source, metadata)

@@ -55,20 +55,6 @@
         "logo": "./assets/ololand-icon.png",
         "composerIcon": "./assets/ololand-icon.png"
       },
-      "portable": {
-        "contract": "source-authorized-bounded-cim-v1",
-        "allowed_actions": [
-          "generate",
-          "read",
-          "status",
-          "task_id"
-        ],
-        "polling": {
-          "max_status_calls": 12,
-          "min_interval_seconds": 10,
-          "max_duration_seconds": 120
-        }
-      },
       "review": {
         "commerce": false,
         "commerce_description": "The plugin uses existing account access and does not initiate purchases or payments.",
