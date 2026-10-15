@@ -142,11 +142,17 @@ generator or broaden its source access.
    `customer_analysis`, `management_employees`, `operations_technology`,
    `industry_competition`, `growth_opportunities`, `financial_performance`,
    `financial_projections`, and `risk_factors`.
+   Resolve natural-language requests to these canonical keys using the current
+   tool schema (for example, “financial performance” maps to
+   `financial_performance`). If a phrase is ambiguous or unknown, ask the user
+   to clarify; never guess or silently substitute a section.
 3. Preserve the returned `task_id` as the only polling identity when generation
-   returns one. Poll `check_task_status` only with that returned task ID, and
-   stop when the server reports a terminal state or the workflow's bounded
-   polling budget is reached. Do not invent timing, retry a failed task, or
-   start a replacement generation as polling recovery.
+   returns one. Poll `check_task_status` only with that returned task ID, at
+   most 12 times, with at least 10 seconds between status calls and a two-minute
+   workflow budget. Stop on terminal or denied status, or when the budget is
+   exhausted. Do not invent timing, retry a failed task, or start a replacement
+   generation as polling recovery. If still pending, retain and report the
+   returned task ID for a later user-requested check.
 4. For an existing draft, call `get_latest_cim` with the resolved deal and an
    optional section filter. Treat the returned draft as **UNVERIFIED** generated
    prose. Validate material claims separately against authorized source-document
@@ -359,6 +365,18 @@ def export(name: str, output: Path) -> None:
     metadata = generator.load_yaml(source / "plugin.yaml")
     if metadata["name"] != name:
         raise ValueError("Plugin identity must match its directory")
+    if name == "cim-generator":
+        portable = metadata.get("openai", {}).get("portable", {})
+        if portable.get("contract") != "source-authorized-bounded-cim-v1":
+            raise ValueError("CIM OpenAI export requires its bounded contract")
+        if portable.get("allowed_actions") != ["generate", "read", "status", "task_id"]:
+            raise ValueError("CIM OpenAI export allowed actions must include task_id")
+        if portable.get("polling") != {
+            "max_status_calls": 12,
+            "min_interval_seconds": 10,
+            "max_duration_seconds": 120,
+        }:
+            raise ValueError("CIM OpenAI export polling budget is not the bounded contract")
     adapter = portable_adapter(source, metadata)
     commands = checked_commands(source)
     codex = generator.codex_manifest(source, metadata)

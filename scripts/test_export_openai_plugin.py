@@ -420,6 +420,25 @@ class PortableExports(unittest.TestCase):
         self.assertIn("protected-draft mutation", n1["description"])
         self.assertIn("Do not redirect", n1["expected_behavior"])
         self.assertIn("UNVERIFIED", cases["positive"][0]["expected_behavior"])
+        portable = source["openai"]["portable"]
+        self.assertEqual(portable["allowed_actions"], ["generate", "read", "status", "task_id"])
+        self.assertEqual(portable["polling"], {
+            "max_status_calls": 12,
+            "min_interval_seconds": 10,
+            "max_duration_seconds": 120,
+        })
+        p5 = cases["positive"][4]["expected_behavior"]
+        self.assertIn("returned task_id", p5)
+        self.assertIn("at most 12 status calls", p5)
+
+        cim_skill = self.archives["cim-generator"][
+            "cim-generator/skills/cim-generation/SKILL.md"
+        ].decode()
+        self.assertIn("financial performance", cim_skill)
+        self.assertIn("canonical keys", cim_skill)
+        self.assertIn("ambiguous or unknown", cim_skill)
+        self.assertRegex(cim_skill, r"at\s+most 12 times")
+        self.assertRegex(cim_skill, r"at least 10 seconds")
 
     @contextlib.contextmanager
     def isolated_source(self, name):
