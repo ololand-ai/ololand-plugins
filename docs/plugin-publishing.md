@@ -161,7 +161,11 @@ OpenAI invocation would have incorrect provenance. The canonical command and
 any local wrappers remain unchanged. Exported cross-references explain the
 unsupported workflow, and DD skills explicitly prohibit invoking that handler
 from OpenAI or claiming a correction was submitted. This upload contains 52 of
-the 53 DD command workflows; the exclusion is not a completed or portable write.
+the 54 DD command workflows. The two exclusions are the Cowork-only
+claim-correction workflow and the native cap-table workflow; cap-table tools are
+unavailable on the ChatGPT OAuth rail. The cap-table command must be used in the
+native OloLand app or another connected native MCP host. Neither exclusion is a
+completed or portable write.
 
 Every local `agents/*.md` role also requires an explicit entry in
 `openai.portable.agentRoles`, with `adapter: explicit-role-workflow-v1` and the

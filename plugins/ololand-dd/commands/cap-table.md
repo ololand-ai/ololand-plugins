@@ -8,16 +8,16 @@ argument-hint: "<deal_id> [status|current|simulate]"
 Use this workflow for holder ownership, dilution, supported SAFE/note conversion,
 and company-security proceeds. It is separate from an LP/GP fund waterfall.
 
-1. Resolve the deal explicitly, then call `get_cap_table(deal_id)` to inspect
+1. Resolve the deal explicitly, then call `mcp__ololand__get_cap_table(deal_id)` to inspect
    issuers, exact baseline revision IDs, source references, and review state.
    A supplied ledger and a reviewed baseline are distinct from a published result.
-2. For decision-facing ownership call `get_current_cap_table(deal_id,
+2. For decision-facing ownership call `mcp__ololand__get_current_cap_table(deal_id,
    capability="capitalization.ownership")`. For a published financing or proceeds
    workpaper select `capitalization.pro_forma` or `capitalization.proceeds`.
    Report publication ID, receipt hash, revision and run IDs with the figures.
    A missing/currently ineligible publication is a gap; do not substitute a newer
    candidate or invent its missing values.
-3. For an explicitly requested sensitivity, call `simulate_cap_table` with the
+3. For an explicitly requested sensitivity, call `mcp__ololand__simulate_cap_table` with the
    exact issuer/revision, a named scenario and a stable idempotency key. Reuse the
    key only to retry the identical request. Pass exact decimal strings.
    Financing uses `pre_money_value`, `subscriptions` (holder ID/name/amount),
