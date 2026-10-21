@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.26.3
+version: 1.27.0
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -170,8 +170,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.26.3 clarifies the separate supplied-input EBITDA bridge boundary in the QoE workbench. Live reviewer
-      scenarios, demo recording, and portal approval remain pending.
+    release_notes: 1.27.0 adds the native governed cap-table workflow for issuer, ownership, financing, and proceeds workpapers. The cap-table command is unavailable in ChatGPT because its tools are not on the ChatGPT OAuth allowlist; use the native OloLand app or connected native MCP host. Existing live reviewer scenarios, demo recording, and portal approval remain pending.
   portable:
     hooksAdapter:
       id: explicit-dd-setup-v1

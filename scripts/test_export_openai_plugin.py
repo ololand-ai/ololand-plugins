@@ -71,8 +71,11 @@ class PortableExports(unittest.TestCase):
         self.assertFalse(any("/skills/ololand-dd-dd-correct/" in path for path in files))
         record = json.loads(files["ololand-dd/unsupported-workflows.json"])
         self.assertEqual(record["format_version"], 1)
-        self.assertEqual(len(record["workflows"]), 1)
-        exclusion = record["workflows"][0]
+        self.assertEqual(len(record["workflows"]), 2)
+        cap = next(item for item in record["workflows"] if item["skill_id"] == "ololand-dd-cap-table")
+        self.assertEqual(cap["reason_code"], "cap_table_tools_not_on_chatgpt_rail")
+        self.assertNotIn("ololand-dd/skills/ololand-dd-cap-table/SKILL.md", files)
+        exclusion = next(item for item in record["workflows"] if item["skill_id"] == "ololand-dd-dd-correct")
         self.assertEqual(exclusion["workflow_id"], "ololand-dd/commands/dd-correct.md")
         self.assertEqual(exclusion["skill_id"], "ololand-dd-dd-correct")
         self.assertEqual(exclusion["status"], "unsupported")

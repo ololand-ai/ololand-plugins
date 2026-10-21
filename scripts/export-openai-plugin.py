@@ -23,6 +23,14 @@ sys.dont_write_bytecode = True
 # OpenAI upload must not relabel a write with another host's provenance.
 UNSUPPORTED_COMMANDS = {
     "ololand-dd": {
+        "cap-table": {
+            "workflow_id": "ololand-dd/commands/cap-table.md",
+            "skill_id": "ololand-dd-cap-table",
+            "status": "unsupported",
+            "reason_code": "cap_table_tools_not_on_chatgpt_rail",
+            "reason": "Capitalization tools are not registered on the ChatGPT OAuth tool allowlist.",
+            "action": "Use the native OloLand app Cap table view; do not invoke hidden tools or claim the capability is deployed.",
+        },
         "dd-correct": {
             "workflow_id": "ololand-dd/commands/dd-correct.md",
             "skill_id": "ololand-dd-dd-correct",
@@ -444,7 +452,7 @@ def export(name: str, output: Path) -> None:
         if command.stem in unsupported:
             exclusions.append(unsupported[command.stem])
             for reference in (f"/cmd-{command.stem}", f"/{command.stem}", f"/{name}:{command.stem}", f"../../commands/{command.name}"):
-                references[reference] = UNSUPPORTED_CORRECTION_NOTICE
+                references[reference] = (UNSUPPORTED_CORRECTION_NOTICE if command.stem == "dd-correct" else f"unsupported OpenAI {command.stem} workflow (see unsupported-workflows.json)")
             continue
         text = generator.command_skill_text(metadata, command)
         front, body = text.split("---\n", 2)[1:]
