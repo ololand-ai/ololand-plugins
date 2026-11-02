@@ -73,7 +73,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Deal Intelligence** | `list_deals`, `get_deal`, `get_deal_summary_tiles`, `get_deal_indicators` |
 | **Financial Valuation** | `get_financial_snapshot`, `get_dcf_valuation`, `run_monte_carlo_simulation`, `analyze_unit_economics` |
 | **Risk Analysis** | `get_deal_risks`, `get_evidence_links`, `analyze_forensic_qoe`, `render_risk_matrix_tile` |
-| **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document` |
+| **Documents** | `list_deal_documents`, `search_deal_documents`, `upload_deal_document`, `extract_indicators_from_document` (.xlsx only), `get_canonical_extraction` |
 | **Knowledge Graph** | `query_knowledge_graph`, `get_entity_neighbors`, `search_knowledge_graph` |
 | **Cross-Deal Learning** | `find_similar_deals` |
 | **Reports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier` |
@@ -83,7 +83,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Voice** | `talk_to_deal` |
 | **CRE Underwriting** | `run_cre_stress_test`, `run_cre_debt_sizing`, `verify_sponsor_assumptions` |
 | **Conversation Sessions** | `create_conversation_session`, `list_conversation_sessions`, `get_conversation_session_summary` |
-| **Workflow** | `run_due_diligence`, `check_task_status`, `decompose_intent`, `get_plan_status`, `list_missions` |
+| **Workflow** | `run_due_diligence` (`master_extraction`), `get_analysis_run_status`, `decompose_intent`, `get_plan_status`, `list_missions` |
 
 ## Pricing
 

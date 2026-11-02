@@ -20,13 +20,14 @@ Run a comprehensive due diligence analysis on a deal using OloLand's institution
 ## Execution
 
 1. Verify the deal exists using the `get_deal` MCP tool.
-2. Run `run_due_diligence` with the specified scope. This triggers a multi-agent analysis:
-   - Financial statement extraction and validation
-   - Risk extraction across 246 categories (5 dimensions: HR, Legal, Tech, Commercial, Financial)
+2. Run `run_due_diligence` with the specified scope. This starts the canonical `master_extraction` workflow for:
+   - Financial, risk, and commercial extraction
+   - Snapshot validation
    - Cross-document reconciliation with source hierarchy
-   - Forensic QoE analysis (Beneish M-Score, Benford's Law)
-3. Monitor progress with `check_task_status`.
-4. When complete, summarize findings using `get_deal_summary_tiles`.
+
+   This workflow does **not** run valuation, generate a memo, or approve an IC package. Run those explicitly through their dedicated tools and approval rails.
+3. Capture the returned `analysis_run_id` and `task_id`. Poll `get_analysis_run_status(deal_id, analysis_run_id)` until the analysis completes. When no `analysis_run_id` is supplied, that status tool defaults to the latest formal Full Analysis; for this run, always pass the returned ID. Do **not** use `check_task_status` for this analysis.
+4. When complete, summarize findings using `get_deal_summary_tiles` and the canonical extraction outputs.
 
 ## After Completion
 

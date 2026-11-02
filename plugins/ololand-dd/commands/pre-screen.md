@@ -21,7 +21,7 @@ This is the pre-NDA counterpart to `/ic-memo-skeptical`. Where that command refr
 
 ## Why this command exists
 
-`run_due_diligence` and `generate_investment_memo` both fan out to web search by default. That makes them useful for *announced* deals where the announcement IS the most important fact, and useless for *pre-screen* exercises where the announcement is the answer key you're not allowed to peek at.
+The canonical `run_due_diligence` workflow is a formal `master_extraction` pass, not this pre-screen: it covers financial, risk, and commercial extraction plus snapshot validation, but it does not produce the pre-screen's explicit tile-based brief. The memo workflow is also intentionally out of scope here. This command keeps the evidence set pre-cutoff so the announcement remains the answer key you're not allowed to peek at.
 
 The Project Atlas / GBTG screen attempt (2026-05-12, `deal554a83ba4a12` for pre-announcement / `deal4fdd2334a0bd` for post-announcement comparison) surfaced the gap:
 
@@ -69,7 +69,7 @@ This is a **web-off** run. The whole point of `/pre-screen` is that the artifact
 
 **Deny-list — do NOT call any of these during `/pre-screen`:**
 
-- `run_due_diligence` — fans out internally to `deep_research`, which fires web search.
+- `run_due_diligence` — canonical `master_extraction` is a formal extraction workflow, not the pre-screen's web-off tile sequence.
 - `deep_market_research` / `research_market` — both invoke Google Search agents.
 - `fetch_public_deal_facts` — designed for memo *refresh* (8-K + press-release fetch); ingests live web data by design.
 - `generate_investment_memo` (legacy / deprecated) — routes through `deep_research` for the executive summary.
