@@ -48,7 +48,7 @@ Goal: turn a raw VDR — sometimes thousands of documents — into structured, s
 **OloLand's ingest pipeline:**
 
 - `upload_deal_document` — single-doc upload (PDF, XLSX, DOCX, etc., via URL or base64)
-- `run_due_diligence` — kicks off the full corpus extraction pipeline (PDF → Tika → smart-chunking → table classification → Qdrant indexing → multi-extractor pass)
+- `run_due_diligence` — starts the canonical `master_extraction` workflow (financial, risk, and commercial extraction plus snapshot validation); it returns `analysis_run_id` and `task_id`, and is polled with `get_analysis_run_status(deal_id, analysis_run_id)` rather than `check_task_status`. It does not run valuation, generate a memo, or approve an IC package.
 - `list_deal_documents` — VDR index
 - `search_deal_documents` — hybrid dense + sparse → RRF fusion → Cohere rerank
 

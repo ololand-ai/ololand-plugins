@@ -6,7 +6,7 @@ description: Compose an IC investment memo using the skeptical tile-stitching pa
 
 Compose an IC-defensible investment memo using OloLand's lower-level tile + web-fetch pattern. Designed to produce the output style that survives IC scrutiny — every $-figure cited, every engine output framed as `[finding]` or `[gap]`, no boilerplate gating conditions, no overtrusted simulation outputs.
 
-This is the **preferred** memo entry point as of 2026-05-12. The high-level `run_due_diligence` + `generate_investment_memo` chain still works but is less defensive: it bundles auto-included engines (war-game), bypasses the public-facts freshness check, and lets the LLM invent verdict labels. `/ic-memo-skeptical` hard-codes the orchestration that produces tighter artifacts.
+This is the **preferred** memo entry point as of 2026-05-12. The canonical `run_due_diligence` workflow is intentionally limited to `master_extraction` (financial, risk, and commercial extraction plus snapshot validation); it does not run valuation, generate a memo, or approve an IC package. `/ic-memo-skeptical` hard-codes the explicit memo orchestration and freshness gate that produces tighter artifacts.
 
 ## Usage
 
