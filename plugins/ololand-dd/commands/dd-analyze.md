@@ -9,25 +9,23 @@ Run a comprehensive due diligence analysis on a deal using OloLand's institution
 ## Usage
 
 ```
-/dd-analyze <deal_id> [scope]
+/dd-analyze <deal_id>
 ```
 
 ## Arguments
 
 - `deal_id` (required) — The deal ID to analyze.
-- `scope` (optional) — Analysis scope: `full` (default), `financial`, `commercial`, `legal`, `hr`, `tech`.
 
 ## Execution
 
 1. Verify the deal exists using the `get_deal` MCP tool.
-2. Run `run_due_diligence` with the specified scope. This starts the canonical `master_extraction` workflow for:
+2. Run `run_due_diligence` for the deal, using its supported `deal_id`/`company_name` inputs. This starts the canonical `master_extraction` workflow for:
    - Financial, risk, and commercial extraction
    - Snapshot validation
-   - Cross-document reconciliation with source hierarchy
 
    This workflow does **not** run valuation, generate a memo, or approve an IC package. Run those explicitly through their dedicated tools and approval rails.
 3. Capture the returned `analysis_run_id` and `task_id`. Poll `get_analysis_run_status(deal_id, analysis_run_id)` until the analysis completes. When no `analysis_run_id` is supplied, that status tool defaults to the latest formal Full Analysis; for this run, always pass the returned ID. Do **not** use `check_task_status` for this analysis.
-4. When complete, summarize findings using `get_deal_summary_tiles` and the canonical extraction outputs.
+4. When complete, summarize the current `get_financial_snapshot` and `get_deal_risks` results, plus the exact run diagnostics from `get_analysis_run_status`. If cross-document reconciliation is needed, call `reconcile_documents` after extraction; do not treat prior summary tiles as fresh output from this run.
 
 ## After Completion
 
