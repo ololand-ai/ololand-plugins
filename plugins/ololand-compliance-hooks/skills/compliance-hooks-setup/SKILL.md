@@ -24,7 +24,10 @@ Anthropic's `private-equity/hooks/hooks.json` ships as `[]`. Same for the other 
 | Var | Default | Purpose |
 |---|---|---|
 | `OLOLAND_CITATION_BLOCK` | `0` | Set to `1` to make the citation enforcer block (exit 2) rather than warn. |
-| `OLOLAND_AGENT_KEY` | unset | MCP connector authentication for headless clients; these hooks do not send it anywhere. |
+
+## OloLand connection
+
+Local hooks need no OloLand credential. If the user also needs the OloLand MCP tools, guide them to explicitly connect `ololand` through their host's connector settings and complete the OAuth flow on `https://api.ololand.ai`. The user selects the intended account and company/workspace and reviews the requested access. Do not approve consent for them or collect credentials in the conversation. If the host cannot complete OAuth or access is denied, report the gap and stop dependent tool work.
 
 ## Local logs
 

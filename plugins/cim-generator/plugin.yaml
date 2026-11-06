@@ -1,5 +1,5 @@
 name: cim-generator
-version: 1.1.1
+version: 1.1.2
 displayName: OloLand CIM Generator
 category: Productivity
 description: >-
@@ -98,4 +98,13 @@ openai:
         expected_behavior: Refuse to fabricate or certify unsupported claims. Preserve missing evidence as UNVERIFIED gaps and do not broaden retrieval or use a model fallback.
   publication:
     countries: []
-    release_notes: 1.1.1 adds a source-authorized bounded OpenAI CIM workflow; native generation remains unchanged. Live reviewer cases, demo, and portal approval remain pending.
+    release_notes: 1.1.2 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
+
+# Directory listing metadata; authentication remains host-managed OAuth.
+claude:
+  extraManifestFields:
+    icon: ./assets/ololand-icon.png
+    documentationUrl: https://github.com/ololand-ai/ololand-plugins/blob/main/plugins/cim-generator/README.md
+    supportUrl: https://github.com/ololand-ai/ololand-plugins/issues
+    privacyPolicyUrl: https://ololand.ai/privacy
+    termsOfServiceUrl: https://ololand.ai/terms

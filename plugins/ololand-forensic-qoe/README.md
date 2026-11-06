@@ -27,7 +27,9 @@ claude plugin install ololand-forensic-qoe@ololand-plugins
 
 ## What you need set up
 
-Each command calls OloLand's MCP server through this plugin's `ololand` connector. Interactive users authenticate through OAuth on first use; no agent key is required. Headless/CI users can use an `OLOLAND_AGENT_KEY` only if they add their own Authorization header to the MCP server config.
+Each command calls OloLand's MCP server through this plugin's `ololand` connector.
+
+Connect the bundled `ololand` connector through your host's connector settings and complete its OAuth sign-in on `https://api.ololand.ai`. Choose the intended OloLand account and company/workspace, review the requested access, and approve only if it matches your intent. The host manages the resulting connection; the plugin does not ask you to copy credentials. If connection or authorization fails, report the error and stop the workflow until the user restores access.
 
 Required setup:
 - An OloLand account and an authorized `ololand` MCP connector

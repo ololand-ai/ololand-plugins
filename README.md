@@ -13,10 +13,10 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.27.0 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.6 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
-| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.4 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
-| [`cim-generator`](./plugins/cim-generator) | v1.1.1 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.27.1 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.7 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
+| [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.5 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
+| [`cim-generator`](./plugins/cim-generator) | v1.1.2 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
 The plugins compose additively with each other and with Anthropic's first-party finance plugins.
 
@@ -41,7 +41,7 @@ release process.
 
 ## Prerequisites
 
-The only thing you need is a free OloLand account. **No env var setup, no manual API key creation.** The plugins handle authentication via OAuth automatically when you install them.
+You need an OloLand account with access to the company/workspace and deals you want to use. The published plugins connect through host-managed OAuth. Installing a plugin does not sign you in or grant access; connect the `ololand` server explicitly and review the requested permissions.
 
 ### Two account rails
 
@@ -52,26 +52,14 @@ The only thing you need is a free OloLand account. **No env var setup, no manual
 
 You can install the plugins on a free Developer account and explore everything against the sample deal — DCF, LBO, Monte Carlo, forensic QoE, risk taxonomy, war-game, all of it. When you're ready to run on your own data, upgrade to a paid plan.
 
-### What happens on first install (no env var setup needed)
+### Connect your OloLand account
 
-1. Add the marketplace and install a plugin (steps in the Install sections below)
-2. The plugin defines an `ololand` MCP connector that points at OloLand's backend
-3. On first invocation, your Cowork / Claude Code prompts you to **Authorize** the connector via OAuth
-4. Click Authorize — your browser opens to OloLand's auth page, you sign in, accept the scopes
-5. OloLand's backend auto-provisions a scoped agent key, bound to your OAuth client. Cowork / Claude Code stores it for you
-6. Subsequent calls use the stored credential. No env var, no manual setup.
+1. Add the marketplace and install the plugin you need.
+2. Open the plugin's Connectors tab or your host's MCP connection settings and select **Connect** for `ololand` (`https://api.ololand.ai/mcp`).
+3. Complete the OAuth sign-in on `https://api.ololand.ai` yourself. Check the OloLand account and company/workspace and review the requested permissions before approving.
+4. The host manages the authorized connection. Verify access with a read-only request, such as listing the deals available to that connection, before starting analysis.
 
-That's it. The OAuth flow happens once and the connector is authenticated for that session and future ones. The same connector is what Grok Bot and Cursor authorize after you install a Cursor-format plugin from this marketplace.
-
-### Power user / headless setup (optional)
-
-If you're running the plugins in a headless environment (CI, server-side automation, custom MCP client that can't run OAuth), you can bypass OAuth with a manual agent key:
-
-1. Sign in at https://app.ololand.ai
-2. Settings → Agent keys → Create new key
-3. Set the env var: `export OLOLAND_AGENT_KEY=olo_agent_sk_...`
-
-The published `.mcp.json` files are OAuth-native and do not send an Authorization header. For headless use, add your own MCP server config with `Authorization: Bearer ${OLOLAND_AGENT_KEY}`. If OAuth and a custom header are both configured by your client, OAuth should be treated as the interactive default.
+Do not paste credentials into chat or ask the plugin to read them from local files or environment variables. If the host cannot complete OAuth, report the connection gap and stop dependent work. Installing the plugin, seeing tools listed, or granting scopes does not establish that every workflow has been tested.
 
 ---
 
@@ -92,9 +80,7 @@ Grok Bot installs plugins in the Cursor format. This repo ships a multi-plugin m
 2. Install the plugins you need from the OloLand marketplace
 3. Authorize the `ololand` connector on first use
 
-After install, a plugin detail view should show the shared skills plus the `ololand` connector. If the connector appears installed but never offers sign-in, remove and re-add the plugin, then authorize again.
-
-Headless Cursor / CI hosts that cannot complete OAuth can add their own MCP config with `Authorization: Bearer ${OLOLAND_AGENT_KEY}`. The published `.mcp.json` files stay OAuth-native and do not embed that header.
+After install, check the plugin details for the shared skills and `ololand` connector. Use the host's supported OAuth connection flow explicitly. If no sign-in flow is available or it fails, report that limitation and stop dependent work; do not substitute a credential from the environment.
 
 ---
 
@@ -144,9 +130,7 @@ If Agents shows 1 instead of 3, you're on an older version. Remove the marketpla
 
 ### Step 5 — Authorize the OloLand connector
 
-The first time you invoke a command that calls OloLand's backend (e.g., `/ololand-dd:dd-analyze`), Cowork prompts you to authorize the `ololand` MCP connector. Click **Authorize** → sign in to OloLand if you haven't yet → accept the scopes. The connector stores the credential for subsequent calls. **No env var setup needed.**
-
-If you're new to OloLand, signing in here also creates your free Developer account on the spot — you don't have to visit app.ololand.ai/signup separately.
+Open the plugin's **Connectors** tab and select **Connect** for `ololand`. Complete the OAuth sign-in on `https://api.ololand.ai`, checking the intended account, company/workspace, and requested access before you approve. Verify with a read-only deal listing. If sign-in is unavailable or fails, report the connection gap before starting any analysis.
 
 ---
 
@@ -186,11 +170,7 @@ This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all 
 
 ### Step 5 — Authorize the OloLand connector
 
-The first time you invoke a command that calls OloLand's backend (e.g., `/ololand-dd:dd-analyze`), Claude Code triggers the OAuth flow for the `ololand` MCP connector. Your browser opens to OloLand's auth page → sign in → accept the scopes. Claude Code stores the credential. Subsequent calls authenticate automatically.
-
-If you're new to OloLand, the auth page lets you sign up on the spot — no separate trip to app.ololand.ai/signup.
-
-**For headless / CI use only**: set `OLOLAND_AGENT_KEY=olo_agent_sk_...` in your environment to bypass the OAuth flow. Get the key at app.ololand.ai → Settings → Agent keys → Create new key. OAuth takes precedence if both are configured.
+Open `/mcp`, choose the `ololand` server, and start its OAuth authentication flow. In the browser, sign in to the intended OloLand account and review the company/workspace and requested permissions before approving. Claude Code manages the connection. Verify with a read-only deal listing; if authorization is unavailable or fails, report the error and stop dependent work.
 
 ---
 
@@ -329,7 +309,7 @@ The drop-in hooks plugin. Most users don't invoke this directly — it runs auto
 |---|---|---|
 | **PreToolUse: MNPI guard** | Bash, Write, Edit, MultiEdit | Blocks tool calls referencing material non-public information patterns ("material non-public", "insider trading window", etc.) unless input contains `# mnpi:cleared` marker |
 | **PostToolUse: citation enforcer** | After CIM / IC memo / dossier generation | Scans for $-amounts, %, multiples without source citation. Warns by default. |
-| **PostToolUse: provenance writeback** | After every generative output | Appends NDJSON to `~/.ololand/provenance/YYYY-MM-DD.ndjson` + optional API mirror |
+| **PostToolUse: provenance writeback** | After every generative output | Appends NDJSON to the local `~/.ololand/provenance/YYYY-MM-DD.ndjson` ledger |
 | **Pre + PostToolUse: audit log** | Every `mcp__ololand__*` call | Mirrors invocations to `~/.ololand/audit/YYYY-MM-DD.ndjson` |
 | **SessionStart: banner** | New session | Confirms hooks armed |
 
@@ -338,8 +318,8 @@ The drop-in hooks plugin. Most users don't invoke this directly — it runs auto
 | Variable | Default | Purpose |
 |---|---|---|
 | `OLOLAND_CITATION_BLOCK` | `0` | Set to `1` to upgrade citation enforcer from warn to deny |
-| `OLOLAND_AGENT_KEY` | unset | Mirror provenance + audit lines to OloLand's API |
-| `OLOLAND_API_URL` | `https://app.ololand.ai` | Override for self-hosted OloLand deployments |
+
+The hooks keep these ledgers local and do not require an OloLand credential. Server-side MCP auditing remains authoritative for calls handled by OloLand.
 
 ### Local logs
 
@@ -394,15 +374,11 @@ Or if that fails:
 /plugin marketplace add ololand-ai/ololand-plugins
 ```
 
-### Tools fail with auth errors ("OLOLAND_AGENT_KEY not set", "401 Unauthorized", etc.)
+### Tools fail with authentication or authorization errors
 
-Most common cause: you skipped or canceled the OAuth flow on first invocation.
+For a `401`, inspect the `ololand` connector's connection status. If the user wants to restore the connection, they can start the host's supported OAuth sign-in flow and review the account and requested permissions themselves. Do not automatically disconnect, reconnect, or approve consent.
 
-**Fix in Cowork**: Customize → Connectors → click the `ololand` connector → click **Reconnect** (or **Disconnect** then click the connector again to retrigger OAuth). Sign in to OloLand and accept scopes.
-
-**Fix in Claude Code CLI**: run any `/ololand-dd:` command — Claude Code retriggers the OAuth flow when it detects an unauthenticated connector. Sign in in the browser when prompted.
-
-**Headless / CI fallback**: if OAuth isn't possible (CI, scripts), generate an agent key at app.ololand.ai → Settings → Agent keys, then `export OLOLAND_AGENT_KEY=olo_agent_sk_...` in your environment.
+For a `403` or company-scope error, check that the connected account has access to the requested company/workspace and deal. Do not assume reconnecting will grant missing permissions. Report the specific access gap and stop dependent work until the user resolves it.
 
 ### Plugin skills not appearing after install
 

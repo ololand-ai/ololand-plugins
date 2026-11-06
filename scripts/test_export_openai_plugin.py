@@ -466,7 +466,7 @@ class PortableExports(unittest.TestCase):
 
     def test_hook_fingerprints_cover_actual_guard_and_all_local_implementations(self):
         expected = {
-            "ololand-dd": {"hooks/hooks.json", "scripts/setup_gate.sh", "scripts/setup_headless.sh"},
+            "ololand-dd": {"hooks/hooks.json", "scripts/setup_gate.sh"},
             "ololand-compliance-hooks": {"hooks/hooks.json", *(
                 "scripts/" + name + ".sh" for name in (
                     "audit_log", "citation_enforcer", "evidence_quality_warning", "mnpi_guard",
@@ -481,7 +481,7 @@ class PortableExports(unittest.TestCase):
             self.assertTrue(exporter.portable_adapter(source, metadata))
 
     def test_changed_direct_and_indirect_hook_scripts_fail_closed_without_execution(self):
-        for name, script in (("ololand-dd", "setup_gate.sh"), ("ololand-dd", "setup_headless.sh"),
+        for name, script in (("ololand-dd", "setup_gate.sh"),
                              ("ololand-compliance-hooks", "mnpi_guard.sh"),
                              ("ololand-compliance-hooks", "citation_enforcer.sh")):
             with self.subTest(plugin=name, script=script), self.isolated_source(name) as (root, source):
@@ -502,7 +502,7 @@ class PortableExports(unittest.TestCase):
                 if mode == "missing":
                     del adapter["sourceFilesSha256"]
                 elif mode == "incomplete":
-                    del adapter["sourceFilesSha256"]["scripts/setup_headless.sh"]
+                    del adapter["sourceFilesSha256"]["scripts/setup_gate.sh"]
                 else:
                     (source / "scripts/new-helper.sh").write_text("#!/bin/sh\nexit 0\n")
                 path.write_text(yaml.safe_dump(metadata))
@@ -536,7 +536,7 @@ class PortableExports(unittest.TestCase):
                 self.assertFalse((root / "bad.zip").exists())
 
     def test_hook_symlinks_are_rejected_before_reading_redirected_files(self):
-        for relative in ("hooks/hooks.json", "scripts/setup_gate.sh", "scripts/setup_headless.sh", "scripts"):
+        for relative in ("hooks/hooks.json", "scripts/setup_gate.sh", "scripts"):
             with self.subTest(path=relative), self.isolated_source("ololand-dd") as (root, source):
                 original = source / relative
                 target = root / "outside"

@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.0
+version: 1.27.1
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -170,15 +170,14 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.0 adds the native governed cap-table workflow for issuer, ownership, financing, and proceeds workpapers. The cap-table command is unavailable in ChatGPT because its tools are not on the ChatGPT OAuth allowlist; use the native OloLand app or connected native MCP host. Existing live reviewer scenarios, demo recording, and portal approval remain pending.
+    release_notes: 1.27.1 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
   portable:
     hooksAdapter:
       id: explicit-dd-setup-v1
       sourceSha256: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
       sourceFilesSha256:
         hooks/hooks.json: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
-        scripts/setup_gate.sh: 924361968d9ee0dc0c30550b570f88ed8d56fa68763e5c6e3595297b1fb1dff0
-        scripts/setup_headless.sh: 4a5b10cf0a4e0864afcfc1dff862fe667fd1db78bd0f44725444b3244a7073a9
+        scripts/setup_gate.sh: b2e1f91c46d2075502a8b85133c5fe12f1175de45fc982dfc2c4d3dbc49aee08
     agentRoles:
       dd-analyst:
         adapter: explicit-role-workflow-v1
@@ -189,3 +188,12 @@ openai:
       war-game-strategist:
         adapter: explicit-role-workflow-v1
         sourceSha256: 00a45b363a12e52ab83dcd10692b40d84cba142388f3a43f80577e9756fb4ee4
+
+# Directory listing metadata; authentication remains host-managed OAuth.
+claude:
+  extraManifestFields:
+    icon: ./assets/ololand-icon.png
+    documentationUrl: https://github.com/ololand-ai/ololand-plugins/blob/main/plugins/ololand-dd/README.md
+    supportUrl: https://github.com/ololand-ai/ololand-plugins/issues
+    privacyPolicyUrl: https://ololand.ai/privacy
+    termsOfServiceUrl: https://ololand.ai/terms

@@ -1,5 +1,5 @@
 name: ololand-compliance-hooks
-version: 0.2.4
+version: 0.2.5
 displayName: OloLand Compliance Hooks
 category: Compliance
 description: >-
@@ -164,8 +164,7 @@ openai:
           the IC package for the committee.
   publication:
     countries: []
-    release_notes: 0.2.4 adds a separate portable OpenAI draft package. Live reviewer
-      scenarios, demo recording, and portal approval remain pending.
+    release_notes: 0.2.5 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
   portable:
     hooksAdapter:
       id: explicit-compliance-review-v1
@@ -183,3 +182,12 @@ openai:
       ololand:
         type: http
         url: https://api.ololand.ai/mcp
+
+# Directory listing metadata; authentication remains host-managed OAuth.
+claude:
+  extraManifestFields:
+    icon: ./assets/ololand-icon.png
+    documentationUrl: https://github.com/ololand-ai/ololand-plugins/blob/main/plugins/ololand-compliance-hooks/README.md
+    supportUrl: https://github.com/ololand-ai/ololand-plugins/issues
+    privacyPolicyUrl: https://ololand.ai/privacy
+    termsOfServiceUrl: https://ololand.ai/terms
