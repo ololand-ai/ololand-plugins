@@ -1,84 +1,47 @@
 ---
 name: setup
-description: Connect your OloLand account to Claude Code, Cursor, or Grok Bot. Use when OloLand tools return an authentication error, when the OloLand MCP server won't connect, or when the user mentions "setup", "connect", or "configure".
+description: Connect your OloLand account using the host-managed OAuth connection. Use when OloLand tools are unavailable or return an authentication error, or when the user asks to set up the plugin.
 ---
 
 # OloLand Setup
 
-OloLand authenticates via **OAuth (one-click sign-in)** — there is no key to
-copy for normal use. The plugin's MCP server is OAuth-native: connecting it
-opens a sign-in page at **api.ololand.ai**, you approve, and you're done.
+The bundled connector uses OAuth at **https://api.ololand.ai/mcp**. The host
+manages sign-in and the resulting credentials. This plugin does not read keys
+from your environment or files, write authentication headers, or provision an
+account automatically.
 
-## Connect (interactive — Claude Desktop / Cowork / Claude Code / Cursor / Grok Bot)
+## Connect
 
-1. Enable / connect the **ololand** MCP server in your client's connectors or
-   plugin settings. On Cursor and Grok Bot this is the connector bundled by
-   the Cursor-format plugin (`.mcp.json` → `https://api.ololand.ai/mcp`).
-2. The host opens the OloLand sign-in page at **https://api.ololand.ai** — sign
-   in with email or Google and click **Approve**.
-3. That's it. Try any OloLand command:
-   - `/dd-analyze` — Run bounded extraction, risk, and financial-snapshot processing for a deal; cross-document reconciliation is a separate explicit tool/workflow
-   - `/similar-deals` — Find comparable transactions
+1. In the host's plugin settings, open OloLand's **Connectors** tab or the
+   equivalent MCP connection settings and choose **Connect** for OloLand.
+2. Complete sign-in on **https://api.ololand.ai** using the OloLand account you
+   intend to use. Review the requested access and company/workspace context
+   shown there before deciding whether to approve.
+3. Return to the host. When the OloLand tools are available, use a read such as
+   `list_deals` to verify the accessible workspace and deals. Tool visibility
+   alone does not prove the intended account or workspace is connected.
+4. Run an analysis only when requested and on a deal the user has selected.
 
-If you see OloLand tools in your tools list, you're connected.
-
-> The sign-in runs on a single canonical host and self-heals the browser
-> handoff, so it works in Cowork and Desktop. If a sign-in window doesn't
-> return on the first try, just reconnect the server and approve again.
-
-## Headless / CI (no browser)
-
-Automated environments can't do an interactive sign-in, so they use a
-long-lived **agent key** as a Bearer token. One command does the wiring — no
-hand-editing JSON:
-
-1. Get a key at **https://api.ololand.ai/connect** (sign in → **Generate new
-   key**, starts with `olo_agent_sk_`), and export it:
-   ```bash
-   export OLOLAND_AGENT_KEY=olo_agent_sk_...
-   ```
-2. Run the setup script — it adds the OloLand MCP server to your `.mcp.json`,
-   preserving any servers already there:
-   ```bash
-   "${CLAUDE_PLUGIN_ROOT}/scripts/setup_headless.sh"
-   ```
-   The config references `${OLOLAND_AGENT_KEY}` rather than the literal key, so
-   the secret stays in your environment, not on disk. Flags: `--config <path>`
-   targets a different file; `--inline-key` writes the literal key for ephemeral
-   CI that can't set an env var (gitignore that config).
-3. Restart / reconnect your MCP host and run any OloLand command.
-
-(If you're asking Claude to set this up, it can run that script for you.)
-
-<details>
-<summary>Manual config — equivalent to what the script writes</summary>
-
-The published plugin manifest is OAuth-native and sends no header, so add the
-OloLand server to your own MCP config with an Authorization header:
-```json
-{
-  "mcpServers": {
-    "ololand": {
-      "type": "http",
-      "url": "https://api.ololand.ai/mcp",
-      "headers": { "Authorization": "Bearer ${OLOLAND_AGENT_KEY}" }
-    }
-  }
-}
-```
-</details>
-
-The agent key works in every MCP host and never expires until you revoke it.
+The user enters credentials only in OloLand's sign-in page. Do not request
+passwords, access tokens, or keys in chat; inspect credential files; or copy
+credentials into MCP configuration. Do not approve consent on the user's
+behalf. A host without an interactive OAuth connection cannot use this
+directory package's authenticated tools.
 
 ## Troubleshooting
 
-- **"Authentication required" / 401**: the OloLand server isn't connected yet.
-  Reconnect it and complete the OAuth sign-in (interactive), or check your
-  `OLOLAND_AGENT_KEY` + Authorization header (headless).
-- **Sign-in window didn't return**: reconnect the server and approve again —
-  the handoff is self-healing and the second attempt typically completes. If
-  it still stalls, generate an agent key (see Headless / CI) and use that.
-- **"Rate limit exceeded"**: Free tier allows 10 requests/minute. Contact
-  sales@ololand.ai to upgrade.
-- **MCP server unreachable**: check https://status.ololand.ai or try again in
-  60 seconds (Cloud Run cold start).
+- **Authentication required / 401:** ask the user to connect or reconnect the
+  OloLand connector through the host's settings, then wait for sign-in to finish.
+  Retry the requested read once after the user confirms connection.
+- **Permission denied / 403:** report the returned access restriction. Verify
+  the selected account and workspace through the normal UI; do not change
+  grants or assume reconnecting will fix missing permissions.
+- **Sign-in does not return to the host:** report the failed connection and
+  use [OloLand support](https://github.com/ololand-ai/ololand-plugins/issues).
+  Do not fall back to reading local secrets or adding a manual auth header.
+- **Tools unavailable in this host:** report the unsupported connection.
+  Do not claim a tool ran or that an analysis completed.
+- **Rate limit or service error:** preserve the returned message and retry
+  guidance. Never create credentials or switch accounts to work around it.
+
+For supported workflows and account prerequisites, see the plugin README.

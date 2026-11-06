@@ -40,7 +40,10 @@ Hooks compose additively across plugins. Multiple `PreToolUse` matchers all fire
 | Env var | Default | Purpose |
 |---|---|---|
 | `OLOLAND_CITATION_BLOCK` | `0` | Set to `1` to upgrade citation enforcer from warn to deny. |
-| `OLOLAND_AGENT_KEY` | unset | MCP connector authentication for headless clients; not used by these local ledgers. |
+
+## OloLand connection
+
+These local hooks do not need or transmit an OloLand credential. To use OloLand MCP tools alongside them, explicitly connect the `ololand` connector in your host and sign in through its OAuth flow. Review the account, company/workspace, and requested access before approving. A failed connection is an access gap; installing the hooks does not resolve it or grant deal access.
 
 ## Why this exists
 

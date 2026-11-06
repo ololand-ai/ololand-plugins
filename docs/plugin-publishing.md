@@ -193,7 +193,7 @@ A source with `hooks/` must declare a recognized
 `sourceSha256` of `hooks/hooks.json`, plus `sourceFilesSha256`, a complete map of
 plugin-relative paths to hashes for that manifest and every file in the local
 `scripts/` tree. This covers direct implementations and local helper scripts:
-DD includes both `setup_gate.sh` and its referenced `setup_headless.sh`;
+DD includes its static OAuth guidance script `setup_gate.sh`;
 Compliance includes all seven implementation scripts. DD uses `explicit-dd-setup-v1`;
 Compliance uses `explicit-compliance-review-v1`. Missing/unknown adapters or a
 changed manifest, changed/added implementation, incomplete map, or missing hook
@@ -243,3 +243,38 @@ DD, CIM, and Compliance.
 generated metadata. Both pull-request artifact CI and tagged release CI use
 that shared script, so an exporter regression blocks either path. The suite
 also checks that its failure propagates through the script.
+
+
+## Claude Directory Packages
+
+The directory packages use host-managed OAuth at the fixed OloLand HTTPS MCP
+endpoint. Do not add credential environment reads, credential-file reads, manual
+Authorization headers, or headless key-writing helpers to these bundles. The
+user completes sign-in and reviews consent in the host's normal connection flow.
+Automated environments without that flow are not supported by these packages.
+
+Claude listing fields belong in `claude.extraManifestFields` in each canonical
+`plugin.yaml`. Existing icons are 512-pixel square PNG files. Privacy and terms
+URLs use the published OloLand policies; support and documentation point to this
+repository. Generate manifests rather than editing them directly.
+
+`check-plugin-artifacts.sh` includes the directory regression suite: fixed
+OAuth-only MCP declarations, listing metadata/icon requirements, absence of
+legacy credential paths, and a setup-hook canary test that verifies ambient
+credentials do not change its output or cause configuration writes. Run
+`claude plugin validate plugins/<name>` with a current Claude Code CLI as well.
+
+These checks do not constitute a directory safety scan, policy approval, or
+live tool testing. After a reviewed change reaches the directory's tracked
+branch, use Check for new commits on the existing listing and inspect the
+reported commit/version. Preserve existing submissions. Listing metadata may
+not replace an icon already stored by the portal.
+
+The remote MCP connector has a separate review and tool-annotation requirement.
+Use a populated authorized reviewer account for bounded live tests, record
+actual tool outcomes, and complete portal acknowledgments manually. Do not
+claim that every tool ran based on schema checks.
+
+The shared Cursor SessionStart output adapter has a pre-existing protocol gap;
+this change retains the plain-text Claude setup-hook contract. Cursor package
+validation is not a claim that its hook context was consumed in a live session.

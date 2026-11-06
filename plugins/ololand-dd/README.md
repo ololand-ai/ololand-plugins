@@ -7,10 +7,11 @@ Anthropic's native `private-equity` plugin ships DD checklists, memo drafts, and
 ## Install
 
 ```bash
-claude plugin add github:ololand-ai/ololand-dd-plugin
+claude plugin marketplace add ololand-ai/ololand-plugins
+claude plugin install ololand-dd@ololand-plugins
 ```
 
-On first use, the plugin opens a browser tab for OAuth sign-in. Your agent key is provisioned automatically, a sample deal is seeded, and your first 100 tool calls are free. No copy-paste, no env vars.
+In the plugin's Connectors tab or your host's MCP settings, connect OloLand and complete OAuth sign-in on api.ololand.ai. Use your intended OloLand account and review the requested access. The plugin does not provision keys or seed deals automatically. Account permissions, available deal data, and current plan limits determine which workflows are available.
 
 ## Quick Start
 
@@ -18,7 +19,7 @@ On first use, the plugin opens a browser tab for OAuth sign-in. Your agent key i
 /dd-analyze
 ```
 
-That's it. The plugin authenticates on first invocation, seeds a sample deal if your account is empty, and drops you into the analysis flow.
+After connecting, list the accessible deals and select the intended workspace and deal before starting analysis. If there is no suitable deal, use the normal OloLand app to prepare one; do not claim a sample was created or an analysis ran.
 
 ## Commands
 
@@ -152,7 +153,7 @@ After cloning, install the git hooks once so commits are checked for manifest ve
 ./scripts/install-hooks.sh
 ```
 
-The pre-commit hook runs `scripts/check-version-sync.sh`, which fails the commit if `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` disagree on the plugin version. When bumping the version, update both files in the same commit.
+The pre-commit hook runs `scripts/check-version-sync.sh`, which fails the commit if `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` disagree on the plugin version. Edit plugin.yaml, regenerate artifacts with scripts/generate-plugin-artifacts.py, and commit the generated manifests with the source change.
 
 ## License
 

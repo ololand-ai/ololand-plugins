@@ -1,6 +1,6 @@
 {
   "name": "cim-generator",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Generates 14-section Confidential Information Memorandums (CIMs) — the sell-side marketing document used in M&A to present a target company to potential buyers — from OloLand's reconciled deal data instead of LLM prose. Every section is built from the deal's financial snapshots, knowledge-graph risk/opportunity insights, and market research already on the platform; missing inputs are marked as explicit data gaps rather than invented. View, edit, and export the finished CIM to PDF, DOCX, or PPTX from the deal workspace.",
   "author": {
     "name": "OloLand",
@@ -18,5 +18,10 @@
     "investment-banking",
     "due-diligence",
     "private-equity"
-  ]
+  ],
+  "icon": "./assets/ololand-icon.png",
+  "documentationUrl": "https://github.com/ololand-ai/ololand-plugins/blob/main/plugins/cim-generator/README.md",
+  "supportUrl": "https://github.com/ololand-ai/ololand-plugins/issues",
+  "privacyPolicyUrl": "https://ololand.ai/privacy",
+  "termsOfServiceUrl": "https://ololand.ai/terms"
 }

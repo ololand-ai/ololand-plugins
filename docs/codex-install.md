@@ -7,11 +7,8 @@ OloLand's three plugins (`ololand-dd`, `ololand-forensic-qoe`, `ololand-complian
 ## Prerequisites
 
 - **Codex CLI installed.** See [openai/codex](https://github.com/openai/codex) for setup.
-- **OloLand agent key** available as `OLOLAND_AGENT_KEY`. Get one at [`app.ololand.ai/settings/agent-keys`](https://app.ololand.ai/settings/agent-keys).
-
-```bash
-export OLOLAND_AGENT_KEY="olo_agent_sk_..."
-```
+- **OloLand account** with access to the intended company/workspace and deals.
+- A Codex host that supports the OloLand server's OAuth flow. Installation does not grant OloLand access.
 
 ## Steps
 
@@ -36,25 +33,29 @@ enabled = true
 enabled = true
 ```
 
-### 3. Register the OloLand MCP server
+### 3. Connect through OAuth
+
+If the installed plugin already supplies the `ololand` connector, use that connection rather than registering a duplicate. Otherwise, register the canonical endpoint:
 
 ```bash
-codex mcp add ololand \
-  --url https://ma-workbench-api-303576587005.us-central1.run.app/mcp \
-  --bearer-token-env-var OLOLAND_AGENT_KEY
+codex mcp add ololand --url https://api.ololand.ai/mcp
 ```
 
-### 4. Verify the MCP server is registered
+Start the host-managed OAuth sign-in:
+
+```bash
+codex mcp login ololand
+```
+
+Complete sign-in on `https://api.ololand.ai` yourself. Review the account, company/workspace, and requested access before approving. Do not paste credentials into chat or copy them from local files or environment variables. If this host cannot complete OAuth, report that limitation and stop dependent work.
+
+### 4. Verify the connection
 
 ```bash
 codex mcp list
 ```
 
-Expected output:
-
-```text
-ololand  https://ma-workbench-api-303576587005.us-central1.run.app/mcp  OLOLAND_AGENT_KEY  enabled
-```
+Confirm the server uses `https://api.ololand.ai/mcp` and inspect its authentication state. A listed server alone does not prove that sign-in or deal access works; use the read-only smoke test below after sign-in succeeds.
 
 ### 5. Restart Codex
 
@@ -80,8 +81,9 @@ Expected: Codex calls `ololand.list_deals` and returns your OloLand deals.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `codex mcp list` shows ololand as `disabled` | Bearer-token env var not set or empty | `export OLOLAND_AGENT_KEY="olo_agent_sk_..."` then restart Codex |
-| `Unauthorized` errors on tool calls | Agent key expired or revoked | Generate a new key at [`app.ololand.ai/settings/agent-keys`](https://app.ololand.ai/settings/agent-keys) |
+| Server is disabled or disconnected | Host configuration or connection is incomplete | Inspect its status and use the host's supported OAuth connection flow when requested by the user |
+| `Unauthorized` / `401` | OAuth sign-in is incomplete or no longer valid | Report the gap; the user can restore the connection with `codex mcp login ololand` |
+| `403` or company-scope error | Connected account lacks the requested access | Verify the selected company/workspace and deal permissions; do not substitute credentials or expand access |
 | Plugin commands not loading | `config.toml` block missing or not in `~/.codex/config.toml` | Re-add the `[plugins."ololand-*@ololand-plugins"]` entries |
 | `Could not fetch marketplace` | Marketplace source pinned to the retired `staging` branch | `codex plugin marketplace remove ololand-plugins && codex plugin marketplace add ololand-ai/ololand-plugins` |
 
