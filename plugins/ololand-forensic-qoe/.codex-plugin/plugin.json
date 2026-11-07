@@ -1,6 +1,6 @@
 {
   "name": "ololand-forensic-qoe",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "Forensic Quality-of-Earnings primitives as a standalone Claude plugin: Beneish M-Score, Benford's Law, EBITDA bridge, journal-entry testing, lapping detection, working-capital deep dive, and sourced covenant, cross-default, and MAC/MAE clause analysis. Wraps OloLand's deterministic forensic engines as the Pre-LOI Forensic Screen and Full QoE reports — included in OloLand Pro and above. Positioned against Big-4 QoE ($150-500K, 4-8 weeks).",
   "author": {
     "name": "OloLand",
@@ -112,7 +112,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "0.6.6 aligns EBITDA bridge prompts and P3 with an explicit caller-supplied unverified scenario; full source-backed normalized earnings acceptance remains blocked. It preserves a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
+        "release_notes": "0.6.8 republishes the directory-compliant package (OAuth-only connection, no local scripts or credential reads) with no workflow changes. 0.6.6 aligns EBITDA bridge prompts and P3 with an explicit caller-supplied unverified scenario; full source-backed normalized earnings acceptance remains blocked. It preserves a separate OpenAI submission export with a concise listing, OloLand branding, a public support channel, five positive and three negative draft review cases, and explicit no-purchasing behavior. Exported skills use provider-neutral wording and distinguish standalone forensic tools from the current self-serve PDF report's coverage. Review cases have not yet been executed; live connection, demo, and portal review remain pending."
       },
       "interface": {
         "shortDescription": "Forensic earnings analysis",
