@@ -34,11 +34,11 @@ Resolving the target as private authorizes **no valuation-engine call**. In part
 
 ### Step 1 — Resolve the company
 
-1. Call `resolve_company` with the user's query. For clean tickers (`GBTG`, `MSFT`, `BRK.B`) pass `hint="public"`. For obviously-private targets (`SpaceX`, `Anthropic`, `Stripe`) pass `hint="private"`. When ambiguous, omit the hint and let the resolver pick.
+1. Call `resolve_company` with the user's query. For clean tickers (`GBTG`, `MSFT`, `BRK.B`) use `hint="public"`. For obviously-private targets (`SpaceX`, `Anthropic`, `Stripe`) use `hint="private"`. When ambiguous, omit the hint and let the resolver pick.
 2. If multiple candidates come back above 0.7 confidence, list the top 3-5 and ask which one. Don't guess.
 3. Capture the picked name + ticker/CIK (if public) + classification.
 
-If the resolver returns `classification == "unresolved"`, halt and tell the user: "I couldn't resolve the target. Try the full legal name (e.g. 'Space Exploration Technologies Corp.' instead of 'SpaceX'), or pass a ticker / website domain."
+If the resolver returns `classification == "unresolved"`, halt and tell the user: "I couldn't resolve the target. Try the full legal name (e.g. 'Space Exploration Technologies Corp.' instead of 'SpaceX'), or provide a ticker / website domain."
 
 If `classification == "public"`, go to **Step 2-Public**. If `classification == "private"`, go to **Step 2-Private**.
 
@@ -90,7 +90,7 @@ If `as-of` was provided, verify each annual filing's `filing_date` is before the
 
 ### Step 5-Public — Run Monte Carlo
 
-Only after the public ingestion readiness gate passes, under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Report mean / median EV ($M), P5 / P25 / P75 / P95 EV ($M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6). If it fails, report Monte Carlo unavailable; do not retry automatically.
+Only after the public ingestion readiness gate passes, under the bounded authority above, call `run_monte_carlo_simulation(deal_id, n_simulations=10000, seed=42)` exactly once. Report mean / median EV (USD M), P5 / P25 / P75 / P95 EV (USD M), VaR(5%) and CVaR(5%), mean / median equity value, `assumption_provenance` breakdown, `assumption_coverage` (target ≥0.6). If it fails, report Monte Carlo unavailable; do not retry automatically.
 
 If the call fails or returns no simulation identity, use this explicit gap in the public brief and audit log: **"[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted."** Do not fill the gap with an earlier run, a DCF, a PCS signal, or an inferred range.
 
@@ -201,12 +201,14 @@ Identical structure to the public branch. The signal counts + reliability scores
 {If the authorized Monte Carlo call succeeded with an exact simulation identity: one sentence stating the MC finding in terms the user asked about. If it failed or returned no identity, replace this headline with: "[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted."}
 
 ## Financial spine
+Amount placeholders below are written as USD X; render them with a leading dollar sign in the brief.
+
 | Metric | Value | Source |
 |---|---|---|
-| Revenue (reported period) | $X.XB | backend fundamentals ({source}) / {annual_filing_type} |
-| EBITDA (reported period) | $XM | backend fundamentals ({source}) / {annual_filing_type} |
+| Revenue (reported period) | USD X.XB | backend fundamentals ({source}) / {annual_filing_type} |
+| EBITDA (reported period) | USD XM | backend fundamentals ({source}) / {annual_filing_type} |
 | EBITDA margin | X.X% | derived |
-| Net debt | $X.XB | balance sheet |
+| Net debt | USD X.XB | balance sheet |
 | Revenue growth (5yr CAGR) | X.X% | historical |
 | CapEx % revenue | X.X% | backend fundamentals ({source}) |
 
@@ -215,14 +217,14 @@ Use an LTM label only when the fundamentals receipt explicitly identifies a TTM/
 ## Monte Carlo valuation (10,000 simulations — include only when the authorized call succeeded with an exact simulation identity)
 | Percentile | Enterprise Value | Equity Value |
 |---|---|---|
-| P5 | $XXX M | $XX M |
-| P25 | $XXX M | $XX M |
-| Median | $X.XB | $XX M |
-| Mean | $X.XB | $XXX M |
-| P75 | $X.XB | $XXX M |
-| P95 | $X.XB | $XXX M |
+| P5 | USD XXX M | USD XX M |
+| P25 | USD XXX M | USD XX M |
+| Median | USD X.XB | USD XX M |
+| Mean | USD X.XB | USD XXX M |
+| P75 | USD X.XB | USD XXX M |
+| P95 | USD X.XB | USD XXX M |
 
-VaR(5%): $XXX M | CVaR(5%): $XXX M | Assumption coverage: XX% (sourced) / XX% (defaulted)
+VaR(5%): USD XXX M | CVaR(5%): USD XXX M | Assumption coverage: XX% (sourced) / XX% (defaulted)
 
 **Failure branch:** If the authorized call failed or returned no simulation identity, omit the table and this VaR/CVaR line entirely. Output only: "[gap] Monte Carlo unavailable: the one authorized public-branch run failed or returned no simulation identity. No EV/equity distribution is available from this screen; no prior simulation was reused and no retry was attempted." Do not use placeholders or substitute a prior run, DCF, PCS signal, or inferred range.
 
@@ -263,8 +265,8 @@ Deal summary: https://app.ololand.ai/deals/{deal_id}/summary
 
 ## Headline
 {One sentence. Examples:
-  - With S-1 ingested: "S-1 reveals $X.XB FY revenue, growing Y%, and N cited risk clusters; standalone private-company valuation remains unavailable on this rail."
-  - With PCS band but no S-1: "PCS revenue band $X.X-X.XB is anchored on N cited mutual-fund disclosures; it is an input signal, not an OloLand valuation."
+  - With S-1 ingested: "S-1 reveals USD X.XB FY revenue, growing Y%, and N cited risk clusters; standalone private-company valuation remains unavailable on this rail."
+  - With PCS band but no S-1: "PCS revenue band USD X.X-X.XB is anchored on N cited mutual-fund disclosures; it is an input signal, not an OloLand valuation."
   - Signal-only (band NULL): "Signal-traced evidence: {N S-1, M N-PORT marks, K counter-party 10-Ks, L federal contracts}. Revenue band not yet derivable without management input or S-1 ingestion."
 }
 
@@ -281,14 +283,14 @@ Every quantitative claim below uses inline `[N]` markers. `[S:N]` = ingested S-1
 ## Revenue band (if derivable)
 | Estimate | Value | Source |
 |---|---|---|
-| Low | $X.XB | {source — e.g. "USAspending floor"} |
-| Mid | $X.XB | {source — e.g. "mutual fund implied, Baillie Gifford Q1 2026"} confidence X.XX |
-| High | $X.XB | {source — e.g. "S-1 § Operations p.42"} |
+| Low | USD X.XB | {source — e.g. "USAspending floor"} |
+| Mid | USD X.XB | {source — e.g. "mutual fund implied, Baillie Gifford Q1 2026"} confidence X.XX |
+| High | USD X.XB | {source — e.g. "S-1 § Operations p.42"} |
 
 ## External valuation signals (not an OloLand valuation)
 | Signal | Reported value | Source |
 |---|---|---|
-| Last financing / fund mark / disclosed IPO target | $X | {[S:N], [R:N], or [W:N]} |
+| Last financing / fund mark / disclosed IPO target | USD X | {[S:N], [R:N], or [W:N]} |
 
 Report only directly sourced observed marks or asks. Do not average them, apply a multiple, derive EV/equity, or present a bear/base/bull range.
 

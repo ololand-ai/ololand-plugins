@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.2
+version: 1.27.3
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -169,7 +169,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.2 removes the SessionStart hook and its script so every package ships only documentation, manifests and images. OAuth setup guidance remains in the setup skill. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
+    release_notes: 1.27.3 rewrites the pre-screen command's money placeholders and setup wording so the directory no longer reads them as environment-variable credentials. Pre-screen output and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
   portable:
     agentRoles:
       dd-analyst:

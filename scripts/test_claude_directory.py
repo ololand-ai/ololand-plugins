@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PLUGINS = yaml.safe_load((ROOT / "marketplace.yaml").read_text())["plugins"]
 DIRECTORY_PLUGINS = ("ololand-dd", "ololand-forensic-qoe", "cim-generator")
 DIRECTORY_FILE_TYPES = {".md", ".txt", ".json", ".yaml", ".yml", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico"}
+SHELL_VARIABLE_LIKE = re.compile(r"\$[A-Za-z_][A-Za-z0-9_]+")
 CREDENTIAL_ENV = re.compile(
     r"(?:\$\{?|\bos\.environ(?:\.get)?\s*[\[(])"
     r"[\"']?[A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD)\b"
@@ -88,6 +89,17 @@ class ClaudeDirectoryTests(unittest.TestCase):
                     self.assertFalse(path.is_symlink())
                     self.assertIn(path.suffix.lower(), DIRECTORY_FILE_TYPES)
                     self.assertFalse(path.read_bytes().startswith(b"#!"))
+
+    def test_directory_text_has_no_shell_variable_like_placeholders(self):
+        # The directory reads multi-letter $NAME tokens (e.g. "$XXX M" money
+        # placeholders) as environment-variable reads; next to an OloLand URL
+        # that pairing holds a version for credential forwarding review.
+        for name in DIRECTORY_PLUGINS:
+            for path in (ROOT / "plugins" / name).rglob("*"):
+                if not path.is_file() or path.suffix.lower() not in {".md", ".json", ".yaml", ".yml", ".txt"}:
+                    continue
+                with self.subTest(path=str(path.relative_to(ROOT))):
+                    self.assertIsNone(SHELL_VARIABLE_LIKE.search(path.read_text()))
 
     def test_removed_headless_credential_writer_is_not_distributed(self):
         self.assertFalse((ROOT / "plugins/ololand-dd/scripts/setup_headless.sh").exists())
