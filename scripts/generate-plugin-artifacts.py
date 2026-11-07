@@ -505,13 +505,21 @@ def main() -> int:
             )
         if plugin.get("targets", {}).get("cursor", True):
             cursor_hooks = cursor_session_start_hooks(root)
+            cursor_hooks_path = root / ".cursor-plugin" / "hooks.json"
             if cursor_hooks is not None:
                 write_or_check(
-                    root / ".cursor-plugin" / "hooks.json",
+                    cursor_hooks_path,
                     json_text(cursor_hooks),
                     args.check,
                     drift,
                 )
+            elif cursor_hooks_path.exists():
+                # The source hook is gone: a leftover generated copy would
+                # keep running a removed script in Cursor.
+                if args.check:
+                    drift.append(cursor_hooks_path)
+                else:
+                    cursor_hooks_path.unlink()
             write_or_check(
                 root / ".cursor-plugin" / "plugin.json",
                 json_text(cursor_manifest(root, plugin)),

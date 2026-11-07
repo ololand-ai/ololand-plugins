@@ -25,6 +25,9 @@ spec.loader.exec_module(exporter)
 PLUGINS = yaml.safe_load((ROOT / "marketplace.yaml").read_text())["plugins"]
 
 
+COMPLIANCE = "ololand-compliance-hooks"
+
+
 class PortableExports(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -289,15 +292,37 @@ class PortableExports(unittest.TestCase):
             self.assertEqual(fields["description"], "Use ololand-dd-ic-package while preserving https://app.ololand.ai/deals/{deal_id}/ic-package links.")
 
     def test_hook_adapters_disclose_limits_and_preserve_human_gates(self):
-        for name in ("ololand-dd", "ololand-compliance-hooks"):
-            text = self.archives[name][f"{name}/PORTABILITY.md"].decode()
-            self.assertIn("OpenAI cannot execute local lifecycle hooks", text)
-            self.assertIn("not equivalent", text)
-            self.assertIn("human approval gates", text)
+        name = COMPLIANCE
+        text = self.archives[name][f"{name}/PORTABILITY.md"].decode()
+        self.assertIn("OpenAI cannot execute local lifecycle hooks", text)
+        self.assertIn("not equivalent", text)
+        self.assertIn("human approval gates", text)
         text = self.archives["ololand-compliance-hooks"]["ololand-compliance-hooks/skills/compliance-hooks-setup/SKILL.md"].decode()
         self.assertIn("## Explicit setup", text)
         self.assertIn("## Explicit review", text)
         self.assertIn("Server-side MCP rail auditing remains", text)
+
+    def test_dd_ships_no_hooks_and_keeps_explicit_oauth_setup(self):
+        files = self.archives["ololand-dd"]
+        self.assertNotIn("ololand-dd/PORTABILITY.md", files)
+        self.assertFalse(any("/hooks/" in path or "/scripts/" in path for path in files))
+        text = files["ololand-dd/skills/setup/SKILL.md"].decode()
+        self.assertIn("# Connect OloLand", text)
+        self.assertIn("OAuth", text)
+        self.assertNotIn("session-start hook", text)
+        self.assertNotIn("lifecycle hooks", text)
+
+    def test_dd_cannot_regain_a_local_hook_even_with_an_adapter_declaration(self):
+        with self.isolated_source("ololand-dd") as (root, source):
+            (source / "hooks").mkdir()
+            (source / "hooks/hooks.json").write_text('{"hooks":{}}')
+            path = source / "plugin.yaml"
+            metadata = yaml.safe_load(path.read_text())
+            metadata["openai"]["portable"]["hooksAdapter"] = {"id": "explicit-dd-setup-v1"}
+            path.write_text(yaml.safe_dump(metadata))
+            with self.assertRaisesRegex(ValueError, "hooks adapter"):
+                exporter.export("ololand-dd", root / "bad.zip")
+            self.assertFalse((root / "bad.zip").exists())
 
     def test_forensic_cases_and_pdf_requirements_are_preserved_and_scoped(self):
         files = self.archives["ololand-forensic-qoe"]
@@ -450,7 +475,7 @@ class PortableExports(unittest.TestCase):
 
     def test_unknown_missing_or_changed_hooks_adapter_fails_closed(self):
         for mode in ("unknown", "missing", "changed"):
-            with self.subTest(mode=mode), self.isolated_source("ololand-dd") as (root, source):
+            with self.subTest(mode=mode), self.isolated_source(COMPLIANCE) as (root, source):
                 path = source / "plugin.yaml"
                 data = yaml.safe_load(path.read_text())
                 if mode == "missing":
@@ -461,12 +486,11 @@ class PortableExports(unittest.TestCase):
                     (source / "hooks/hooks.json").write_text('{"hooks":{"UnknownLifecycle":[]}}')
                 path.write_text(yaml.safe_dump(data))
                 with self.assertRaisesRegex(ValueError, "hooks adapter|Unsupported local hook"):
-                    exporter.export("ololand-dd", root / "bad.zip")
+                    exporter.export(COMPLIANCE, root / "bad.zip")
                 self.assertFalse((root / "bad.zip").exists())
 
     def test_hook_fingerprints_cover_actual_guard_and_all_local_implementations(self):
         expected = {
-            "ololand-dd": {"hooks/hooks.json", "scripts/setup_gate.sh"},
             "ololand-compliance-hooks": {"hooks/hooks.json", *(
                 "scripts/" + name + ".sh" for name in (
                     "audit_log", "citation_enforcer", "evidence_quality_warning", "mnpi_guard",
@@ -481,7 +505,7 @@ class PortableExports(unittest.TestCase):
             self.assertTrue(exporter.portable_adapter(source, metadata))
 
     def test_changed_direct_and_indirect_hook_scripts_fail_closed_without_execution(self):
-        for name, script in (("ololand-dd", "setup_gate.sh"),
+        for name, script in (("ololand-compliance-hooks", "session_banner.sh"),
                              ("ololand-compliance-hooks", "mnpi_guard.sh"),
                              ("ololand-compliance-hooks", "citation_enforcer.sh")):
             with self.subTest(plugin=name, script=script), self.isolated_source(name) as (root, source):
@@ -495,31 +519,31 @@ class PortableExports(unittest.TestCase):
 
     def test_missing_or_incomplete_hook_file_declaration_and_added_file_fail_closed(self):
         for mode in ("missing", "incomplete", "added"):
-            with self.subTest(mode=mode), self.isolated_source("ololand-dd") as (root, source):
+            with self.subTest(mode=mode), self.isolated_source(COMPLIANCE) as (root, source):
                 path = source / "plugin.yaml"
                 metadata = yaml.safe_load(path.read_text())
                 adapter = metadata["openai"]["portable"]["hooksAdapter"]
                 if mode == "missing":
                     del adapter["sourceFilesSha256"]
                 elif mode == "incomplete":
-                    del adapter["sourceFilesSha256"]["scripts/setup_gate.sh"]
+                    del adapter["sourceFilesSha256"]["scripts/mnpi_guard.sh"]
                 else:
                     (source / "scripts/new-helper.sh").write_text("#!/bin/sh\nexit 0\n")
                 path.write_text(yaml.safe_dump(metadata))
                 with self.assertRaisesRegex(ValueError, "every current hook implementation"):
-                    exporter.export("ololand-dd", root / "bad.zip")
+                    exporter.export(COMPLIANCE, root / "bad.zip")
 
     def test_unsafe_or_unknown_hook_invocations_fail_closed_even_with_updated_manifest_hash(self):
         commands = (
             'bash "/tmp/outside-hook.sh"',
             'bash "${CLAUDE_PLUGIN_ROOT}/scripts/../outside.sh"',
             'bash "${CLAUDE_PLUGIN_ROOT}/scripts/$(choose-hook).sh"',
-            'bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh"; echo injected',
-            'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh"',
-            '[ -n "${CLAUDE_PLUGIN_ROOT}" ] && bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup_gate.sh" || echo "$(outside-command)"',
+            'bash "${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh"; echo injected',
+            'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh"',
+            '[ -n "${CLAUDE_PLUGIN_ROOT}" ] && bash "${CLAUDE_PLUGIN_ROOT}/scripts/session_banner.sh" || echo "$(outside-command)"',
         )
         for command in commands:
-            with self.subTest(command=command), self.isolated_source("ololand-dd") as (root, source):
+            with self.subTest(command=command), self.isolated_source(COMPLIANCE) as (root, source):
                 hook = source / "hooks/hooks.json"
                 data = json.loads(hook.read_text())
                 data["hooks"]["SessionStart"][0]["hooks"][0]["command"] = command
@@ -532,12 +556,12 @@ class PortableExports(unittest.TestCase):
                 adapter["sourceFilesSha256"]["hooks/hooks.json"] = digest
                 path.write_text(yaml.safe_dump(metadata))
                 with self.assertRaisesRegex(ValueError, "[Hh]ook|invocation"):
-                    exporter.export("ololand-dd", root / "bad.zip")
+                    exporter.export(COMPLIANCE, root / "bad.zip")
                 self.assertFalse((root / "bad.zip").exists())
 
     def test_hook_symlinks_are_rejected_before_reading_redirected_files(self):
-        for relative in ("hooks/hooks.json", "scripts/setup_gate.sh", "scripts"):
-            with self.subTest(path=relative), self.isolated_source("ololand-dd") as (root, source):
+        for relative in ("hooks/hooks.json", "scripts/session_banner.sh", "scripts"):
+            with self.subTest(path=relative), self.isolated_source(COMPLIANCE) as (root, source):
                 original = source / relative
                 target = root / "outside"
                 if original.is_dir():
@@ -548,18 +572,18 @@ class PortableExports(unittest.TestCase):
                     original.unlink()
                 original.symlink_to(target, target_is_directory=target.is_dir())
                 with self.assertRaisesRegex(ValueError, "[Ss]ymlinks"):
-                    exporter.export("ololand-dd", root / "bad.zip")
+                    exporter.export(COMPLIANCE, root / "bad.zip")
                 self.assertFalse((root / "bad.zip").exists())
 
     def test_declared_hook_adapter_cannot_be_bypassed_by_missing_or_dangling_directory(self):
         for mode in ("missing", "dangling"):
-            with self.subTest(mode=mode), self.isolated_source("ololand-dd") as (root, source):
+            with self.subTest(mode=mode), self.isolated_source(COMPLIANCE) as (root, source):
                 hook_directory = source / "hooks"
                 shutil.rmtree(hook_directory)
                 if mode == "dangling":
                     hook_directory.symlink_to(root / "nonexistent-hooks", target_is_directory=True)
                 with self.assertRaisesRegex(ValueError, "hooks adapter|Symlinks"):
-                    exporter.export("ololand-dd", root / "bad.zip")
+                    exporter.export(COMPLIANCE, root / "bad.zip")
                 self.assertFalse((root / "bad.zip").exists())
 
     def test_symlinked_command_is_rejected_before_generator_reads_it(self):

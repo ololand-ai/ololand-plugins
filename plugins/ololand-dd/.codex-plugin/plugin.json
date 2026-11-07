@@ -1,6 +1,6 @@
 {
   "name": "ololand-dd",
-  "version": "1.27.1",
+  "version": "1.27.2",
   "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 311-factor risk taxonomy (67 diligence categories) with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, analytical workbench tools for QoE/compliance/scenarios/earnings, value-impact ledger reads, deal-health actions, workbooks with template-driven population, acquisition-financing prep (deterministic analysis, provider-sourcing prep, lender pre-reads), company discovery, watchlists, IC-package lifecycle dispatch, advisory requests, external-artifact grading (the Cowork adoption funnel) and cross-document conflict detection, verified forensic screen marketplace support, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin.",
   "author": {
     "name": "OloLand",
@@ -22,7 +22,6 @@
     "forensic-qoe"
   ],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "OloLand DD",
@@ -50,7 +49,7 @@
     "com.openai": {
       "interface": {
         "shortDescription": "Institutional due diligence",
-        "longDescription": "Due-diligence workflows using OloLand's connected deterministic engines, risk analysis, workbooks, and evidence controls. Run available deal analyses, inspect source-linked findings and data gaps, and prepare reviewable IC materials. Local lifecycle hooks do not run in OpenAI; connection setup is explicitly user-invoked. Server-side auditing and human-only approval gates remain in OloLand. Availability depends on account permissions, current server tools, and deal data. This plugin does not initiate purchases or payments.",
+        "longDescription": "Due-diligence workflows using OloLand's connected deterministic engines, risk analysis, workbooks, and evidence controls. Run available deal analyses, inspect source-linked findings and data gaps, and prepare reviewable IC materials. Connection setup is explicitly user-invoked. Server-side auditing and human-only approval gates remain in OloLand. Availability depends on account permissions, current server tools, and deal data. This plugin does not initiate purchases or payments.",
         "websiteURL": "https://ololand.ai",
         "supportURL": "https://github.com/ololand-ai/ololand-plugins/issues",
         "privacyPolicyURL": "https://ololand.ai/privacy",
@@ -112,17 +111,9 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "1.27.1 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation."
+        "release_notes": "1.27.2 removes the SessionStart hook and its script so every package ships only documentation, manifests and images. OAuth setup guidance remains in the setup skill. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation."
       },
       "portable": {
-        "hooksAdapter": {
-          "id": "explicit-dd-setup-v1",
-          "sourceSha256": "30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035",
-          "sourceFilesSha256": {
-            "hooks/hooks.json": "30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035",
-            "scripts/setup_gate.sh": "b2e1f91c46d2075502a8b85133c5fe12f1175de45fc982dfc2c4d3dbc49aee08"
-          }
-        },
         "agentRoles": {
           "dd-analyst": {
             "adapter": "explicit-role-workflow-v1",
