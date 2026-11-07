@@ -83,13 +83,11 @@ This is an explicit, user-invoked setup workflow. Enable the packaged `ololand`
 MCP connection, complete the client's OAuth sign-in, and inspect the tools
 actually available to the connected account. If authentication fails, ask the
 user to reconnect. Never request, print, or store account credentials in chat.
-Do not run local setup scripts or claim a session-start hook has run.
+Do not run local setup scripts.
 Resolve a requested deal using the connected server; do not assume a sample
 deal or entitlement exists. Report connection or permission gaps explicitly.
 
-OpenAI cannot execute this plugin's local lifecycle hooks. The upload supplies
-an explicit workflow, not an automatic setup gate. Server-side MCP auditing
-remains authoritative. Preserve tool-returned evidence and permission blockers;
+Server-side MCP auditing remains authoritative. Preserve tool-returned evidence and permission blockers;
 IC approval and other human-only gates stay with authorized people in OloLand.
 """
 
@@ -291,8 +289,9 @@ def portable_adapter(source: Path, metadata: dict) -> str | None:
     if not hook_directory.is_dir():
         raise ValueError("Portable hooks adapter requires a source hook directory")
     adapter = portable.get("hooksAdapter", {})
+    # DD shipped a setup hook until 1.27.2; the Claude directory now refuses
+    # command hooks from unverified organizations, so DD must not regain one.
     allowed = {
-        "ololand-dd": "explicit-dd-setup-v1",
         "ololand-compliance-hooks": "explicit-compliance-review-v1",
     }
     if not adapter.get("id") or adapter.get("id") != allowed.get(metadata["name"]):
@@ -466,7 +465,6 @@ def export(name: str, output: Path) -> None:
         for reference in ("@" + role_name, f"../../agents/{role_name}.md", f"agents/{role_name}.md"):
             references[reference] = fields["name"]
     required_adapter_skill = {
-        "explicit-dd-setup-v1": "setup",
         "explicit-compliance-review-v1": "compliance-hooks-setup",
     }.get(adapter)
     if required_adapter_skill and required_adapter_skill not in {skill.name for skill, _, _ in skills}:
@@ -497,7 +495,7 @@ def export(name: str, output: Path) -> None:
                 shutil.copytree(skill, destination)
             else:
                 destination.mkdir(parents=True)
-            if adapter == "explicit-dd-setup-v1" and skill.name == "setup":
+            if name == "ololand-dd" and skill.name == "setup":
                 body = SETUP_BODY
                 fields["description"] = "Connect OloLand and review available deal tools when the user requests setup or has a connection error."
             elif adapter == "explicit-compliance-review-v1" and skill.name == "compliance-hooks-setup":

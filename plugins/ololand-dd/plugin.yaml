@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.1
+version: 1.27.2
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -64,8 +64,7 @@ openai:
     longDescription: Due-diligence workflows using OloLand's connected deterministic
       engines, risk analysis, workbooks, and evidence controls. Run available deal
       analyses, inspect source-linked findings and data gaps, and prepare reviewable
-      IC materials. Local lifecycle hooks do not run in OpenAI; connection setup is
-      explicitly user-invoked. Server-side auditing and human-only approval gates
+      IC materials. Connection setup is explicitly user-invoked. Server-side auditing and human-only approval gates
       remain in OloLand. Availability depends on account permissions, current server
       tools, and deal data. This plugin does not initiate purchases or payments.
     websiteURL: https://ololand.ai
@@ -170,14 +169,8 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.1 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
+    release_notes: 1.27.2 removes the SessionStart hook and its script so every package ships only documentation, manifests and images. OAuth setup guidance remains in the setup skill. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
   portable:
-    hooksAdapter:
-      id: explicit-dd-setup-v1
-      sourceSha256: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
-      sourceFilesSha256:
-        hooks/hooks.json: 30393eac670bc534468fd05bf57c9f7344ebe042a74d360f747296514c2f6035
-        scripts/setup_gate.sh: b2e1f91c46d2075502a8b85133c5fe12f1175de45fc982dfc2c4d3dbc49aee08
     agentRoles:
       dd-analyst:
         adapter: explicit-role-workflow-v1

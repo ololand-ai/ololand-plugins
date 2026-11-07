@@ -193,9 +193,10 @@ A source with `hooks/` must declare a recognized
 `sourceSha256` of `hooks/hooks.json`, plus `sourceFilesSha256`, a complete map of
 plugin-relative paths to hashes for that manifest and every file in the local
 `scripts/` tree. This covers direct implementations and local helper scripts:
-DD includes its static OAuth guidance script `setup_gate.sh`;
-Compliance includes all seven implementation scripts. DD uses `explicit-dd-setup-v1`;
-Compliance uses `explicit-compliance-review-v1`. Missing/unknown adapters or a
+Compliance includes all seven implementation scripts and uses
+`explicit-compliance-review-v1`, the only recognized adapter. DD shipped a
+setup hook until 1.27.2 and now has none; a DD hook tree fails the export
+rather than reviving the retired `explicit-dd-setup-v1`. Missing/unknown adapters or a
 changed manifest, changed/added implementation, incomplete map, or missing hook
 tree fails closed. Symlinked manifests, scripts, directories, and command
 sources are rejected before their redirected contents are read. The hook
@@ -209,8 +210,8 @@ behavioral equivalence of arbitrary shell code. Security review remains
 necessary when implementation or dependencies change. A source without `.mcp.json` can declare its public HTTPS
 connection under `openai.portable.mcpServers`; Compliance does so explicitly.
 
-OpenAI cannot execute local lifecycle hooks. The DD adapter provides explicit
-connection setup. The Compliance adapter provides **user-invoked** setup and
+OpenAI cannot execute local lifecycle hooks. DD has no hooks; its setup skill
+is an explicit OAuth connection workflow. The Compliance adapter provides **user-invoked** setup and
 document/deal review. It cannot automatically block arbitrary client or other
 application tools, enforce citations across sessions, mirror local audit logs,
 write local provenance ledgers, or claim the local hooks are armed. These
@@ -253,6 +254,14 @@ Authorization headers, or headless key-writing helpers to these bundles. The
 user completes sign-in and reviews consent in the host's normal connection flow.
 Automated environments without that flow are not supported by these packages.
 
+The directory accepts command hooks, and files other than Markdown, text,
+JSON, YAML and PNG/JPEG/GIF/WebP/ICO images, only from Verified organizations.
+OloLand is not Verified, so the listed packages (`ololand-dd`,
+`ololand-forensic-qoe`, `cim-generator`) ship no `hooks/`, no `scripts/`, no
+generated Cursor hook file and no `#!` files. `ololand-compliance-hooks` is
+hooks by design and is not a directory listing until the organization is
+Verified; it remains available through this marketplace.
+
 Claude listing fields belong in `claude.extraManifestFields` in each canonical
 `plugin.yaml`. Existing icons are 512-pixel square PNG files. Privacy and terms
 URLs use the published OloLand policies; support and documentation point to this
@@ -260,8 +269,7 @@ repository. Generate manifests rather than editing them directly.
 
 `check-plugin-artifacts.sh` includes the directory regression suite: fixed
 OAuth-only MCP declarations, listing metadata/icon requirements, absence of
-legacy credential paths, and a setup-hook canary test that verifies ambient
-credentials do not change its output or cause configuration writes. Run
+legacy credential paths, and the allowed-file-type/no-hooks check above. Run
 `claude plugin validate plugins/<name>` with a current Claude Code CLI as well.
 
 These checks do not constitute a directory safety scan, policy approval, or
@@ -275,6 +283,7 @@ Use a populated authorized reviewer account for bounded live tests, record
 actual tool outcomes, and complete portal acknowledgments manually. Do not
 claim that every tool ran based on schema checks.
 
-The shared Cursor SessionStart output adapter has a pre-existing protocol gap;
-this change retains the plain-text Claude setup-hook contract. Cursor package
-validation is not a claim that its hook context was consumed in a live session.
+The shared Cursor SessionStart output adapter has a pre-existing protocol gap
+for Compliance's session banner. When a source hook is removed, the generator
+deletes the stale `.cursor-plugin/hooks.json`. Cursor package validation is not
+a claim that its hook context was consumed in a live session.
