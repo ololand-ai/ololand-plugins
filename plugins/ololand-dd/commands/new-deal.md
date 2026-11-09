@@ -59,4 +59,4 @@ Suggested next steps to offer the user:
 - `/valuation <deal_id> read all` — inspect governed DCF/LBO and source-backed Comps without starting a model run.
 - `/valuation <deal_id> run all` — explicitly create fresh DCF/LBO/Monte Carlo candidates when the user asks to execute new models.
 - `/risk-report <deal_id>` — risk taxonomy breakdown (67 categories / 311 risk factors).
-- `/talk-to-deal <deal_id> "<question>"` — voice-optimized Q&A on the deal.
+- `/talk-to-deal <deal_id> "<question>"` — the fast conversational answer on the deal.
