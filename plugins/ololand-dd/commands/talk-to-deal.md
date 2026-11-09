@@ -1,10 +1,10 @@
 ---
-description: Ask a question about a deal and get a conversational, voice-optimized response — concise answers with rounded numbers and clear recommendations.
+description: Ask a quick question about a deal and get the fast conversational answer — a short, read-only turn that asks for rounded numbers and a bottom line.
 ---
 
 # Talk to Your Deal
 
-Have a natural conversation about a deal. Returns voice-optimized responses suitable for hands-free review, Claude Dispatch, or quick deal check-ins.
+Ask a quick question about a deal and get the fast conversational answer: one read-only turn with a short iteration budget, for quick deal check-ins. The brief style is requested, not guaranteed: answers can still contain markdown, lists and inline citations, so anything that needs speech-ready text must render it itself.
 
 ## Usage
 
@@ -26,7 +26,7 @@ Have a natural conversation about a deal. Returns voice-optimized responses suit
 2. For the lookup-only `talk_to_deal` path, relay any returned `boundary_gate`, `completion_contract`, and `grader_passed` fields. A response is not a completed or verified answer merely because text was returned. If any applicable field is absent, unavailable, or failed, say so plainly and do not replace it with an inferred pass.
 3. Every deal fact, figure, date, risk, or recommendation must retain its returned inline source citation. Voice style may round a cited number (for example, "about $160 million [3]"), but must not remove its citation or convert missing evidence into an estimate. State unavailable evidence and the resulting limitation instead.
 4. Do not state a buyer's or acquirer's identity, strategy, mandate, interest, expected synergies, or likely action unless it is supported by a tenant-authorized returned source citation. A caller-supplied premise may be discussed only when labeled as a hypothetical, not as a fact about the buyer.
-5. The response uses voice-mode directives:
+5. The tool asks the lead for this style (a request, not a guaranteed format):
    - Concise (2-3 sentences per point)
    - Rounded numbers ("about 160 million" not "$164,501,234")
    - Narrative style, no markdown tables

@@ -53,7 +53,7 @@ After connecting, list the accessible deals and select the intended workspace an
 | `/record-decision` | Capture the qualitative WHY when a deal is closed, passed, exited, or withdrawn — rationale, validated/invalidated assumptions, and pattern tags that `/similar-deals` and `/playbook-recall` surface later |
 | `/deal-search` | Hybrid vector + keyword + reranked search across the full data room |
 | `/war-game` | RL-powered competitive strategy simulation (MaskablePPO, 1,000-episode rollouts, 16 quarters) |
-| `/talk-to-deal` | Voice-optimized Q&A over the deal's full system of record, with rounded numbers and recommendations |
+| `/talk-to-deal` | The fast conversational answer: a quick read-only question over the deal's system of record, asking for rounded numbers and a bottom line |
 | `/source` | Map and persist a private-company research universe (`map`), prepare a read-only watchlist brief (`brief`), inspect source access (`connections`), or run sourcing and standing-thesis workflows |
 | `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals and market context, with outcome labels and SEC filing citations |
 | `/firm-calibration` | How accurate this firm's own predictions have been — accuracy by prediction type, systematic biases, risk-category precision, and the fields analysts keep overriding (firm-wide; `/calibrate-vs-history` is the per-deal counterpart) |
@@ -116,7 +116,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
 | **Sourcing** | `batch_triage_companies`, `save_sourcing_candidates`, `update_sourcing_candidate`, `log_sourced_lead` |
 | **Financing** | `get_financing_workflow_status`, `run_financing_analysis`, `prepare_financing_sourcing`, `prepare_financing_lender_package`, `list_capital_programs`, `prepare_capital_plan`, `evaluate_capital_eligibility` |
-| **Voice** | `talk_to_deal` |
+| **Quick answer** | `talk_to_deal` |
 | **CRE Underwriting** | `run_cre_stress_test`, `run_cre_debt_sizing`, `verify_sponsor_assumptions` |
 | **Conversation Sessions** | `create_conversation_session`, `list_conversation_sessions`, `get_conversation_session_summary` |
 | **Workflow** | `run_due_diligence`, `check_task_status`, `decompose_intent`, `get_plan_status`, `list_missions` |

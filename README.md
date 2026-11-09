@@ -209,7 +209,7 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/similar-deals <deal_id>` | Cross-deal memory: find similar past deals, accuracy patterns, valuation ranges |
 | `/playbook-recall <deal_id>` | What worked, what didn't, what was missed in similar past deals from your firm's history |
 | `/calibrate-vs-history <deal_id>` | Apply your firm's historical projection bias to recalibrate the deal's headline numbers |
-| `/talk-to-deal <deal_id>` | Conversational session: ask anything about the deal, voice-optimized output |
+| `/talk-to-deal <deal_id>` | The fast conversational answer: a quick read-only question about the deal |
 | `/deal-search <deal_id>` | Full-text + semantic search across a deal's data room |
 | `/unit-economics <deal_id>` | SaaS cohort retention (NDR/GRR), LTV/CAC, payback, magic number, rule of 40 |
 | `/source <criteria>` | Source new M&A/PE deals from criteria; enrich with contact data; dedupe vs CRM |
