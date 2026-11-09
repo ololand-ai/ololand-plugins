@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.3
+version: 1.27.4
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -87,7 +87,10 @@ openai:
           without refreshing any analysis or models.
         tools_triggered: get_deal, get_financial_snapshot, get_deal_risks
         expected_behavior: Use the resolved deal_id for the three reads. Report only returned snapshot
-          figures and the reviewed risk subset, with source references and coverage gaps. Honor
+          figures and the reviewed risk subset, with source references and coverage gaps. Keep entity,
+          reporting period, basis, currency/units, and snapshot identity explicit or unknown; do not
+          compare unlike bases. Separate quote existence from claim support and group duplicate issues
+          without summing correlated impacts. Follow supported continuation or disclose the unread scope. Honor
           qualitative probability_rendering rather than presenting severity proxies as probabilities.
           Do not call run_due_diligence, run_deal_model, run_monte_carlo_simulation, or report-generation
           tools.
@@ -134,7 +137,9 @@ openai:
           and weak/partial warnings. Preserve returned package status, provenance, and view_url.
           Explain approval occurs through the human-session app surface; do not invoke approve_ic_package,
           set_assumption_status, generation, or verifier overrides. Missing evidence must not be
-          labeled ready.
+          labeled ready. An empty ledger is not assessed and missing metadata is unknown; ic_blocked=false
+          is only no known tracked-control blockers. Keep assessment, policy blockers, artifact eligibility,
+          and persisted human approval separate; a failed lookup is degraded without inventing a policy gate.
       - description: 'Draft case, not run. Source-backed external-artifact review. Setup: the reviewer
           supplies a nonconfidential externally drafted paragraph with figures and a dedicated deal
           with an ingested corpus that can confirm or contradict it. Execution is blocked until
@@ -169,7 +174,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.3 rewrites the pre-screen command's money placeholders and setup wording so the directory no longer reads them as environment-variable credentials. Pre-screen output and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation.
+    release_notes: 1.27.4 clarifies assessment versus approval readiness, financial scope and period, partial retrieval and valid source locators, claim support and duplicate risks, and bounded scenario correction handoffs. Missing evidence stays unknown; backend availability and live reviewer validation remain separate from package validation.
   portable:
     agentRoles:
       dd-analyst:

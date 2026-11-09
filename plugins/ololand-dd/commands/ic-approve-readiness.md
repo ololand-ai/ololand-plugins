@@ -34,12 +34,35 @@ This command runs the pre-flight check before the analyst attempts to approve.
    - **Warnings** (review recommended, not blocking): from `quality_flags` — high/critical tracked assumptions with `evidence_strength` in {weak, partial}. Cross-reference these against `approval_evidence_snapshot.warnings` if a package exists.
 5. Render:
 
-   - **Overall readiness**: READY / BLOCKED
+   - **Assessment**: backend-returned state and coverage. An empty ledger is **NOT ASSESSED**, not evidence that diligence is complete; missing state on an older server is **UNKNOWN**. Report partial or degraded evidence lookup separately from policy blockers.
+   - **Tracked-control gate**: BLOCKED only for returned applicable blockers; otherwise “no known tracked-control blockers.” `ic_blocked=false` does not establish source support, completeness, model eligibility, or approval.
+   - **Artifact eligibility**: report the package/publication status and returned missing prerequisites. If no package exists, report **NOT STARTED** for package preparation; do not describe the deal as ready.
+   - **Human approval**: report only the persisted approval state. This read does not approve an IC package.
    - **Tier-1 blockers** (one row per blocker): `assumption_id`, `statement`, `status`, `priority`, recommended resolution
    - **Tier-2 blockers** (unsupported high-priority): `assumption_id`, `statement`, `missing_links`, recommended source to attach
    - **Warnings** (weak/partial evidence): `assumption_id`, `statement`, `evidence_strength`, why this is weak, what to add to strengthen it
    - **Counts**: `total`, `open`, `blocking`, by `evidence_strength`
    - **Package state** (if a package exists): `version`, `status`, `approved_at`, and `approval_evidence_snapshot.summary` — the snapshot that was captured at the last approval attempt or will be captured next.
+
+## Readiness boundaries
+
+When returned, use `assessment_status` with `assessment_scope` and
+`degraded_checks`; this is tracked-assumption coverage, not whole-deal completion.
+Use `publication_readiness.capabilities` for each returned capability's `status`,
+`allowed`, reason, and next action. Eligibility for financial display, valuation,
+returns, or memo export does not imply eligibility for IC approval. Preserve
+`approval_status: "unknown"` unless a separate authoritative package read proves
+human approval. These fields are optional on older servers: missing means unknown.
+
+Read the returned assessment/coverage, `source_support_validation`, quality flags,
+and package state independently. `source_support_validation: "not_performed"`
+means support has not been checked, even if every tracked assumption is closed.
+A source link or a passing quote-existence check does not prove the linked
+statement. Never fill absent counts, statuses, or validation results with zeros
+or passes. A failed lookup is **degraded/unknown**, not a clean bill of health
+and not a newly invented policy blocker; preserve the existing fail-soft policy.
+Only the authoritative approval surface decides eligibility and human approval.
+Do not run analysis, generate a package, or modify controls during this check.
 
 ## Why two tiers
 

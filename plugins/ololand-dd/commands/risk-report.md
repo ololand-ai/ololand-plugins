@@ -38,6 +38,22 @@ Generate a comprehensive risk assessment using OloLand's institutional risk taxo
 
 Mixing severity-derived probabilities with source-supported ones in the same percentage column is a false-precision bug; the rendering field exists specifically to prevent that.
 
+## Evidence and issue groups
+
+Report quote existence separately from claim support. A retrieved clause may be
+draft, historical, conditional, or hypothetical; do not promote it to a current
+obligation. Preserve returned support verdicts and contradictory excerpts; absent
+support validation means unverified. Source grade and extraction confidence are
+not probability estimates. If probability metadata is missing, report unknown
+rather than inventing a numeric probability.
+
+Group by returned canonical issue identity when available and retain member
+risk IDs and source versions. Otherwise identify any analyst grouping as
+provisional. Count unique issues separately from records and citations. Do not
+sum overlapping/correlated dollar impacts or silently delete duplicates. Report
+retrieval coverage; an empty or partial risk register is not a completed clean
+risk assessment.
+
 ## Report Format
 
 Present as structured markdown with:

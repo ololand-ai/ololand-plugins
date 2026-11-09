@@ -29,10 +29,17 @@ This command walks the assumption ledger for a deal and reports the IC-blocker s
 4. Call `list_deal_assumptions` with `priority=critical` and `priority=high` to verify nothing in the tracked-but-not-blocking state has been overlooked (e.g., suggested assumptions waiting to be promoted).
 5. Render the result as a structured review:
 
-   - **IC status**: Clear / Blocked (with count)
+   - **Tracked-control gate**: Blocked (with returned count) / no known tracked-control blockers. Never translate `ic_blocked=false` into IC-ready or approved.
+   - **Assessment and source support**: preserve returned state, coverage, and `source_support_validation`. Empty ledger means not assessed; absent metadata means unknown; lookup failure means degraded, not zero blockers. This does not create a new approval-policy blocker.
    - **Blockers**: table of `id`, `statement`, `category`, `priority`, `status`, `evidence_strength`, `missing_links`
    - **By category**: count of open assumptions per category (financial / commercial / operational / market / legal / regulatory / hr / technical / financing / growth / margin / capex / wacc / terminal / other)
    - **Recommended next actions**: for each blocker, the most concrete next step (verify with X document; mitigate via Y; mark accepted with a risk-acknowledgment note; invalidate if the underlying premise no longer holds).
+
+Readiness also depends on source support, eligible artifacts, and the human approval
+state. Report those separately through `/ic-approve-readiness`; closing a tracked
+assumption alone proves none of them. A status review is read-only. Transition a
+control only when the user requests that specific change; acceptance records a
+risk decision and must not be presented as verification of its premise.
 
 ## Status transitions
 

@@ -39,6 +39,28 @@ OloLand uses validated computation engines for all financial models. Never gener
 - Precedent transactions: Recent M&A deal premiums
 - Peer selection by industry, size, geography, margin profile
 
+## Financial identity before comparison
+
+Every material figure needs the returned entity scope (target, acquirer, or
+combined), fiscal/reporting period, currency and unit scale, financial basis
+(reported, adjusted, forecast, or canonical snapshot), and source/snapshot
+identity. For schema-version 2 snapshots, inspect `basis`, `metrics`,
+`value_state`, `validation_state`, `decision_eligibility`, and `metadata_gaps`.
+`prospective_dcf_input` is a model input scope, not an entity or reporting period.
+An available metric can still have unknown validation and decision eligibility;
+empty `source_refs` do not establish source support. Preserve backend-provided
+basis and coverage metadata. Never guess
+missing scope from the deal title, derive a fiscal period from `created_at`,
+label canonical values reported/adjusted without evidence, or recover quarantined
+raw values from another payload. A timestamp proves freshness, not period.
+
+If metadata is absent on this rail, mark it unknown and retrieve an authorized
+source for a separate comparison. For example, target FY2025 reported EBITDA
+and combined FY2026 forecast EBITDA are different observations, not a discrepancy
+to reconcile away. Compare like periods/entities/bases; otherwise explain the
+mismatch before calculating a variance. Null or withheld amounts are gaps, not
+zero. Scenario arithmetic is not independent source verification.
+
 ## Cross-Document Reconciliation
 
 Before any valuation, verify input data consistency:

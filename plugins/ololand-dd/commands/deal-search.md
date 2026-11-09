@@ -21,7 +21,7 @@ Search across all documents in a deal's data room using hybrid search (dense + s
 
 1. Call `search_deal_documents` with the deal_id and query.
 2. Present results with:
-   - Document name and page number
+   - Document name and actual returned locator (PDF page, spreadsheet cell, structural span, or converted-text line); unknown if absent
    - Relevant excerpt (highlighted match)
    - Relevance score
 3. If the query implies a financial figure, cross-reference with `get_financial_snapshot` to check consistency.
@@ -68,6 +68,43 @@ structure-based access to the same data-room text, complementing
   file_id, note_number)` reads a numbered note in full, including its
   outgoing `cross_references` — follow a Note 11 → Note 8 → Note 18 chain with
   repeated calls, or `list_cross_references` for the whole graph at once.
+
+## Native spreadsheet tables
+
+When the connected `read_table` schema and response support native workbook
+evidence, an empty `table_label` discovers `available_tables`; use the returned
+stable table ID or exact label to select one. Preserve `source_hash`,
+`source_version`, `worksheet`, `range`, `table_id`, and `evidence_kind`. A native
+cell address is a valid original locator only for that identified workbook
+version. Do not map converted-text offsets to cells.
+
+Keep literal values, formulas, and imported cached values distinct. Native
+extraction does not recalculate formulas; `cache_status: "unverified"` or
+`"missing"` cannot be described as a verified result. Header bindings are
+available only when actually returned; a worksheet used-range alone does not
+prove row/column meaning, reporting period, currency, or scale. Resolve an
+ambiguous label with the returned choices. `table_not_materialized`,
+`unsupported_format`, or `source_unreadable` is a capability/data gap, not proof
+of an empty workbook. Existing documents may need an explicitly authorized
+reingestion in the app. Do not launch one or a paid analysis from a read request.
+On an older server, use only its callable schema and report missing native
+workbook provenance rather than claiming this path ran.
+
+## Partial retrieval and absence claims
+
+Inspect returned coverage, truncation, and continuation fields before summarizing
+completeness. Continue with the returned cursor/offset and the same query/document
+when the current callable schema supports it; do not invent parameters for older
+servers. Stop when coverage is complete, a reported failure prevents continuation,
+or the agreed bound is reached, and disclose the unread portion. A structural read
+may be bounded even when described as full text. A missing table graph or a search
+with no matches is a retrieval gap, not proof the source contains no such table,
+clause, risk, or figure. Only assert absence within the scope actually reviewed.
+
+For financial comparisons, apply the `financial-valuation` identity rules:
+entity, reporting period, basis, currency/units, and source/snapshot must match
+or be explicitly labeled as different. Do not overwrite a governed model with
+a separately retrieved figure.
 
 Use these when the user names a specific document, section, table, or note —
 reach for `search_deal_documents` when they're asking a question and don't
