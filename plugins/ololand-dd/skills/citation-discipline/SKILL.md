@@ -11,7 +11,10 @@ Every dollar figure, percentage, multiple, ratio, name, date, or factual claim a
 
 When `search_deal_documents` (or any document-retrieval MCP tool) returns evidence, each chunk is prefixed with a stable reference number: `[1] Source: file=10-K.pdf, p.42`, `[2] Source: file=audit.pdf, p.8`, and so on.
 
-After every claim you make in your final answer, write the corresponding `[N]` token. In OloLand-aware UIs (the AI Assistant, Claude Cowork, Claude Code with the plugin loaded), these become clickable links that open the source PDF at the cited page.
+After every claim you make in your final answer, write the corresponding returned
+`[N]` token. Hosts may render these as links. Preserve the returned locator type:
+a converted-text line is not an original PDF page or spreadsheet cell. Only
+claim page/cell navigation when the result actually supplies that provenance.
 
 Examples:
 - "SigmaTron's revenue declined 18.5% YoY to $304.7M in FY2025 [1]."
@@ -28,6 +31,28 @@ Use multiple numbers in one bracket — `[1, 4]` — when a single claim is supp
 4. **Computed metrics show the formula and cite each input.** "EBITDA margin = $7.7M ÷ $304.7M = 2.5% [1]" — the inputs come from `[1]`.
 5. **No round-trip hallucination.** Don't restate a number you computed as if a source said it.
 6. **Greetings and identity questions don't need citations.** This rule only applies when you're answering a factual deal question.
+
+## Coverage, locators, and claim support
+
+- Inspect truncation, coverage, and continuation metadata on each read. Follow
+  returned cursors/offsets with the same document and query until the requested
+  scope is covered or a stated bound is reached. If continuation is unavailable
+  or fails, report the reviewed subset and unresolved scope. A bounded semantic
+  search or no matches cannot establish document-wide or corpus-wide absence.
+- Preserve document ID, actual locator type, and returned source version/hash
+  when available. Never turn converted-text line offsets into PDF pages, row
+  ordinals into cell addresses, or guessed locations into citations. If `[N]`
+  markers are absent, use the returned source identifier and locator in prose;
+  explicitly state the missing locator instead of manufacturing a marker.
+- Quote existence proves that text was found, not that it entails the claim.
+  Preserve returned claim-support verdicts; distinguish **supported**, **partial**,
+  **contradicted**, **unverified**, and **not applicable** when available. If no
+  support check ran, say unverified rather than inferring a pass from a source
+  link, source grade, extraction confidence, or quote match.
+- Check entity, period, negation, conditions, and status around the quote. A draft
+  lease clause, historical obligation, or hypothetical scenario is not a current
+  executed obligation. Label analyst inference and user assumptions separately
+  from supported document facts, and retain conflicting evidence.
 
 ## Failure modes to avoid
 

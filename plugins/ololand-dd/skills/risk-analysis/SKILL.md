@@ -46,6 +46,22 @@ When evaluating financial risks, apply these deterministic tests:
 | 2 | Low | Minor. Identifiable but unlikely to materially affect valuation or deal structure. |
 | 1 | Minimal | Negligible. Standard industry risk, no specific mitigation needed. |
 
+## Evidence and duplicate issues
+
+Severity, source grade, extraction confidence, and probability are different
+concepts. Show a numeric probability only when returned probability metadata
+supports it; otherwise preserve qualitative or unknown status. The scale above
+is a methodological rubric, not a license to derive percentages from severity.
+Use `citation-discipline` to separate quote existence from claim support, and
+retain current/draft/historical/hypothetical status and contradictory evidence.
+
+Use returned canonical issue groups when available. Keep every underlying risk
+ID, source, and historical record visible in the group. If no server grouping
+exists, label any analyst grouping as provisional. Do not delete duplicate
+records or count multiple citations/versions of the same issue as independent
+risks. Do not sum correlated dollar impacts without an explicit, returned
+aggregation basis; retain the original estimates and disclose overlap.
+
 ## Cross-Deal Risk Calibration
 
 Before assessing risks, check historical patterns:

@@ -1,6 +1,6 @@
 {
   "name": "ololand-dd",
-  "version": "1.27.3",
+  "version": "1.27.4",
   "description": "Institutional due diligence for Claude — deterministic DCF / LBO / Monte Carlo / Real Options engines, 311-factor risk taxonomy (67 diligence categories) with SaaS / healthcare / real-estate / industrial overlays, forensic QoE primitives, cross-document reconciliation (CPA > tax > management > AI), MaskablePPO war-game simulation, assumption controls that gate IC approval, analytical workbench tools for QoE/compliance/scenarios/earnings, value-impact ledger reads, deal-health actions, workbooks with template-driven population, acquisition-financing prep (deterministic analysis, provider-sourcing prep, lender pre-reads), company discovery, watchlists, IC-package lifecycle dispatch, advisory requests, external-artifact grading (the Cowork adoption funnel) and cross-document conflict detection, verified forensic screen marketplace support, and a regulator-grade audit trail with replay and compliance-framework exports. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist) plus a flywheel that retrains from analyst corrections. Counter-positions Anthropic's native private-equity plugin.",
   "author": {
     "name": "OloLand",
@@ -66,7 +66,7 @@
               "description": "Draft case, not run. Baseline read-only review. Setup: resolve a dedicated, reviewer-authorized deal with a financial snapshot and sourced risk register. Execution is blocked until that account, company scope, and data are supplied. Success requires output reconciling to returned records without starting an analysis or model run.",
               "prompt": "Show the current financial snapshot and latest risk register for the review deal without refreshing any analysis or models.",
               "tools_triggered": "get_deal, get_financial_snapshot, get_deal_risks",
-              "expected_behavior": "Use the resolved deal_id for the three reads. Report only returned snapshot figures and the reviewed risk subset, with source references and coverage gaps. Honor qualitative probability_rendering rather than presenting severity proxies as probabilities. Do not call run_due_diligence, run_deal_model, run_monte_carlo_simulation, or report-generation tools."
+              "expected_behavior": "Use the resolved deal_id for the three reads. Report only returned snapshot figures and the reviewed risk subset, with source references and coverage gaps. Keep entity, reporting period, basis, currency/units, and snapshot identity explicit or unknown; do not compare unlike bases. Separate quote existence from claim support and group duplicate issues without summing correlated impacts. Follow supported continuation or disclose the unread scope. Honor qualitative probability_rendering rather than presenting severity proxies as probabilities. Do not call run_due_diligence, run_deal_model, run_monte_carlo_simulation, or report-generation tools."
             },
             {
               "description": "Draft case, not run. Explicit DCF candidate run. Setup: a reviewer-authorized deal with sufficient model inputs and a known governed DCF or documented governed-read gap. Execution is blocked until write scope and reviewer data are supplied. Success requires one candidate run and separate candidate/current identities.",
@@ -84,7 +84,7 @@
               "description": "Draft case, not run. IC readiness and human approval handoff. Setup: a review deal with a stored IC package and known assumption/evidence states, including blocked or weak-evidence examples. Execution is blocked until reviewer access and that fixture state are available. Success requires separate blocker tiers and an accurate human-only handoff.",
               "prompt": "Prepare an approval-readiness review for the review deal and show how an authorized person can approve it in OloLand. Do not generate a new package or change assumptions.",
               "tools_triggered": "get_assumption_control_summary, get_assumption_evidence_pack, get_ic_package",
-              "expected_behavior": "Read the resolved deal control summary, evidence quality_flags, and current IC package. Separate unresolved high/critical controls, unsupported high-priority evidence, and weak/partial warnings. Preserve returned package status, provenance, and view_url. Explain approval occurs through the human-session app surface; do not invoke approve_ic_package, set_assumption_status, generation, or verifier overrides. Missing evidence must not be labeled ready."
+              "expected_behavior": "Read the resolved deal control summary, evidence quality_flags, and current IC package. Separate unresolved high/critical controls, unsupported high-priority evidence, and weak/partial warnings. Preserve returned package status, provenance, and view_url. Explain approval occurs through the human-session app surface; do not invoke approve_ic_package, set_assumption_status, generation, or verifier overrides. Missing evidence must not be labeled ready. An empty ledger is not assessed and missing metadata is unknown; ic_blocked=false is only no known tracked-control blockers. Keep assessment, policy blockers, artifact eligibility, and persisted human approval separate; a failed lookup is degraded without inventing a policy gate."
             },
             {
               "description": "Draft case, not run. Source-backed external-artifact review. Setup: the reviewer supplies a nonconfidential externally drafted paragraph with figures and a dedicated deal with an ingested corpus that can confirm or contradict it. Execution is blocked until that paragraph, corpus, and permissions are supplied. Success requires returned per-claim verdicts and provenance rather than manufactured support.",
@@ -111,7 +111,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "1.27.3 rewrites the pre-screen command's money placeholders and setup wording so the directory no longer reads them as environment-variable credentials. Pre-screen output and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation."
+        "release_notes": "1.27.4 clarifies assessment versus approval readiness, financial scope and period, partial retrieval and valid source locators, claim support and duplicate risks, and bounded scenario correction handoffs. Missing evidence stays unknown; backend availability and live reviewer validation remain separate from package validation."
       },
       "portable": {
         "agentRoles": {

@@ -40,4 +40,5 @@ Render:
 
 - Approval is a controlled workflow, not a drafting shortcut. Approval is app/human-session only; never invoke `approve_ic_package` through MCP, even with explicit user instruction.
 - Do not set `override_verifier_block=true` unless the user explicitly gives an override reason. Preserve the reason.
-- If assumptions are unresolved or evidence is missing, do not summarize as "ready".
+- If assumptions are unresolved or evidence is missing, do not summarize as "ready". Keep assessment coverage, tracked-policy blockers, artifact eligibility, and human approval separate; `ic_blocked=false` means only no known tracked-control blockers.
+- For a status read, a missing package is not started; running/partial/failed/ineligible/unavailable states retain the returned reason. Absence is not a finding that there are no risks. Never generate, retry, or approve from a read request, and do not infer a lifecycle state an older server did not return.
