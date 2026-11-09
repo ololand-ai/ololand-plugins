@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.4
+version: 1.28.0
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -174,7 +174,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.4 clarifies assessment versus approval readiness, financial scope and period, partial retrieval and valid source locators, claim support and duplicate risks, and bounded scenario correction handoffs. Missing evidence stays unknown; backend availability and live reviewer validation remain separate from package validation.
+    release_notes: 1.28.0 reads the IC gate evaluator's typed blocker list (unsourced figure, source conflict, open assumption, stale dependent, unsigned workstream, open closing condition, missing readiness input) from the control summary in /ic-approve-readiness, with override permission and per-stage status, falling back to the assumption tiers on older servers. Missing evidence stays unknown; backend availability and live reviewer validation remain separate from package validation.
   portable:
     agentRoles:
       dd-analyst:
