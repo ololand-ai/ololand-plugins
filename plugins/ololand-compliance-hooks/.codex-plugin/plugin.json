@@ -1,6 +1,6 @@
 {
   "name": "ololand-compliance-hooks",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcement, local provenance/audit ledgers, tier-capacity warning, and evidence-quality warning for OloLand's IC approval gate. Server-side MCP rail auditing remains authoritative. Populates the empty hooks/ directory Anthropic's private-equity, financial-analysis, investment-banking, equity-research, and wealth-management vertical plugins ship with.",
   "author": {
     "name": "OloLand",
@@ -116,7 +116,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "0.2.5 synchronizes package metadata and OAuth setup guidance. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation."
+        "release_notes": "0.2.6 fixes the local MNPI guard hook so a blocked tool call carries its denial reason to the model. Portable workflows and authorization boundaries are unchanged; live reviewer testing and approval remain separate from package validation."
       },
       "portable": {
         "hooksAdapter": {
@@ -127,7 +127,7 @@
             "scripts/audit_log.sh": "271dde8d0ba0b0a54b2c4882cb186cb6479832ede33da3f35c34d3ba3d86ce0c",
             "scripts/citation_enforcer.sh": "9309b9f278b2f7ae16dcf7184eae4b06e4d26ae41193f2a3bd19ca8acb8bc549",
             "scripts/evidence_quality_warning.sh": "cf3fdf19d1be9da4a0042f3e2112d5d84953e183eff3a16c52f3f5361e899ee1",
-            "scripts/mnpi_guard.sh": "af83a7b5fad353531697d894a54520bf179e8848b53ca4f51d2f5f2cc65103b4",
+            "scripts/mnpi_guard.sh": "db314b2359e2478a3a62070bf9396e1292f4a14f8095702b46ba0ba3a28187c3",
             "scripts/provenance_writeback.sh": "a805d18cebc8137073079be7634ce222e3d689f9b5a2f98c88111aed7829afea",
             "scripts/session_banner.sh": "70fb1d6beac0dced5d97b6ff71e5e8423812468c380ec2d0a7ecab2de5d63b5c",
             "scripts/tier_capacity_warning.sh": "028126522ba76b2cc2e22669ef503f81e97472111eb539ba51cddf95f7b7a047"

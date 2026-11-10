@@ -2,7 +2,7 @@
   "name": "ololand-compliance-hooks",
   "displayName": "OloLand Compliance Hooks",
   "description": "Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcement, local provenance/audit ledgers, tier-capacity warning, and evidence-quality warning for OloLand's IC approval gate. Server-side MCP rail auditing remains authoritative. Populates the empty hooks/ directory Anthropic's private-equity, financial-analysis, investment-banking, equity-research, and wealth-management vertical plugins ship with.",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "author": {
     "name": "OloLand",
     "email": "support@ololand.ai"
