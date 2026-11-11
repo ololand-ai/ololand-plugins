@@ -2,7 +2,7 @@
 
 Date: 2026-05-12
 
-OloLand's three plugins (`ololand-dd`, `ololand-forensic-qoe`, `ololand-compliance-hooks`) ship to Codex CLI from the same marketplace repo as Claude Code and Claude Cowork. Same plugins, same MCP server, three surfaces.
+OloLand's plugins (`ololand-dd`, `ololand-forensic-qoe`, `ololand-compliance-hooks`, `cim-generator`) ship to Codex CLI from the same marketplace repo as Claude Code and Claude Cowork. Same plugins, same MCP server, three surfaces.
 
 ## Prerequisites
 
@@ -73,8 +73,8 @@ Expected: Codex calls `ololand.list_deals` and returns your OloLand deals.
 
 | Plugin | Purpose |
 |---|---|
-| **`ololand-dd`** | Institutional due diligence + middle-office assumption controls + IC approval gate. 48 commands. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist). |
-| **`ololand-forensic-qoe`** | Nine forensic workflows spanning Beneish, Benford, EBITDA bridge, journal-entry testing, lapping, conflict detection, verification, and sourced covenant/cross-default/MAC/MAE clause analysis. $99 / 72-hour Pre-LOI screen with Full QoE at $999, vs Big-4 QoE $150-500K / 4-8 weeks. |
+| **`ololand-dd`** | Institutional due diligence + middle-office assumption controls + IC approval gate. 60 commands. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist). |
+| **`ololand-forensic-qoe`** | Nine forensic workflows spanning Beneish, Benford, EBITDA bridge, journal-entry testing, lapping, conflict detection, verification, and sourced covenant/cross-default/MAC/MAE clause analysis. Pre-LOI screen and Full QoE are included in OloLand Pro and above, with no per-deal price. |
 | **`ololand-compliance-hooks`** | MNPI guard (PreToolUse), citation enforcer (PostToolUse on memo/CIM/dossier), audit log, tier-capacity warning, evidence-quality warning. Drops into Codex's hooks scaffold the same way it drops into Claude's. |
 
 ## Troubleshooting

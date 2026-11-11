@@ -1,5 +1,5 @@
 ---
-description: "Run a third-party merger analysis on an announced or rumored acquisition. Use when the user is not a principal in the deal (banker, equity analyst, merger-arb, antitrust counsel, target board, journalist). Runs on Developer as part of the bounded single-deal trial."
+description: "Run a third-party merger analysis on an announced or rumored acquisition. Use when the user is not a principal in the deal (banker, equity analyst, merger-arb, antitrust counsel, target board, journalist)."
 ---
 
 # /dd-merger-analyze
@@ -32,4 +32,4 @@ If the user gave a natural-language phrasing ("examine Capital One's acquisition
 
 ## Subscription
 
-Runs on Developer as part of the bounded single-deal trial, metered against the monthly credit budget — no longer Pro-gated. Note `analyze_announced_merger` creates a deal, so a user who has already used their one deal will hit the one-deal-limit CTA. If any call returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.
+Runs during the 7-day Pro trial and on paid plans, metered against the plan's credit budget. With no active plan (an expired trial or a lapsed subscription) the account is read-only: existing deals can be read, but there are no credits and no new deals. Note `analyze_announced_merger` creates a deal, so it is refused on a read-only account. If any call returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.

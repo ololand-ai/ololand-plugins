@@ -18,9 +18,10 @@ Use this command when the user wants to discover companies, screen a market, sea
 
 1. Prefer `mcp__ololand__natural_language_company_search` for prose queries with multiple criteria. It decomposes intent and filters.
 2. Use `mcp__ololand__search_company_discovery` when the user supplies structured filters, mode, company scope, or wants lookup/discover/signals explicitly.
-3. For each promising result, present the canonical name, domain/ticker when present, source summary, signal count, and why it matched.
-4. If the user wants ongoing monitoring, route to `/watchlist` and call `mcp__ololand__create_watchlist` with the same criteria.
-5. If the user wants to diligence a result immediately, use `/new-deal` or `mcp__ololand__create_deal` with the selected company.
+3. Use `mcp__ololand__search_company_universe` to filter the full company universe by `name`, `state`, `sector`, or `sic_code`. It returns operating companies by default (`classification` of `fund`, `spv`, or `all` includes investment vehicles); page with `limit` and `offset` and report `total_count`.
+4. For each promising result, present the canonical name, domain/ticker when present, source summary, signal count, and why it matched.
+5. If the user wants ongoing monitoring, route to `/watchlist` and call `mcp__ololand__create_watchlist` with the same criteria.
+6. If the user wants to diligence a result immediately, use `/new-deal` or `mcp__ololand__create_deal` with the selected company.
 
 ## Output
 

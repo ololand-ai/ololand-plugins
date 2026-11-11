@@ -397,7 +397,7 @@ class PortableExports(unittest.TestCase):
         dd = self.archives["ololand-dd"]["ololand-dd/skills/ololand-dd-qoe-analysis/SKILL.md"].decode()
         self.assertIn("Do not transfer this workbench's native snapshot fallback", dd)
         self.assertIn("source_claim` fields are not verified", dd)
-        self.assertEqual(sum(path.endswith("/SKILL.md") for archive in self.archives.values() for path in archive), 91)
+        self.assertEqual(sum(path.endswith("/SKILL.md") for archive in self.archives.values() for path in archive), 96)
 
     def test_cim_openai_export_is_portable_and_native_sources_are_unchanged(self):
         files = self.archives["cim-generator"]
