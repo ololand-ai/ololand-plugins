@@ -1,5 +1,5 @@
 name: ololand-dd
-version: 1.27.4
+version: 1.27.5
 displayName: OloLand DD
 category: Productivity
 description: >-
@@ -174,7 +174,7 @@ openai:
           any application fees from my saved card.
   publication:
     countries: []
-    release_notes: 1.27.4 clarifies assessment versus approval readiness, financial scope and period, partial retrieval and valid source locators, claim support and duplicate risks, and bounded scenario correction handoffs. Missing evidence stays unknown; backend availability and live reviewer validation remain separate from package validation.
+    release_notes: 1.27.5 adds /buyer-list for SEC-filed repeat strategic acquirer rankings via search_strategic_acquirers and extends /precedents with --gotchas quote-verified deal-break mode, private-target sector_scope recall, target_ownership filters, and mini-tender exclusion.
   portable:
     agentRoles:
       dd-analyst:

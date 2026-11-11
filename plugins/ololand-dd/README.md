@@ -55,7 +55,8 @@ After connecting, list the accessible deals and select the intended workspace an
 | `/war-game` | RL-powered competitive strategy simulation (MaskablePPO, 1,000-episode rollouts, 16 quarters) |
 | `/talk-to-deal` | The fast conversational answer: a quick read-only question over the deal's system of record, asking for rounded numbers and a bottom line |
 | `/source` | Map and persist a private-company research universe (`map`), prepare a read-only watchlist brief (`brief`), inspect source access (`connections`), or run sourcing and standing-thesis workflows |
-| `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals and market context, with outcome labels and SEC filing citations |
+| `/precedents` | Search ~61K public M&A transactions (2006-2026) for precedent deals, private-target comps (`sector_scope=either`), or quote-verified deal-break gotchas (`--gotchas`), with SEC filing citations |
+| `/buyer-list` | Rank repeat SEC-reporting strategic acquirers and roll-up platforms by sector, EV band, and disclosed multiples from ~61K public M&A filings |
 | `/firm-calibration` | How accurate this firm's own predictions have been — accuracy by prediction type, systematic biases, risk-category precision, and the fields analysts keep overriding (firm-wide; `/calibrate-vs-history` is the per-deal counterpart) |
 | `/deal-canvas` | Create or update charts, KPI rows, tables, and infographics on the deal canvas — every value engine-bound or cited, never invented |
 
@@ -112,7 +113,7 @@ Every deal compounds. Analyst corrections feed the retraining pipeline on Vertex
 | **Reports + Exports** | `generate_investment_memo`, `generate_cim`, `export_deal_dossier`, `export_deal_okf_bundle` |
 | **Advisory + Managed Agents** | `list_deal_advisory_engagements`, `request_advisory_engagement`, `launch_managed_context_agent` |
 | **Deal Network** | `list_network_participants`, `create_network_listing`, `request_network_intro` |
-| **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals`, `search_precedent_deals` |
+| **Market Intelligence** | `research_market`, `deep_market_research`, `search_pe_buyers`, `search_targets`, `search_ma_deals`, `search_precedent_deals`, `search_strategic_acquirers` |
 | **Strategy** | `run_war_game_simulation`, `analyze_build_vs_buy`, `generate_acquisition_thesis` |
 | **Sourcing** | `batch_triage_companies`, `save_sourcing_candidates`, `update_sourcing_candidate`, `log_sourced_lead` |
 | **Financing** | `get_financing_workflow_status`, `run_financing_analysis`, `prepare_financing_sourcing`, `prepare_financing_lender_package`, `list_capital_programs`, `prepare_capital_plan`, `evaluate_capital_eligibility` |
