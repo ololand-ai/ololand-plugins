@@ -59,7 +59,7 @@ Close with one line on what the firm should do about it — e.g. "the firm's exi
 
 ## Cost
 
-A metered read (1 credit), on the same footing as the other institutional-memory reads. Not available on the free post-trial allowlist — if a call returns `tier_gated: true`, surface the upgrade CTA from the response rather than pre-refusing.
+A metered read (1 credit), on the same footing as the other institutional-memory reads. Not available once a trial has ended without a plan (a read-only account) — if a call returns `tier_gated: true`, surface the upgrade CTA from the response rather than pre-refusing.
 
 ## Why this matters
 

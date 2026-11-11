@@ -1,8 +1,8 @@
 # ololand-forensic-qoe
 
-> Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen wedge.
+> Forensic Quality-of-Earnings primitives as a standalone Claude plugin. The Pre-LOI Forensic Screen.
 
-This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone plugin on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen for $99 with a 72-hour SLA. Full QoE is $999.
+This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone plugin on Claude Cowork. It's the math layer of QoE — the same battery Big-4 runs in their $150-500K Quality-of-Earnings opinion, available as a Pre-LOI Forensic Screen and a Full QoE workflow, both included in OloLand Pro and above.
 
 ## Commands
 
@@ -15,7 +15,7 @@ This plugin wraps OloLand's deterministic forensic-QoE engines as a standalone p
 | `/journal-test` | Journal-entry tester | Period-end concentration, round-number frequency, weekend postings, reversing-entry anomalies. |
 | `/lapping-check` | Lapping detector | Detects AR-lapping fraud cycles by tracing customer-to-cash application. |
 | `/conflicts` | Deal Document Conflict Detector | Finds cross-document discrepancies in figures, dates, entities, ownership, terms, obligations, and representations. |
-| `/legal-risk` | `analyze_covenants` + `analyze_mac_mae` | Analyzes sourced covenant clauses and MAC/MAE provisions, preserving source quotes and risk scope. |
+| `/legal-risk` | `analyze_covenants` + `analyze_mac_mae` | Pattern-based analysis of sourced covenant clauses and MAC/MAE provisions, preserving source quotes and risk scope. |
 | `/verify` | Corpus verifier | Checks an externally drafted artifact against the ingested deal corpus, with per-figure PASS / FAIL / UNVERIFIED output. |
 
 ## Install
@@ -51,7 +51,7 @@ other clients remains subject to their actual schema and returned basis.
 
 ## Why this exists
 
-Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We sell it standalone, pre-LOI, with full methodology disclosure, and offer a $999 Full QoE workflow when the buyer wants a deeper package.
+Big-4 QoE engagements take 4-8 weeks and cost $150-500K. Most of that price is fieldwork, a signed CPA partner opinion, and E&O coverage — not the math. The deterministic statistical layer (Beneish, Benford, EBITDA bridge, journal-entry testing, lapping) is software-margin work. We offer it standalone, pre-LOI, with full methodology disclosure, plus a Full QoE workflow when the buyer wants a deeper package. Both are included in OloLand Pro and above; there is no per-deal price.
 
 For the broader OloLand DD plugin (deterministic DCF/LBO, 311-factor risk taxonomy, cross-deal memory), install [`ololand-dd`](../ololand-dd) from the same marketplace.
 

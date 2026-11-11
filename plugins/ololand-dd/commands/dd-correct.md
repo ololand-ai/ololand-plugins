@@ -1,5 +1,5 @@
 ---
-description: "Submit a correction on a claim in an OloLand agent output (e.g., a wrong number, a missing citation). The correction lands in OloLand's analyst_corrections store stamped surface=cowork and feeds the SFT pipeline."
+description: "Submit a correction on a claim in an OloLand agent output (e.g., a wrong number, a missing citation). The correction lands in OloLand's analyst_corrections store stamped surface=cowork for review."
 ---
 
 # /dd-correct

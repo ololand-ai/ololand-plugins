@@ -1,5 +1,5 @@
 ---
-description: "Read the firm's standing institutional playbook attached to this deal — WACC ranges, EV/Revenue and EV/EBITDA ceilings, target IRR, min MOIC, approval thresholds, preferred frameworks, custom rules. Use at the start of any deal turn that produces a number under the firm's name."
+description: "Read the firm's standing institutional playbook attached to this deal, or record a standing investment rule into it — WACC ranges, EV/Revenue and EV/EBITDA ceilings, target IRR, min MOIC, approval thresholds, preferred frameworks, custom rules. Use at the start of any deal turn that produces a number under the firm's name."
 ---
 
 # /firm-playbook
@@ -48,6 +48,10 @@ Preferred frameworks: <list>
 Custom rules:
   - <name>: <condition>  [severity: <high | medium | low>]
 ```
+
+## Recording a standing rule
+
+When the user states a standing investment rule ("target IRR is 25% or better", "no deals under 10M of revenue"), confirm the exact values, then call `mcp__ololand__set_firm_playbook_criteria` with `target_criteria`, `valuation_thresholds`, `preferred_frameworks`, or `rules`. Values are plain numbers: actual USD and decimals (0.15, not "15%"); a malformed value is refused. The write is additive and always creates a new playbook version. A risk-category position (waive, downweight, escalate) belongs in `set_firm_risk_policy`, not here.
 
 ## Empty-playbook handling
 

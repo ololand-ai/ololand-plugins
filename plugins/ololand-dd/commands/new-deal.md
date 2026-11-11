@@ -20,7 +20,7 @@ Create an OloLand deal in seconds. Type a public ticker (e.g. `SNOW`) and the sy
 
 The instruction below is for the model executing this command.
 
-> **Developer can create deals.** Developer is a bounded single-deal trial — `create_deal` runs on Developer (one active deal, metered against the monthly credit budget). Never pre-refuse deal creation; if the one-deal limit is reached, surface the tool's upgrade CTA.
+> **Trial accounts can create deals.** `create_deal` runs during the 7-day Pro trial and on paid plans. Never pre-refuse deal creation; if the tool refuses (for example an expired trial, which is read-only with no new deals), surface the tool's upgrade CTA.
 
 1. **Resolve the company first.** Call the `resolve_company` MCP tool with the user's query. If the user typed a clean ticker (`SNOW`, `MSFT`, `BRK.B`), pass `hint="public"`. Otherwise leave `hint` unset.
 

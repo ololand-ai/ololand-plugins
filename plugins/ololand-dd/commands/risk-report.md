@@ -95,6 +95,10 @@ user before recording a `waive` policy so they don't expect the risk to stop
 appearing. A single one-off disagreement about one finding is
 `submit_risk_correction`, not this tool.
 
+## Proposing that a finding is resolved
+
+When cited evidence shows a stored finding no longer stands (mitigated, corrected by a later document, a duplicate, or never a risk), call `mcp__ololand__propose_risk_resolution(insight_id, kind, note, evidence)` with `kind` one of `resolved` / `superseded` / `not_a_risk` / `duplicate` and a `note` naming the document or figure that shows it. This writes a proposal only: the finding stays in the register until a person applies the resolution in the OloLand app. Tell the user it is pending their decision and give the returned `view_url`.
+
 ## Output URL Conventions (STRICT)
 
 When linking to OloLand web app pages in your output, the domain is **`app.ololand.ai`** — never `.com`. Use these canonical paths:

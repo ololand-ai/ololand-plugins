@@ -1,10 +1,10 @@
 ---
-description: Request, inspect, and track paid human verification for a deal's forensic screen. Uses OloLand's verification marketplace and preserves signed artifact lineage for IC provenance.
+description: Request, inspect, and track a human reviewer's check of a deal's forensic screen. The reviewer's sign-off is evidence attached to the IC package with its lineage, not an audit, attestation, or signed opinion.
 ---
 
 # Verification Marketplace
 
-Use this command when the user asks for a human reviewer, verified forensic screen, CPA-style sign-off, external reviewer status, or IC appendix provenance.
+Use this command when the user asks for a human reviewer, verified forensic screen, external reviewer status, or IC appendix provenance.
 
 ## Usage
 
@@ -37,6 +37,7 @@ Render:
 ## Guardrails
 
 - Do not imply automatic payment, escrow, or instant fulfillment. Phase 1 is a manual concierge marketplace with explicit fee/spread accounting.
+- A reviewer's sign-off is review evidence. Do not describe it as an audit, an attestation, a CPA opinion, or an expert-signed opinion.
 - Do not bypass conflict checks. If the tool reports a conflict or blocked assignment, surface that as a blocker.
 - If the user wants to approve IC, pair this command with `/ic-approve-readiness`; human verification is additional evidence, not a substitute for resolving assumption-control blockers.
 

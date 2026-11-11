@@ -73,7 +73,7 @@ openai:
     composerIcon: ./assets/ololand-icon.png
   review:
     commerce: false
-    commerce_description: Subscriptions are purchased separately on https://ololand.ai/pricing.
+    commerce_description: Subscriptions are purchased separately in the OloLand app (https://app.ololand.ai/settings/billing).
       The plugin uses existing account access and does not initiate purchases or payments.
     test_cases:
       positive:

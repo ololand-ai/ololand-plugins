@@ -1,5 +1,5 @@
 name: ololand-forensic-qoe
-version: 0.6.8
+version: 0.6.9
 displayName: OloLand Forensic QoE
 category: Productivity
 description: >-
@@ -80,7 +80,7 @@ openai:
   review:
     commerce: false
     commerce_description: >-
-      OloLand subscriptions are purchased separately on https://ololand.ai/pricing.
+      OloLand subscriptions are purchased separately in the OloLand app (https://app.ololand.ai/settings/billing).
       The plugin uses the connected account's existing access and does not initiate
       purchases or payments.
     test_cases:
@@ -187,7 +187,7 @@ openai:
   publication:
     countries: []
     release_notes: >-
-      0.6.8 republishes the directory-compliant package (OAuth-only connection, no local scripts or credential reads) with no workflow changes. 0.6.6 aligns EBITDA bridge prompts and P3 with an explicit caller-supplied unverified scenario; full source-backed normalized earnings acceptance remains blocked. It preserves a separate OpenAI submission export with a concise listing,
+      0.6.9 removes retired per-deal price and turnaround wording; no workflow changes. 0.6.8 republishes the directory-compliant package (OAuth-only connection, no local scripts or credential reads) with no workflow changes. 0.6.6 aligns EBITDA bridge prompts and P3 with an explicit caller-supplied unverified scenario; full source-backed normalized earnings acceptance remains blocked. It preserves a separate OpenAI submission export with a concise listing,
       OloLand branding, a public support channel, five positive and three negative
       draft review cases, and explicit no-purchasing behavior. Exported skills
       use provider-neutral wording and distinguish standalone forensic tools

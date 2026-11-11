@@ -55,4 +55,4 @@ After ingestion, direct the user to the cockpit (`view_url`). It exposes five he
 
 ## Subscription
 
-The four engine tools and `/dd-merger-analyze` run on Developer as part of the bounded single-deal trial, metered against the monthly credit budget; `/dd-merger-readiness` is a zero-credit read. None are Pro-gated anymore — only the saleable Forensic Screen PDF (`generate_forensic_screen_pdf`) is paid. If a call ever returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.
+The four engine tools and `/dd-merger-analyze` run during the 7-day Pro trial and on paid plans, metered against the plan's credit budget; `/dd-merger-readiness` is a zero-credit read. With no active plan (an expired trial or a lapsed subscription) the account is read-only: no credits and no new deals. If a call ever returns `tier_gated: true`, surface the upgrade CTA at https://app.ololand.ai/settings/billing in your reply.

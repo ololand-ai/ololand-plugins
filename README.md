@@ -13,8 +13,8 @@ This repo is OloLand's plugin marketplace for **Claude Cowork** (Claude Desktop)
 
 | Plugin | Status | What it does |
 |---|---|---|
-| [`ololand-dd`](./plugins/ololand-dd) | v1.27.5 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, and a flywheel that retrains from analyst corrections. |
-| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.8 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
+| [`ololand-dd`](./plugins/ololand-dd) | v1.29.0 | Institutional due diligence: deterministic financial engines, 311-factor risk taxonomy (67 diligence categories), analytical workbench tools, verified forensic screen workflow, war-game RL strategy simulation, deal and portfolio cockpit reads, virtual deal-team briefings, diligence-request tracking, and a firm's reviewed corrections and recorded outcomes feeding that firm's later risk analysis. |
+| [`ololand-forensic-qoe`](./plugins/ololand-forensic-qoe) | v0.6.9 | Forensic earnings workflows with explicit evidence and data gaps. Individual MCP tools and self-serve PDF reports have different coverage; reports are included in Pro and above. OpenAI submission export and draft review cases are documented in [the submission guide](./docs/openai-plugin-submission.md). |
 | [`ololand-compliance-hooks`](./plugins/ololand-compliance-hooks) | v0.2.6 | Drop-in compliance, citation, and provenance hooks for Anthropic's Claude Cowork finance plugins. PreToolUse MNPI guard, PostToolUse citation enforcer, audit-log writeback. Populates the empty `hooks/` scaffold Anthropic's verticals ship with. |
 | [`cim-generator`](./plugins/cim-generator) | v1.1.2 | 14-section CIM generator with provenance — sell-side memorandums built from your reconciled deal data (financial snapshots, risk insights, market research), not LLM prose. View, edit, and export the finished CIM (PDF, DOCX, PPTX) from the deal workspace. |
 
@@ -43,14 +43,11 @@ release process.
 
 You need an OloLand account with access to the company/workspace and deals you want to use. The published plugins connect through host-managed OAuth. Installing a plugin does not sign you in or grant access; connect the `ololand` server explicitly and review the requested permissions.
 
-### Two account rails
+### Account and plans
 
-| Rail | Cost | Access |
-|---|---|---|
-| **Developer (free)** | Sign up at https://app.ololand.ai/signup | Sandbox-only — full MCP tool access against the included sample deal (`Paragon Flight School (Sample)`). Unlimited calls. No payment, no credit card. |
-| **Platform (paid)** | Pro $199/mo, Team $499/mo (2 seats included, +$199/seat), Enterprise (custom) (see [pricing](https://ololand.ai/pricing)) | Access to your own deals + cross-deal memory + outcome flywheel + production volumes |
+Sign up at https://app.ololand.ai/signup. Every signup starts a 7-day Pro trial with no card. Paid plans are Pro $199/mo, Team $499/mo (2 seats included, +$199 per additional seat), and Enterprise (custom).
 
-You can install the plugins on a free Developer account and explore everything against the sample deal — DCF, LBO, Monte Carlo, forensic QoE, risk taxonomy, war-game, all of it. When you're ready to run on your own data, upgrade to a paid plan.
+When a trial ends without a plan the account becomes read-only: existing deals can be read, but there are no credits and no new deals. Plans are managed in the app under Settings → Billing.
 
 ### Connect your OloLand account
 
@@ -104,14 +101,15 @@ The recommended path for analysts running deals through the Cowork UI.
    ololand-ai/ololand-plugins
    ```
 4. Click **Sync**
-5. After ~5-10 seconds, a new pill `ololand-plugins` appears with three plugin cards: `Ololand dd`, `Ololand forensic qoe`, `Ololand compliance hooks`.
+5. After ~5-10 seconds, a new pill `ololand-plugins` appears with four plugin cards: `Ololand dd`, `Ololand forensic qoe`, `Ololand compliance hooks`, `Cim generator`.
 
 ### Step 3 — Install the plugins
 
-Click the **`+`** button on each card to install. After all three installed, your Personal plugins sidebar should list:
+Click the **`+`** button on each card you want. Installed plugins appear in your Personal plugins sidebar:
 - Ololand dd
 - Ololand compliance hooks
 - Ololand forensic qoe
+- Cim generator
 
 ### Step 4 — Verify
 
@@ -120,9 +118,9 @@ Click `Ololand dd` in the sidebar. The detail view should show:
 | Field | Expected value |
 |---|---|
 | Source | Marketplace (`ololand-plugins`) |
-| Version | **1.20.4** or higher |
+| Version | The `ololand-dd` version in the table at the top of this page |
 | Author | OloLand |
-| Skills tab | ~18 skills including `/playbook-recall`, `/calibrate-vs-history` |
+| Skills tab | 22 skills, and commands including `/cockpit`, `/playbook-recall`, `/calibrate-vs-history` |
 | Agents tab | **3 agents**: `dd-analyst`, `forensic-screener`, `war-game-strategist` |
 | Connectors tab | 1 connector named `ololand` |
 
@@ -166,7 +164,7 @@ In any Claude Code chat session:
 /plugin
 ```
 
-This opens the plugin manager TUI. Tab to the **Installed** tab and confirm all three OloLand plugins are listed and enabled. Open `ololand-dd` detail to verify version 1.20.4 and the three agents.
+This opens the plugin manager TUI. Tab to the **Installed** tab and confirm the OloLand plugins you installed are listed and enabled. Open `ololand-dd` detail to verify the version matches the table at the top of this page and that it lists the three agents.
 
 ### Step 5 — Authorize the OloLand connector
 
@@ -191,7 +189,7 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/valuation <deal_id> read [method]` | Read governed DCF / LBO and source-backed Comps. To create a fresh model candidate, explicitly use `/valuation <deal_id> run <method>` or `/valuation <deal_id> refresh <method>`; bare and legacy method-only calls are read-only. |
 | `/qoe-analysis <deal_id> [latest|run]` | Run or retrieve the deal-scoped QoE workbench; optional cross-document conflict scan |
 | `/verify <deal_id>` | Defend every number: verify an OloLand artifact against source docs + engine runs, or grade an externally-drafted memo (e.g. from Claude Cowork) per-claim against the deal corpus |
-| `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis |
+| `/compliance-analysis <deal_id> [ofac|hsr|cfius|all]` | Run sanctions, HSR, and CFIUS analysis (OFAC list is simulated; HSR thresholds at 2024 values) |
 | `/scenario-analysis <deal_id> [stress|market|real-options|all]` | Run stress tests, market simulation, and real-options valuation |
 | `/earnings-analysis <deal_id>` | Analyze earnings-call transcript segments for diligence signals |
 | `/verification-marketplace <deal_id> [status|list|request]` | Track or request human verification for a forensic screen |
@@ -213,6 +211,13 @@ Type `/` in any chat to see autocomplete. Plugin commands are namespaced as `/ol
 | `/deal-search <deal_id>` | Full-text + semantic search across a deal's data room |
 | `/unit-economics <deal_id>` | SaaS cohort retention (NDR/GRR), LTV/CAC, payback, magic number, rule of 40 |
 | `/source <criteria>` | Source new M&A/PE deals from criteria; enrich with contact data; dedupe vs CRM |
+| `/cockpit <deal_id>` or `/cockpit portfolio` | Readiness gates, pending approvals, drivers outside tolerance, the dispatch ledger, and the precomputed financial briefing |
+| `/deal-team <deal_id> [briefing|proposals|item|ask]` | What the virtual deal team filed, its proposals awaiting a human decision, or one asynchronous question to one seat (asynchronous desks are still in verification) |
+| `/diligence-requests <deal_id> [list|create|prepare|submit]` | Track diligence requests and prepare sourced draft responses for human review |
+| `/strategy <deal_id> <framework>` | Porter's five forces, SWOT, value chain, and five more frameworks run against the deal's evidence |
+| `/take-private <deal_id> [target_irr]` | Sponsor-side price ceiling for an announced take-private on a per-share football field; not a recommended price |
+
+The full list of 60 commands is in the [`ololand-dd` README](./plugins/ololand-dd/README.md#commands).
 
 ### Sub-agents
 
@@ -222,7 +227,7 @@ In Cowork, click an agent in the Agents tab and it loads as the lead agent for t
 |---|---|
 | `dd-analyst` | Full DD workflows, IC memo prep, deep deal investigation. The general-purpose specialist. |
 | `forensic-screener` | Pre-LOI forensic deep-dive. Runs all 7 forensic primitives, reconciles findings against source hierarchy, produces an IC-defensible exclusion schedule with severity, $-impact, and citations. |
-| `war-game-strategist` | Stress-testing the deal thesis against competitor responses. Runs 4-scenario MaskablePPO simulation, calibrates vs. similar-deal outcomes, overlays on deterministic DCF, recommends bid adjustment. |
+| `war-game-strategist` | Stress-testing the deal thesis against competitor responses. Runs 4-scenario MaskablePPO simulation, calibrates vs. similar-deal outcomes, overlays on deterministic DCF, and suggests bid sensitivities for human review. |
 
 ### Example workflow — full Pre-LOI DD
 
@@ -260,7 +265,7 @@ For thesis stress-test:
 
 ## Usage — `ololand-forensic-qoe`
 
-The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth without the full DD plugin.
+The standalone Pre-LOI Forensic Screen. Use when you want forensic depth without the full DD plugin.
 
 ### Commands
 
@@ -290,12 +295,12 @@ The standalone Pre-LOI Forensic Screen wedge. Use when you want forensic depth w
 /ololand-forensic-qoe:forensic-screen deal_target_2026
 ```
 
-Returns in 60-90s an IC-defensible exclusion schedule with:
+Returns an IC-defensible exclusion schedule with:
 - Reported EBITDA $X.XM → defensible EBITDA $Y.YM (delta $Z.ZM)
 - Each forensic primitive's verdict (pass / warning / fail)
 - Adjustments table with $ impact and source citations
 - Severity-scored findings (low / medium / high / critical)
-- Recommendation: proceed / proceed with caveats / kill
+- Findings by severity for the deal team to weigh
 
 ---
 
@@ -359,7 +364,7 @@ The `/plugin` command set works in **Claude Code CLI** only.
 
 Likely cached install from before the marketplace rename (was `ololand-dd-plugin`, now `ololand-plugins`). Remove the old marketplace pill, add `ololand-ai/ololand-plugins` fresh, install.
 
-Verify v1.20.4 by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
+Verify the current version by clicking the plugin → Agents tab should show 3 agents (dd-analyst, forensic-screener, war-game-strategist).
 
 ### CLI: `/plugin install` fails with "marketplace not found"
 

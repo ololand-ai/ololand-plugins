@@ -1,6 +1,6 @@
 # OpenAI submission preparation: OloLand Forensic QoE
 
-Status: preparation draft, not submitted or published. Package version: 0.6.8.
+Status: preparation draft, not submitted or published. Package version: 0.6.9.
 
 ## Confirmed publication choices
 
@@ -23,7 +23,7 @@ python3 scripts/generate-plugin-artifacts.py
 ./scripts/check-plugin-artifacts.sh
 ./scripts/check-version-sync.sh
 python3 scripts/export-openai-plugin.py ololand-forensic-qoe \
-  --output /tmp/ololand-forensic-qoe-0.6.8-openai-draft.zip
+  --output /tmp/ololand-forensic-qoe-0.6.9-openai-draft.zip
 ```
 
 The exporter creates portable `plugin.json` and `mcp.json`, copies packaged skills,

@@ -55,7 +55,7 @@ The right workflow on any non-trivial deal session:
 | Assumption status (open/blocking/approved) | `deal_assumptions` — surfaced via `set_assumption_status`. |
 | Conversation-scoped TODO list | `write_todo` / `update_todo` — turn-scoped, not persistent. |
 
-Putting these in `deal_session_memory` muddies the dedicated surfaces; the flywheel can't train on miscategorized data.
+Putting these in `deal_session_memory` muddies the dedicated surfaces; miscategorized data cannot inform later analysis.
 
 ## Companion tools
 
