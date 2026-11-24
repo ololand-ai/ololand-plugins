@@ -1,5 +1,5 @@
 ---
-description: "Verify every number and citation in an artifact (CIM paragraph, IC memo, risk narrative, DCF write-up) against a deal's source documents and deterministic engine runs. Works on OloLand-produced artifacts (four atomic-claim verifiers + citation audit + cross-document reconciliation) AND on externally-drafted artifacts — e.g. a memo written in Claude Cowork — via per-claim corpus grading. The 'defend every number, cite every source' button."
+description: "Check the figures, factual claims and citations in an artifact (CIM paragraph, IC memo, risk narrative, DCF write-up) against a deal's source documents and deterministic engine runs. Works on OloLand-produced artifacts (four atomic-claim verifiers + citation audit + cross-document reconciliation) AND on externally-drafted artifacts — e.g. a memo written in Claude Cowork — via per-claim corpus grading. The 'defend every number, cite every source' button."
 ---
 
 # /verify
@@ -20,7 +20,9 @@ Optional:
 - **include_dcf_arithmetic** (default `true`) — also replay the DCF identity checks against the deal's stored `DCFRun`. Set to `false` if the artifact does not reference a DCF.
 - **audit_markers** (default `true` when the artifact contains `[N]` markers) — also run `check_citation_coverage` to audit the `[N]` markers.
 
-## Action
+## OloLand-produced artifacts
+
+For drafts written outside OloLand, use the external workflow below. For artifacts produced by OloLand, follow these steps.
 
 1. Call `mcp__ololand__run_atomic_verifiers` with `deal_id`, `text`, and `include_dcf_arithmetic`.
 2. If the artifact contains any `[N]` markers, also call `mcp__ololand__check_citation_coverage` with the same `deal_id` and `text`. (Detect with a quick regex on the text — `\[\d+\]` excluding `[EK:N]`.)
@@ -28,17 +30,16 @@ Optional:
 
 ## Externally-drafted artifacts (e.g. written in Claude Cowork)
 
-The verifiers above are tuned for OloLand-produced text. When the user pastes an artifact **drafted outside OloLand** — a memo written in Claude Cowork, a draft from another tool, a partner's marked-up paragraph — grade it per-claim against the deal's ingested data room instead:
+Use this workflow for an investment memo drafted in ChatGPT, Claude Cowork or another editor. Keep the original memo and the selected deal fixed throughout the review.
 
-1. Call `mcp__ololand__grade_external_artifact` with `artifact_text`, `deal_id`, and `mode` (`strict` default; `lenient` for early drafts). Optionally pass a `rubric` string to steer what "supported" means.
-2. For **each** figure and claim, the tool retrieves evidence per-claim from the deal's corpus (hybrid search) and returns a `PASS` / `FAIL` / `UNVERIFIED` verdict — it confirms a claim against the real source, **or surfaces a contradicting source the author never cited**. It also returns a content-hashed provenance pack for IC lineage.
-3. Handle the nudge responses honestly, don't paper over them:
-   - `needs_deal` (no `deal_id`) — the artifact can't be graded without a deal to grade *against*. Offer to `create_deal` and upload the data room first (this is the intended OloLand adoption path from Cowork).
-   - `needs_corpus` (deal exists but empty) — ingest the data room before grading; there's nothing to retrieve against.
+1. Inventory every material factual claim in document order, including financial table cells, contract terms and claims embedded in recommendations. Retain its location, entity, period, units, reporting basis and cited page or cell. Track assumptions and investment judgments separately; verify their factual premises and recalculate stated arithmetic when the inputs are available.
+2. Call `mcp__ololand__grade_external_artifact` with the original text, `deal_id` and `mode="strict"`. For a memo above the tool's input limit, begin with bounded passages. Use only arguments supported by the connected tool. On `needs_deal`, identify the intended deal. On `needs_corpus`, report the evidence gap. On access denial, stop.
+3. Map the returned `figures` and `textual_claims` to the inventory. Keep the claim verdict, reason, source locator and run ID when returned. A timeout has no verdict. A partial, degraded or truncated result can leave omissions even when some rows have verdicts.
+4. Queue unassessed claims and returned `UNVERIFIED` claims whose reason, checks, or degradation fields identify a provider timeout or temporary provider failure. Preserve each attempt and its run ID. Leave evidence gaps and source contradictions out of automatic retries. Process the queue in order, in passages of one to three related claims using the same tool and deal. Copy the original wording. Include the heading and definitions needed to interpret each passage. For a table, include the row label, column headers, units, period, footnotes and matching source references. Resolve citation markers to the memo's bibliography. Track repeated context once. If a passage times out or transient failures persist, narrow it to a single claim. After that retry, retain the last returned verdict. Mark a claim unassessed if no attempt produced a verdict, then move on. If successive single-claim calls remain unavailable, report the remaining inventory as unassessed and give the next claim location for resuming. Respect any explicit call or cost limit.
+5. For a disputed result, read the cited source row or clause using the available document tools. Compare the metric, entity, period, units and rounding. Report an independently reproduced calculation or source-supported disagreement alongside the original tool verdict. Keep missing or conflicting evidence visible.
+6. Reconcile the claim inventory to the results. Give counts for supported, contradicted, unverified and unassessed claims, and identify the remaining assumptions and judgments. Report unresolved source or citation gaps and the relevant run IDs. Mark whole-memo verification **incomplete** while any material claim is unverified, unassessed or disputed, or any material citation remains unchecked. Report confirmed errors even when coverage is incomplete. A passage-level grade applies only to that passage.
 
-Prefer `grade_external_artifact` over `run_atomic_verifiers` whenever the text did **not** come from an OloLand tool — it does the per-claim retrieval an external artifact needs, and it's the surface that turns a Cowork draft into a source-linked, IC-defensible one.
-
-## Output
+## Output for OloLand-produced artifacts
 
 Render a single human-readable verdict block, in this order:
 
@@ -73,7 +74,7 @@ If the artifact is going into IC or a regulator-facing deliverable and the verdi
 
 ## When NOT to use this
 
-- For prose that contains no numbers and no citations — the verifier has nothing to check.
+- For a purely subjective opinion with no checkable factual premise.
 - For non-deal artifacts (general M&A commentary, market color, methodology notes).
 - Pre-ingestion — verifiers need a populated deal corpus to retrieve chunks against. If `citations_available` is 0, ingest documents first.
 
