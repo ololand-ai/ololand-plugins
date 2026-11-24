@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "ololand-dd",
-      "version": "1.29.0",
+      "version": "1.29.1",
       "source": "./plugins/ololand-dd",
       "category": "productivity",
       "description": "Institutional due diligence for M&A and private equity — deterministic DCF / LBO / Monte Carlo / real-options engines, a 311-factor risk taxonomy (67 diligence categories) with SaaS, healthcare, real-estate and industrial overlays, forensic QoE, cross-document reconciliation (CPA > tax > management > AI), war-game simulation, assumption controls that gate IC approval, deal and portfolio cockpit reads, virtual deal-team briefings, diligence-request tracking, acquisition-financing prep, company discovery and watchlists, IC-package dispatch, external-artifact grading, and a regulator-grade audit trail with replay. Three sub-agents (dd-analyst, forensic-screener, war-game-strategist). A firm's reviewed corrections and recorded outcomes feed that firm's later risk analysis."
