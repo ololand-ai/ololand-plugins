@@ -53,6 +53,19 @@ class PortableExports(unittest.TestCase):
     def test_source_is_preserved(self):
         self.assertEqual(self.source_before, self.source_hashes())
 
+    def test_external_verification_keeps_transient_verdict_recovery_in_both_formats(self):
+        for name in ("ololand-dd", "ololand-forensic-qoe"):
+            native = (ROOT / "plugins" / name / "commands/verify.md").read_text()
+            exported = self.archives[name][f"{name}/skills/{name}-verify/SKILL.md"].decode()
+            for distribution, workflow in (("Claude", native), ("portable", exported)):
+                with self.subTest(plugin=name, distribution=distribution):
+                    self.assertIn("grade_external_artifact", workflow)
+                    recovery_steps = [line for line in workflow.splitlines()
+                                      if "provider timeout" in line and "`UNVERIFIED`" in line]
+                    self.assertTrue(any("Queue " in line or "Retry " in line for line in recovery_steps))
+                    self.assertIn("unassessed", workflow)
+                    self.assertIn("incomplete", workflow)
+
     def test_every_command_is_packaged_or_explicitly_disclosed_even_when_codex_opted_out(self):
         dd = yaml.safe_load((ROOT / "plugins/ololand-dd/plugin.yaml").read_text())
         self.assertFalse(dd["codex"]["generateCommandSkills"])

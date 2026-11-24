@@ -31,18 +31,17 @@ Optional:
 ## Execution
 
 1. **No deal yet?** If the user has no `deal_id`, call `mcp__ololand__grade_external_artifact` with just the `artifact_text` — it returns `status: "needs_deal"`. Relay its guidance: create a deal and upload the data room with `mcp__ololand__create_deal`, then re-run `/verify` with the returned `deal_id`. (This is the intended onboarding path — do not fall back to pasting evidence.)
-2. **Verify.** Call `mcp__ololand__grade_external_artifact` with `artifact_text`, `deal_id`, `mode` (and `rubric` if supplied).
-3. **Handle the status field:**
-   - `ok` — render the verdict (see Output).
-   - `needs_corpus` — the deal exists but has no ingested documents. Tell the user to upload the data room (ingest), then re-run.
-   - `search_error` — a retryable corpus-search failure (not a missing corpus); tell the user to retry.
-4. Do not re-compute or second-guess the per-figure statuses — they come from the deterministic engines, the NLI check, and the independent grader.
+2. Inventory material claims in memo order. Preserve each claim's location, entity, period, reporting basis, units and cited file/page or cell. Identify assumptions and investment judgments separately. Call `mcp__ololand__grade_external_artifact` with the original text, the selected deal and the requested mode and rubric. Start with bounded passages if the original exceeds the tool's input limit.
+3. Keep each returned figure and textual verdict, reason, source locator and run ID. On access denial, stop. On `needs_corpus`, report the gap. A timeout leaves the call without a verdict. A partial or truncated run can still return usable rows.
+4. Retry unassessed claims and `UNVERIFIED` claims attributable to a provider timeout or temporary provider failure. Record the original attempt. Exclude missing evidence and established contradictions from automatic retries. Use one to three related claims with their original wording, headings, table labels, period, units, footnotes and references. If the passage still fails, retry a single claim once and retain the last returned verdict. If successive single-claim retries remain unavailable, stop and give the next unresolved location. Observe the user's call and cost limits.
+5. For a disputed result, inspect the source row or clause if the available tools expose it. Record the grader verdict and any independently documented discrepancy. Distinguish correctly rounded values from a change of entity, period, unit or reporting basis. A report of missing support remains unverified.
+6. Reconcile the inventory to the results. Report supported, contradicted, unverified and unassessed claims, source gaps, and outstanding assumptions and judgments. Mark the whole memo incomplete while a material claim remains unresolved or a material citation remains unchecked.
 
 ## What it checks (per figure)
 
-- **Corpus number reconciliation** — each `$` / `%` figure must reconcile (5% rel / 0.5pt abs) against the chunks **retrieved for that figure from the deal corpus**. A `38%` whose data-room source says `11%` fails.
+- **Corpus number reconciliation** — compare the stated figure and its displayed precision with the cited evidence for the same metric, period and unit. A `38%` whose data-room source says `11%` fails.
 - **NLI derivation** — the retrieved source must *entail* the claim (entail / neutral / contradict), so a guessed number that happens to appear is caught — not just a digit match.
-- **Independent grader** — a Gemini grader (a genuinely different model from the one that drafted the artifact) judges figure support and attribution.
+- **Independent grader** — a separate grading call judges figure support and attribution.
 - **Fail-closed** (strict mode) — provider degradation surfaces `UNVERIFIED`, never a green pass; a figure with no supporting corpus evidence is `UNVERIFIED` (we report we could not confirm it, we do not silently pass it).
 
 ## Output structure
@@ -57,7 +56,8 @@ Per figure:
      reason: <one line>
      checks: number_matches=<bool>  nli=<entail|neutral|contradict|—>
 
-Coverage: <marker_count> corpus chunks used
+Coverage: <supported, contradicted, unverified and unassessed counts>
+Corpus chunks used: <marker_count>
 Grader (<model>): <passed|failed|—>  <rationale>
 Degraded: <list, if any provider could not be reached>
 
